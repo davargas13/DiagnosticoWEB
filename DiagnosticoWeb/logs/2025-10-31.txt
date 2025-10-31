@@ -19,3 +19,8 @@
 31-10-2025 15:17:45 Object reference not set to an instance of an object.    at DiagnosticoWeb.Code.ImportacionDiagnosticos.CompletarCurp(Beneficiario beneficiario, ApplicationDbContext db, String url, String passwordCurp, DateTime now, HttpClient client, String idApiCurp) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Code\ImportacionDiagnosticos.cs:line 516
    at DiagnosticoWeb.Controllers.ApiController.CompletarCurp(String id, String conexion, String url, String password, HttpClient client, String idApiCurp) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Controllers\ApiController.cs:line 1989
 31-10-2025 15:17:46 Exception of type 'System.Exception' was thrown.  http://139.70.80.53:8080/datosapi? NotFound
+31-10-2025 15:47:54 Object reference not set to an instance of an object.    at DiagnosticoWeb.Code.ImportacionDiagnosticos.CompletarCurp(Beneficiario beneficiario, ApplicationDbContext db, String url, String passwordCurp, DateTime now, HttpClient client, String idApiCurp) in C:\Users\Alejandro Vargas\Desktop\DiagnosticoWEB\DiagnosticoWeb\Code\ImportacionDiagnosticos.cs:line 516
+   at DiagnosticoWeb.Controllers.ApiController.CompletarCurp(String id, String conexion, String url, String password, HttpClient client, String idApiCurp) in C:\Users\Alejandro Vargas\Desktop\DiagnosticoWEB\DiagnosticoWeb\Controllers\ApiController.cs:line 1989
+31-10-2025 15:47:54  Error: Unable to access jarfile C:\Users\Alejandro
+
+31-10-2025 15:47:55 Exception of type 'System.Exception' was thrown.  http://139.70.80.53:8080/datosapi? NotFound
