@@ -1,0 +1,126 @@
+@using System.Security.Claims;
+@{
+    ViewData["Title"] = "Dependencias";
+}
+<div ng-app="SedeshuApp" ng-controller="welcomeController">
+    <partial name="_Loading_Partial" />
+    <div ng-cloak>
+        <div class="card border-cards">
+            <div class="card-header bg-cards text-white">
+                <div class="d-flex justify-content-between">
+                    <h5>Dependencias</h5>
+                    @if (((ClaimsIdentity)User.Identity).HasClaim("Permiso", "dependencias.crear"))
+                    {
+                        <a class="btn btn-sm btn-header" asp-controller="Dependencias" asp-action="CreateEdit">
+                            <i class="fa fa-plus"></i> Crear
+                        </a>
+                    }
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="d-flex">
+                    <div class="col-4">
+                        <label>Nombre</label>
+                        <input class="form-control" ng-model="nombre" ng-keyup="$event.keyCode == 13 ? getDependencias() : null" />
+                    </div>
+                    <div class="col-2">
+                        <label>&nbsp;</label>
+                        <br>
+                        <button class="btn btn-info" ng-click="getDependencias()" ng-disabled="cargando" ng-if="!cargando">
+                            <i class="fa fa-search"></i> Buscar
+                        </button>
+                        <button class="btn btn-info" ng-if="cargando" disabled>
+                            <i class="fa fa-spinner fa-spin"></i> Buscar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card border-cards">
+            <div class="card-body">
+                <table class="table table-responsive" ng-if="!cargando" ng-cloak>
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th class="no-stretch"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="dependencia in dependencias" ng-cloak>
+                            <td>{{dependencia.Nombre}}</td>
+                            <td class="no-stretch">
+                                @if (((ClaimsIdentity)User.Identity).HasClaim("Permiso", "dependencias.editar"))
+                                {
+                                    <a class="btn btn-sm btn-info lineal" href="@Url.Action(controller: "Dependencias", action: "CreateEdit")/{{ dependencia.Id }}">
+                                        <i class="fa fa-edit"></i> Editar
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a class="btn btn-sm btn-info lineal" href="@Url.Action(controller: "Dependencias", action: "CreateEdit")/{{ dependencia.Id }}">
+                                        <i class="fa fa-eye"></i> Ver
+                                    </a>
+                                }
+                            </td>
+                        </tr>
+                        <tr ng-if="dependencias.length == 0">
+                            <td colspan="2">No hay datos para mostrar.</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="float-right">
+                    <ul uib-pagination total-items="totalcount" ng-change="pagechanged()"
+                        items-per-page="pageSize" direction-links="false" ng-model="pageIndex" role="menu"
+                        max-size="maxsize" class="pagination-sm" boundary-links="true" rotate="true"
+                        num-pages="numPages" style="margin-bottom: 0px !important"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        (function () {
+            var app = angular.module('SedeshuApp', ['ui.bootstrap']);
+            var baseUrl = document.baseURI;
+
+            app.controller('welcomeController',
+                function ($scope, $http, $uibModal) {
+                    $scope.dependencias = [];
+                    $scope.nombre = "";
+                    $scope.cargando = false;
+                    //Paginacion
+                    $scope.maxsize = 5;
+                    $scope.totalcount = 0;
+
+                    $scope.pageIndex = 1;
+                    $scope.pageSize = 10;
+                    $scope.numPages = 0;
+
+                    $scope.getDependencias = function () {
+                        $scope.cargando = true;
+                        $http.post(baseUrl + 'Dependencias/GetDependencias/',
+                            {
+                                Nombre: $scope.nombre,
+                                PageIndex: $scope.pageIndex,
+                                PageSize: $scope.pageSize
+                            }
+                        ).then(
+                            function (response) {
+                                $scope.dependencias = response.data.Dependencias;
+                                $scope.totalcount = response.data.Total;
+                                $scope.cargando = false;
+                            });
+                    }
+
+                    $scope.pagechanged = function () {
+                        $scope.getDependencias();
+                    };
+
+                    $scope.getDependencias();
+                }
+            );
+        })();
+    </script>
+}

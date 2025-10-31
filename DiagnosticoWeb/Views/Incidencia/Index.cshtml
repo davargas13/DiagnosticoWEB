@@ -1,0 +1,241 @@
+@{
+    ViewData["Title"] = "Incidencias";
+}
+@using DiagnosticoWeb.Code
+@using System.Security.Claims;
+<div ng-app="SedeshuApp" ng-controller="indexController" ng-init="init(@JsonSedeshu.SerializeObject(Model))">
+    <partial name="_Loading_Partial" />
+    <div ng-cloak>
+        <div class="card border-cards">
+            <div class="card-header bg-cards text-white">
+                <div class="d-flex justify-content-between">
+                    <h5>Incidencias</h5>
+                    <div class="d-flex justify-content-between">
+                        @if (((ClaimsIdentity) User.Identity).HasClaim("Permiso", "incidencias.exportar"))
+                        {
+                            <button class="btn btn-sm btn-header" ng-click="exportar()">
+                                <i class="fa fa-file-excel"></i> Exportar
+                            </button>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="d-flex flex-wrap">
+                    <div class="col-5">
+                        <label>Período</label>
+                        <br>
+                        <div class="d-flex">
+                            <input type="date" ng-model="Filtros.Inicio" placeholder="yyyy-MM-dd" class="form-control filtro" />
+                            <span class="al filtro">Al</span>
+                            <input type="date" ng-model="Filtros.Fin" placeholder="yyyy-MM-dd" class="form-control filtro" />
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <label>Folio</label>
+                        <input type="text" class="form-control" ng-model="Filtros.Folio">
+                    </div>
+                    <div class="col-3">
+                        <label>Encuestador</label>
+                        <select class="selectpicker2 form-control" ng-model="Filtros.TrabajadorId" data-live-search="true">
+                            <option value="">[Todos]</option>
+                            <option ng-repeat="trabajador in Trabajadores" ng-value="trabajador.Id">{{trabajador.Nombre}}</option>
+                        </select>
+                    </div>
+                    <div class="col-3">
+                        <label>Tipo de incidencia </label>
+                        <select class="selectpicker2" ng-model="Filtros.TipoIncidenciaId">
+                            <option value="">[Todos]</option>
+                            <option ng-repeat="tipo in TiposIncidencias" ng-value="tipo.Id">{{tipo.Nombre}}</option>
+                        </select>
+                    </div>
+                    <div class="col-3">
+                        <label>Municipio</label>
+                        <select class="selectpicker2" ng-model="Filtros.MunicipioId" ng-change="seleccionarMunicipio()" data-live-search="true">
+                            <option value="">[Todos]</option>
+                            <option ng-repeat="municipio in Municipios" ng-value="municipio.Id">{{municipio.Nombre}}</option>
+                        </select>
+                    </div>
+                    <div class="col-3">
+                        <label>Localidad</label>
+                        <select class="selectpicker2" ng-model="Filtros.LocalidadId" data-live-search="true">
+                            <option value="">[Todas]</option>
+                            <option ng-repeat="localidad in Localidades" ng-value="localidad.Id">{{localidad.Nombre}}</option>
+                        </select>
+                    </div>
+                    <div class="col-3">
+                        <label>Zona de impulso</label>
+                        <select class="selectpicker2" ng-model="Filtros.ZonaImpulsoId" data-live-search="true">
+                            <option value="">[Todas]</option>
+                            <option ng-repeat="zona in Zonas" ng-value="zona.Id">{{zona.Nombre}}</option>
+                        </select>
+                    </div>
+                    <div class="col-2">
+                        <br>
+                        <button class="mt-2 btn btn-info" ng-click="getIncidencias()" ng-if="!cargando">
+                            <i class="fa fa-search"></i> Buscar
+                        </button>
+                        <button class="mt-2 btn btn-info" ng-if="cargando">
+                            <i class="fa fa-spinner fa-spin"></i> Buscar
+                        </button>
+                        <form id="form" asp-controller="Incidencia" asp-action="ExportarIncidencias" method="post" target="_blank">
+                            <input id="PageIndex" name="PageIndex" type="hidden" />
+                            <input id="PageSize" name="PageSize" type="hidden" />
+                            <input id="Inicio" name="Inicio" type="hidden" />
+                            <input id="Fin" name="Fin" type="hidden" />
+                            <input id="Folio" name="Folio" type="hidden" />
+                            <input id="TipoIncidenciaId" name="TipoIncidenciaId" type="hidden" />
+                            <input id="TrabajadorId" name="TrabajadorId" type="hidden" />
+                            <input id="MunicipioId" name="MunicipioId" type="hidden" />
+                            <input id="LocalidadId" name="LocalidadId" type="hidden" />
+                            <input id="ZonaImpulsoId" name="ZonaImpulsoId" type="hidden" />
+                        </form>
+                    </div>
+                </div>
+            </div>            
+        </div>
+        <div class="card border-cards">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Folio</th>
+                            <th>Tipo de incidencia</th>
+                            <th>Encuestador</th>
+                            <th>Municipio</th>
+                            <th>Localidad</th>
+                            <th>Polígono</th>
+                            <th class="no-stretch"></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="incidencia in incidencias">
+                            <td>{{ incidencia.Folio }}</td>
+                            <td>{{ incidencia.TipoIncidencia }}</td>
+                            <td>{{ incidencia.Trabajador }}</td>
+                            <td>{{ incidencia.Municipio }}</td>
+                            <td>{{ incidencia.Localidad }}</td>
+                            <td>{{ incidencia.ZonaImpulso }}</td>
+                            <td>
+                                <button class="btn btn-sm btn-info lineal" href="@Url.Action(action: "CreateEdit", controller: "TipoIncidencia")/{{tipo.Id}}">
+                                    <i class="fa fa-eye"></i> Ver
+                                </button>
+                            </td>
+                        </tr>
+                        <tr ng-if="incidencias.length == 0">
+                            <td colspan="3">No hay datos para mostrar.</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="d-flex justify-content-end">
+                    <ul uib-pagination total-items="totalcount" ng-change="pagechanged()"
+                        items-per-page="Filtros.PageSize" direction-links="false" ng-model="Filtros.PageIndex" role="menu"
+                        max-size="maxsize" class="pagination-sm" boundary-links="true" rotate="true"
+                        num-pages="numPages" style="margin-bottom: 0px !important"></ul>
+                </div>
+            </div>
+        </div>        
+    </div>
+</div>
+    
+    @section Scripts{
+    <script>
+        (function () {
+            var app = angular.module('SedeshuApp', ['ui.bootstrap']);
+            var baseUrl = document.baseURI;
+
+            app.controller('indexController',
+                function ($scope, $http, $uibModal) {                                        
+                    $scope.incidencias = [];
+                    $scope.Municipios = [];
+                    $scope.Localidades = [];
+                    $scope.Zonas = [];
+                    $scope.Trabajadores = [];
+                    $scope.TiposIncidencias = [];
+                    //Paginacion
+                    $scope.maxsize = 5;
+                    $scope.totalcount = 0;
+                    $scope.numPages = 0;
+                    $scope.cargando = false;                    
+
+                    $scope.Filtros = {                        
+                        Folio: "",                        
+                        TrabajadorId: "",                        
+                        TipoIncidenciaId: "",                        
+                        MunicipioId: "",                        
+                        LocalidadId: "",                        
+                        ZonaImpulsoId: "",                        
+                        Inicio: null,                        
+                        Fin: null,
+                        PageIndex: 1,
+                        PageSize: 10
+                    };
+
+                    $scope.init = function (model) {
+                        $scope.Filtros.Inicio = new Date(model.Inicio.substring(0, 4), parseInt(model.Inicio.substring(5, 7)) - 1, model.Inicio.substring(8, 10));                        
+                        $scope.Filtros.Fin = new Date(model.Fin.substring(0, 4), parseInt(model.Fin.substring(5, 7)) - 1, model.Fin.substring(8, 10));
+                        $scope.Municipios = model.Municipios;
+                        $scope.Trabajadores = model.Trabajadores;
+                        $scope.TiposIncidencias = model.TiposIncidencias;
+                         setTimeout(function () {
+                            $scope.$apply(function () {
+                                $scope.refreshSelect();
+                                $scope.getIncidencias();
+                            });
+                        });
+                    };
+
+                    $scope.getIncidencias = function () {
+                        $scope.cargando = true;                        
+                        $http.post(baseUrl + 'Incidencia/GetIncidencias/', $scope.Filtros).then(
+                            function (response) {
+                                $scope.cargando = false;
+                                $scope.incidencias = response.data.Incidencias;
+                                $scope.totalcount = response.data.Total;
+                            });
+                    };
+                    
+                    $scope.seleccionarMunicipio = function () {
+                        $scope.cargando = true;                        
+                        $http.get(baseUrl + 'Localidad/ByMunicipio/'+$scope.Filtros.MunicipioId).then(
+                            function (response) {
+                                $scope.cargando = false;
+                                $scope.Localidades = response.data;
+                                $http.get(baseUrl + 'Zona/ByMunicipio/'+$scope.Filtros.MunicipioId).then(
+                                    function (response) {
+                                        $scope.cargando = false;
+                                        $scope.Zonas = response.data;
+                                        $scope.refreshSelect();                                                                        
+                                });                                                               
+                        });
+                        
+                    };
+
+                    $scope.pagechanged = function () {
+                        $scope.getIncidencias();
+                    };
+                    
+                    $scope.refreshSelect = _.debounce(function () {
+                        $('.selectpicker2').selectpicker('refresh');
+                    }, 200);
+                    
+                    $scope.exportar = function() {
+                      document.getElementById("PageIndex").value = 0;
+                      document.getElementById("PageSize").value = 0;
+                      document.getElementById("Inicio").value = $scope.Filtros.Inicio.toISOString().substring(0, 10);
+                      document.getElementById("Fin").value = $scope.Filtros.Fin.toISOString().substring(0, 10);                      
+                      document.getElementById("Folio").value = $scope.Filtros.Folio;
+                      document.getElementById("TrabajadorId").value = $scope.Filtros.TrabajadorId;
+                      document.getElementById("TipoIncidenciaId").value = $scope.Filtros.TipoIncidenciaId;
+                      document.getElementById("MunicipioId").value = $scope.Filtros.MunicipioId;
+                      document.getElementById("LocalidadId").value = $scope.Filtros.LocalidadId;
+                      document.getElementById("ZonaImpulsoId").value = $scope.Filtros.ZonaImpulsoId;
+                      document.getElementById("form").submit();
+                    };                    
+                }
+            );
+        })();
+    </script>
+}

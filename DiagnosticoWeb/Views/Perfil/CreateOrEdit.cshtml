@@ -1,0 +1,139 @@
+﻿@using DiagnosticoWeb.Code;
+@using System.Security.Claims;
+<div ng-app="SedeshuApp" ng-controller="indexController" ng-init="init(@JsonSedeshu.SerializeObject(Model))">
+    <partial name="_Loading_Partial" />
+    <div ng-cloak>
+        <div class="card border-cards">
+            <div class="card-header bg-cards text-white">
+                <div class="d-flex justify-content-between">
+                    <h5 ng-if="Perfil.Id == ''">Crear perfil</h5>
+                    <h5 ng-if="Perfil.Id != ''">Editar perfil</h5>
+                    <a class="btn btn-sm btn-header" asp-controller="Perfil" asp-action="Index">
+                        <i class="fa fa-backward"></i> Regresar
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <label class="required">Nombre <small>{{ Perfil.Nombre.length }} / 100</small></label>
+                        <input class="form-control" ng-model="Perfil.Nombre" />
+                        <strong class="small text-danger" ng-bind="errors['Nombre']"></strong>
+                    </div>
+                    <div class="col-sm-4">
+                        <label class="required">Permiso</label>
+                        <select class="selectpicker form-control" multiple ng-model="Perfil.PermisosIds" data-title="Sin selección"
+                                data-selected-text-format="count > 2" data-live-search="true">
+                            <option ng-repeat="permiso in Perfil.Permisos" ng-value="permiso.Id">{{ permiso.Nombre }}</option>
+                        </select>
+                        <strong class="small text-danger" ng-bind="errors['PermisosIds']"></strong>
+                    </div>
+
+                    <div class="col-sm-12 mt-3" ng-if="Perfil.PermisosIds.length > 0">
+                        <span class="badge badge-info mb-2">Permisos</span>
+                        <div class="row">
+                            <div class="col-sm-6" ng-repeat="(index, perfil) in Perfil.PermisosIds">
+                                <div class="vertiente">
+                                    <label>{{ obtenerNombre(perfil) }}</label>
+                                    <button class="btn btn-sm btn-danger float-right" ng-click="eliminar(index)">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @if (((ClaimsIdentity)User.Identity).HasClaim("Permiso", "perfil.editar") || (string.IsNullOrEmpty(Model.Id) &&
+                ((ClaimsIdentity)User.Identity).HasClaim("Permiso", "perfil.crear")))
+            {
+                <div class="card-footer">
+                    <button class="btn btn-sm btn-success" ng-if="!guardando" ng-click="Guardar()">
+                        <i class="fa fa-save"></i> Guardar
+                    </button>
+                    <button class="btn btn-sm btn-success" ng-if="guardando" disabled>
+                        <i class="fa fa-spinner fa-spin"></i> Guardar
+                    </button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        (function () {
+            var baseUrl = document.baseURI;
+            var app = angular.module('SedeshuApp', ['ui.bootstrap']);
+
+            app.controller('indexController',
+                function ($scope, $http, $uibModal) {
+                    $scope.Perfil = {
+                        Id: "",
+                        Nombre: "",
+                        PermisosIds: [],
+                        Permisos: []
+                    };
+                    $scope.guardando = false;
+                    $scope.errors = [];
+
+                    $scope.init = function (model) {
+                        $scope.Perfil = model;
+
+                        $scope.refreshSelect();
+                    };
+
+                    $scope.Guardar = function () {
+                        $scope.errors = [];
+                        $scope.guardando = true;
+                        $http.post(baseUrl + "Perfil/Guardar", $scope.Perfil)
+                            .then(function (response) {
+                                if (response.data == 'ok') {
+                                    window.location = baseUrl + "Perfil";
+                                } else {
+                                    $scope.cargarErrores(response.data);
+                                }
+                                $scope.guardando = false;
+                            });
+                    };
+
+                    $scope.cargarErrores = function (errors) {
+                        $scope.errors = [];
+                        for (var i = 0; i < errors.length; i++) {
+                            $scope.errors[errors[i].Key] = errors[i].Error;
+                        }
+                    };
+
+                    $scope.eliminar = function (index) {
+                        $scope.Perfil.PermisosIds.splice(index, 1);
+
+                        $scope.refreshSelect();
+                    };
+
+                    $scope.obtenerNombre = function (Id) {
+                        let permiso = _.find($scope.Perfil.Permisos, function (permiso) {
+                            return permiso.Id == Id;
+                        });
+
+                        return permiso.Nombre;
+                    };
+
+                    $scope.refreshSelect = _.debounce(function () {
+                        $('.selectpicker').selectpicker('refresh');
+                    }, 500);
+                }
+            );
+        })();
+    </script>
+}
+
+@section Styles
+    {
+    <style>
+        .vertiente {
+            padding: 8px; 
+            margin: 4px;
+            border: 1px solid #eaecee;
+        }     
+    </style>
+}

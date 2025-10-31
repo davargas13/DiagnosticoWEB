@@ -1,0 +1,712 @@
+@using Microsoft.AspNetCore.Authorization
+@using System.Security.Claims
+@inject IAuthorizationService AuthorizationService
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+@using DiagnosticoWeb.Code
+@{
+    ViewData["Title"] = "Información del beneficiario";
+}
+<div ng-app="SedeshuApp" ng-controller="indexController" ng-init="init(@JsonSedeshu.SerializeObject(Model))">
+    <partial name="_Loading_Partial" />
+    <div ng-cloak>
+        <div class="card border-cards">
+            <div class="card-header bg-cards text-white d-flex justify-content-between">
+                <h5>Información del domicilio</h5>
+                <div>
+                    <a class="btn btn-sm btn-header" href="@Url.Action(controller: "Beneficiarios", action: "Index")">
+                        <i class="fa fa-backward"></i> Regresar
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="d-flex flex-wrap">
+                    <div class="col-6">
+                        <div class="card">
+                            <div class="card-header bg-question d-flex justify-content-between">
+                                <div>
+                                    <span class="badge">Datos personales integrante {{numDato}} </span>
+                                </div>
+                                <div class="d-flex" ng-if="Hijos.length > 1">
+                                    <button class="btn btn-sm btn-light" ng-click="verDato('anterior')" ng-if="numDato > 1">
+                                        <i class="fa fa-arrow-left"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-light" ng-click="verDato('siguiente')" ng-if="numDato < Hijos.length">
+                                        <i class="fa fa-arrow-right"></i>
+                                    </button>
+                                </div>
+                                @if (((ClaimsIdentity)User.Identity).HasClaim("Permiso", "beneficiarios.editar"))
+                                {
+                                    <a ng-if="Aplicacion.Estatus=='Completo'" class="btn btn-sm btn-info" href="@Url.Action(controller: "Beneficiarios", action: "Edit")/{{ FamiliaId }}/{{numDato}}">
+                                        <i class="fa fa-edit"></i> Editar
+                                    </a>
+                                }
+                            </div>
+                            <div class="card-body">
+                                <div class="d-flex flex-column">
+                                    <label class="strong">Nombre</label>
+                                    <label>{{ Beneficiario.Nombre+" "+Beneficiario.ApellidoPaterno+" "+Beneficiario.ApellidoMaterno }}</label>
+                                    <label class="strong">Fecha de nacimiento</label>
+                                    <label>{{ Beneficiario.FechaNacimiento }}</label>
+                                    <label class="strong">CURP</label>
+                                    <label>{{ Beneficiario.Curp }} </label>
+                                    <label class="strong">RFC</label>
+                                    <label>{{ Beneficiario.Rfc }} </label>
+                                    <label class="strong">Último nivel de estudios</label>
+                                    <label>{{ Beneficiario.Estudio }} </label>
+                                    <label class="strong">Grado de estudios</label>
+                                    <label>{{ Beneficiario.GradoEstudio }} </label>
+                                    <label class="strong">Estado civil</label>
+                                    <label>{{ Beneficiario.EstadoCivil }} </label>
+                                    <label class="strong">Discapacidad</label>
+                                    <label>{{ Beneficiario.Discapacidad }} </label>
+                                    <label class="strong">Grado de la discapacidad</label>
+                                    <label>{{ Beneficiario.GradoDiscapacidad }} </label>
+                                    <label class="strong">Causa de la discapacidad</label>
+                                    <label>{{ Beneficiario.CausaDiscapacidad }} </label>
+                                    <label class="strong">Estatus de registro</label>
+                                    <label>{{ Beneficiario.EstatusInformacion }} </label>
+                                    @if (((ClaimsIdentity)User.Identity).HasClaim("Permiso", "beneficiarios.editar"))
+                                    {
+                                        <button class="btn btn-sm btn-success" ng-if="!Beneficiario.Activa" ng-click="showBeneficiarioModal(FamiliaId, numDato)">
+                                            <i class="fa fa-unlock"></i> Activar
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <label class="badge badge-info" ng-if="!Beneficiario.Activa">Inactivo</label>
+                                    }
+                                </div>
+                                <div class="card card-body">
+                                    <span class="badge badge-info mb-3">Documentos</span>
+                                    <div class="d-flex flex-wrap" ng-if="Documentos.length > 0">
+                                        <div ng-repeat="imagen in Documentos" class="col-sm-6">
+                                            <div class="card card-body bg-question">
+                                                <small class="text-capitalize" ng-bind="imagen.Nombre"></small>
+                                                <button class="btn btn-xsm btn-light" ng-click="CambiarImagen(imagen)">
+                                                    <i class="fa fa-image"></i> Ver
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div ng-if="Documentos.Length == 0">
+                                            <span>[No se han capturado documentos del beneficiario]</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card card-body">
+                                    <span class="badge badge-info mb-3">Fotografías</span>
+                                    <div class="d-flex flex-wrap" ng-if="Fotos.length > 0">
+                                        <div ng-repeat="imagen in Fotos" class="col-sm-6">
+                                            <div class="card card-body bg-question">
+                                                <small class="text-capitalize" ng-bind="imagen.Nombre"></small>
+                                                <button class="btn btn-xsm btn-light" ng-click="CambiarImagen(imagen)">
+                                                    <i class="fa fa-image"></i> Ver
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div ng-if="Fotos.Length == 0">
+                                            <span>[No se han capturado documentos del beneficiario]</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card card-body">
+                                    <span class="badge badge-info mb-3">Huellas</span>
+                                    <div class="d-flex flex-wrap" ng-if="Huellas.length > 0">
+                                        <div ng-repeat="huella in Huellas" class="col-sm-6">
+                                            <div class="card card-body bg-question">
+                                                <small class="text-capitalize" ng-bind="huella.nombre"></small>
+                                                <button class="btn btn-xsm btn-light" ng-click="CambiarHuella(huella)" ng-if="huella.archivoId!=null">
+                                                    <i class="fa fa-image"></i> Ver
+                                                </button>
+                                                <span class="badge badge-info" ng-if="huella.archivoId==null">{{huella.status==0?'Pendiente':'No ingresado'}}</span>
+                                            </div>
+                                        </div>
+                                        <div ng-if="Huellas.Length == 0">
+                                            <span>[No se han capturado huellas del beneficiario]</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <div class="col-6">
+                    <div class="card">
+                        <div class="card-header bg-question d-flex justify-content-between">
+                            <div>
+                                <span class="badge">Domicilio {{numDomicilio + 1}}</span>
+                            </div>
+                            <div class="d-flex" ng-if="NumDomicilios > 1">
+                                <button class="btn btn-sm btn-light" ng-click="verDomicilio('anterior')" ng-if="numDomicilio > 0">
+                                    <i class="fa fa-arrow-left"></i>
+                                </button>
+                                <button class="btn btn-sm btn-light" ng-click="verDomicilio('siguiente')" ng-if="numDomicilio < NumDomicilios - 1">
+                                    <i class="fa fa-arrow-right"></i>
+                                </button>
+                            </div>
+                            @if (((ClaimsIdentity)User.Identity).HasClaim("Permiso", "beneficiarios.editar"))
+                            {
+                                <a class="btn btn-sm btn-info" href="@Url.Action(controller: "Domicilio", action: "Edit")/{{FamiliaId}}" ng-if="Domicilio.Id!=null">
+                                    <i class="fa fa-edit"></i> Editar
+                                </a>
+                            }
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex flex-column" ng-show="Domicilio.Id != null">
+                                <label class="strong">Domicilio</label>
+                                <label>{{ Domicilio.Calle == '' ? Domicilio.Domicilio : Domicilio.Calle }}</label>
+                                <div class="form-inline">
+                                    <small class="strong">OCR:</small>
+                                    <small class="text-primary ml-1">{{ Domicilio.CadenaOCR }}</small>
+                                    <small class="text-success ml-1">{{ Domicilio.Porcentaje }}% coincidencia</small>
+                                </div>
+                                <label class="strong">Entre calles</label>
+                                <div class="d-flex">
+                                    <label>{{Domicilio.EntreCalle1}}</label>
+                                    <label style="margin-left: 10px">{{Domicilio.EntreCalle2}}</label>
+                                </div>
+                                <label class="strong">Teléfono</label>
+                                <label>{{ Domicilio.Telefono }}</label>
+                                <label class="strong">Teléfono de casa</label>
+                                <label>{{ Domicilio.TelefonoCasa }}</label>
+                                <label class="strong">Email</label>
+                                <label>{{ Domicilio.Email }} </label>
+                                <label class="strong">Código postal</label>
+                                <label>{{ Domicilio.CodigoPostal }} </label>
+                                <label class="strong">Localidad</label>
+                                <div class="d-flex justify-content-between">
+                                    <label>{{ Domicilio.Municipio }} </label>
+                                    <label>{{ Domicilio.Localidad}} </label>
+                                    <label>{{ Domicilio.Ageb}} </label>
+                                </div>
+                                <label class="strong">Colonia</label>
+                                <label>{{ Domicilio.Colonia == '' ? Domicilio.NombreAsentamiento:Domicilio.Colonia }} </label>
+                                <label ng-if="Domicilio.ZonaImpulso!=''" class="strong">Zona de impulso</label>
+                                <label ng-if="Domicilio.ZonaImpulso!=''">{{ Domicilio.ZonaImpulso}} </label>
+                                <label class="strong">Coordenadas seleccionadas</label>
+                                <div ng-if="Domicilio.Latitud != '' && Domicilio.Longitud != ''" class="d-flex flex-wrap">
+                                    <label class="col-12">Coordenadas del encuestador</label>
+                                    <label class="col-6">{{Domicilio.Latitud}}</label>
+                                    <label class="col-6">{{Domicilio.Longitud}}</label>
+                                </div>
+                                <div ng-if="Domicilio.LatitudAtm != '' && Domicilio.LongitudAtm != ''" class="d-flex flex-wrap">
+                                    <label class="col-12">Coordenadas del dispositivo</label>
+                                    <label class="col-6">{{Domicilio.LatitudAtm}}</label>
+                                    <label class="col-6">{{Domicilio.LongitudAtm}}</label>
+                                </div>
+                                <div id="domicilio" style="height: 200px;"></div>
+                                <div class="d-flex">
+                                    <slot ng-if="Domicilio.Latitud == 0 && Domicilio.Longitud == 0">
+                                        <small class="text-danger">No hay coordenadas capturadas</small>
+                                    </slot>
+                                </div>
+                                @if (((ClaimsIdentity)User.Identity).HasClaim("Permiso", "beneficiarios.editar"))
+                                {
+                                    <button class="btn btn-sm btn-success" ng-if="!Domicilio.Activa" ng-click="showDomicilioModal(Domicilio.Id, FamiliaId)">
+                                        <i class="fa fa-unlock"></i> Activar
+                                    </button>
+                                }
+                                else
+                                {
+                                    <label class="badge badge-info" ng-if="!Domicilio.Activa">Inactivo</label>
+                                }
+                            </div>
+                            <div ng-if="Domicilio.Id == null">
+                                <span>[Aún no se ha capturado el domicilio del beneficiario]</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header bg-question font-weight-bold">Carencias de la familia</div>
+                        <div class="card-body">
+                            <table class="table carencias">
+                                <tr class="table-header">
+                                    <th rowspan="2" class="bg-dark-blue text-white">Preocupacion COVID</th>
+                                    <th rowspan="2" class="bg-dark-blue text-white">Pérdida de empleo</th>
+                                    <th rowspan="2">Propiedad de la vivienda</th>
+                                    <th colspan="4">Carencia por calidad y espacios de vivienda</th>
+                                    <th colspan="4">Carencia de acceso a servicios básicos de la vivienda</th>
+                                    <th rowspan="2">Indicador de carencia por acceso a la alimentación</th>
+                                </tr>
+                                <tr class="table-header">
+                                    <th>Piso</th>
+                                    <th>Techos</th>
+                                    <th>Muros</th>
+                                    <th>Hacinamiento</th>
+                                    <th>Agua</th>
+                                    <th>Drenaje</th>
+                                    <th>Electricidad</th>
+                                    <th>Combustible</th>
+                                </tr>
+                                <tr ng-if="Aplicacion.Estatus == 'Completo'">
+                                    <td class="text-center">{{Aplicacion.PreocupacionCovid > 3 ? (Aplicacion.PreocupacionCovid > 7 ? "Alta" : "Media") :"Baja"}}</td>
+                                    <th><i class="radio" ng-class="Aplicacion.PerdidaEmpleo?'rojo':'azul'"></i></th>
+                                    <td class="text-center">{{Aplicacion.PropiedadVivienda?"Propia":"Rentada"}}</td>
+                                    <th><i class="radio" ng-class="Aplicacion.Piso?'rojo':'azul'"></i></th>
+                                    <th><i class="radio" ng-class="Aplicacion.Techos?'rojo':'azul'"></i></th>
+                                    <th><i class="radio" ng-class="Aplicacion.Muros?'rojo':'azul'"></i></th>
+                                    <th><i class="radio" ng-class="Aplicacion.Hacinamiento?'rojo':'azul'"></i></th>
+                                    <th><i class="radio" ng-class="Aplicacion.Agua?'rojo':'azul'"></i></th>
+                                    <th><i class="radio" ng-class="Aplicacion.Drenaje?'rojo':'azul'"></i></th>
+                                    <th><i class="radio" ng-class="Aplicacion.Electricidad?'rojo':'azul'"></i></th>
+                                    <th><i class="radio" ng-class="Aplicacion.Combustible?'rojo':'azul'"></i></th>
+                                    <th><i class="radio" ng-class="Aplicacion.Alimentaria?'rojo':'azul'"></i></th>
+                                </tr>
+                                <tr ng-if="Aplicacion.Estatus != 'Completo'">
+                                    <td colspan="12">[Aún no se aplica el diagnóstico al beneficiario]</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>                
+                <div class="col-12" ng.show="Hijos.length > 0">
+                    <div class="card">
+                        <div class="card-header bg-question d-flex justify-content-between">
+                            <span class="font-weight-bold">Integrantes de la familia</span>
+                            <a ng-if="Aplicacion.Estatus == 'Completo'" class="btn btn-sm btn-header" href="@Url.Action("GetPdf", "Beneficiarios", new { id = Model.FamiliaId })" target="_blank">
+                                <i class="far fa-file-pdf"></i> Exportar PDF
+                            </a>
+                        </div>
+                        <div class="card-body">
+                            <table class="table carencias">
+                                <tr class="table-header">
+                                    <th rowspan="2">No</th>
+                                    <th rowspan="2" class="text-left">Nombre</th>
+                                    <th rowspan="2">Edad</th>
+                                    <th rowspan="2" class="text-left">Parentesco</th>
+                                    <th rowspan="2">Acta de nacimiento</th>
+                                    <th rowspan="2">Índice de carencias sociales</th>
+                                    <th colspan="4">Carencia por rezago educativo</th>
+                                    <th rowspan="2">Carencia por acceso a servicios de salud</th>
+                                    <th rowspan="2">Carencia por acceso a la seguridad social</th>
+                                    <th rowspan="2">Pérdida de empleo</th>
+                                </tr>
+                                <tr class="table-header">
+                                    <th>Carencia</th>
+                                    <th>Nivel aprobado</th>
+                                    <th>Grado aprobado</th>
+                                    <th>Asiste a la escuelta</th>
+                                </tr>
+                                <tr ng-if="Aplicacion.Estatus == 'Completo'" ng-repeat="(index, hijo) in Hijos">
+                                    <td>
+                                        {{index+1}}
+                                    </td>
+                                    <td class="text-left">
+                                        <a class="text-left badge badge-info lineal" href="{{'/Hijo/Ver/'+hijo.Id}}" >
+                                            <span>{{hijo.Nombre}}</span>
+                                            <br>
+                                            <span>{{hijo.ApellidoPaterno+" "+hijo.ApellidoMaterno}}</span>
+                                        </a>
+                                    </td>
+                                    <td>{{Carencias[index]==null?'': Carencias[index].Edad}}</td>
+                                    <td class="text-left">{{hijo.Parentesco}}</td>
+                                    <th>
+                                        {{Carencias[Index]}}
+                                        <i class="radio" ng-class="Carencias[Index]==null?'azul':(Carencias[index].TieneActa?'rojo':'azul')"></i>
+                                    </th>
+                                    <td>{{Carencias[index]==null?'': Carencias[index].NumCarencias}}</td>
+                                    <th>
+                                        <i class="radio" ng-class="Carencias[index]==null?'azul':(Carencias[index].Educativa?'rojo':'azul')"></i>
+                                    </th>
+                                    <td>{{hijo.Estudio}}</td>
+                                    <td>{{hijo.GradoEstudio}}</td>
+                                    <th>{{Asiste[index].RespuestaId == "49" ?'Asiste':'No asiste'}}</th>
+                                    <th>
+                                        <i class="radio" ng-class="Carencias[index]==null?'azul':(Carencias[index].ServicioSalud?'rojo':'azul')"></i>
+                                    </th>
+                                    <th>
+                                        <i class="radio" ng-class="Carencias[index]==null?'azul':(Carencias[index].SeguridadSocial?'rojo':'azul')"></i>
+                                    </th>
+                                    <th>
+                                        <i class="radio" ng-class="Carencias[index]==null?'azul':(Carencias[index].PerdidaEmpelo?'rojo':'azul')"></i>
+                                    </th>
+                                </tr>
+                                <tr ng-if="Aplicacion.Estatus != 'Completo'">
+                                    <td colspan="5">[No hay datos para mostrar]</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header bg-question d-flex justify-content-between">
+                            <div>
+                                <span class="font-weight-bold">Encuesta {{numEncuesta + 1}}</span>
+                            </div>
+                            <div class="d-flex">
+                                <div class="d-flex" ng-if="NumEncuestas > 1">
+                                    <button class="btn btn-sm btn-light" ng-click="verEncuesta('anterior')" ng-if="numEncuesta > 0">
+                                        <i class="fa fa-arrow-left"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-light" ng-click="verEncuesta('siguiente')" ng-if="numEncuesta < NumEncuestas - 1">
+                                        <i class="fa fa-arrow-right"></i>
+                                    </button>
+                                </div>
+                                @if (((ClaimsIdentity)User.Identity).HasClaim("Permiso", "beneficiarios.editar"))
+                                {
+                                    <a class="btn btn-sm btn-info" href="@Url.Action(controller: "Aplicacion", action: "Editar")/{{Aplicacion.Id}}" 
+                                       ng-if="Aplicacion != null && Aplicacion.EncuestaVersionId == VersionEncuestaActual">
+                                        <i class="fa fa-edit"></i> Editar
+                                    </a>
+                                    <span class="badge badge-dark" ng-if="Aplicacion != null && Aplicacion.EncuestaVersionId != VersionEncuestaActual">
+                                        La encuesta no se puede editar porque hay una nueva versión del diagnóstico
+                                    </span>
+                                }
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <span>{{ Aplicacion.CreatedAt | date:'dd/MM/yyyy' }}</span>
+                                <span>{{Aplicacion.Estatus}}</span>
+                                <span>{{Aplicacion.Trabajador==null ? '' : Aplicacion.Trabajador.Nombre}}</span>
+                            </div>
+                            <hr>
+                            <div class="d-flex flex-wrap encuesta" ng-if="Preguntas.length > 0">
+                                <div ng-repeat="pregunta in Preguntas" class="col-6">
+                                    <div class="font-weight-bold">
+                                        {{ pregunta.Id}}
+                                    </div>
+                                    <div>
+                                        {{pregunta.Valor==null?pregunta.RespuestaValor:pregunta.Valor}}
+                                    </div>
+                                </div>
+                            </div>
+                            <div ng-if="Preguntas.length == 0">
+                                <span>[Aún no se aplica la encuesta CONEVAL al beneficiario]</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+        <div id="myModal" class="modal-img" ng-click="Close()" title="Clic para cerrar">
+            <img class="modal-content-img" ng-src="data:image/png;base64,{{ imagenBase64 }}" ng-if="imagenBase64 != ''" />
+            <div id="caption-img">{{ DocName }}</div>
+        </div>
+        <script type="text/ng-template" id="modalDomicilio">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modal-title">Activación de domicilio</h5>
+            </div>
+            <div class="modal-body" id="modal-body">
+                <label>¿Estás seguro de activar la información de este domicilio?</label>
+                <label class="small">La información actual del domicilio se mandará al histórico</label>
+            </div>
+            <div class="modal-footer" style="padding-top: 5px; padding-bottom: 5px;">
+                <button class="btn btn-sm btn-light" type="button" ng-click="$modalDomicilio.close()">Cancelar</button>
+                <button class="btn btn-sm btn-primary" type="button" ng-click="$modalDomicilio.activar()" ng-if="!cargando">
+                    <i class="fa fa-file-upload"></i> Confirmar
+                </button>
+                <button class="btn btn-sm btn-primary" type="button" ng-if="cargando" disabled>
+                    <i class="fa fa-spinner fa-spin"></i> Confirmar
+                </button>
+            </div>
+        </script>
+        <script type="text/ng-template" id="modalBeneficiario">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modal-title">Activación de datos personales</h5>
+            </div>
+            <div class="modal-body" id="modal-body">
+                <label>¿Estás seguro de activar la información de estos datos personales?</label>
+                <label class="small">La información actual se mandará al histórico</label>
+            </div>
+            <div class="modal-footer" style="padding-top: 5px; padding-bottom: 5px;">
+                <button class="btn btn-sm btn-light" type="button" ng-click="$modalBeneficiario.close()">Cancelar</button>
+                <button class="btn btn-sm btn-primary" type="button" ng-click="$modalBeneficiario.activar()" ng-if="!cargando">
+                    <i class="fa fa-file-upload"></i> Confirmar
+                </button>
+                <button class="btn btn-sm btn-primary" type="button" ng-if="cargando" disabled>
+                    <i class="fa fa-spinner fa-spin"></i> Confirmar
+                </button>
+            </div>
+        </script>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=@Configuration["GoogleApi:ApiKey"]"></script>
+
+    <script>
+        (function () {
+            var app = angular.module('SedeshuApp', ['ui.bootstrap']);
+            var baseUrl = document.baseURI;
+
+            app.controller('indexController',
+                function ($scope, $http, $uibModal) {
+                    $scope.Beneficiario = {};
+                    $scope.Carencias = [];
+                    $scope.Domicilio = {};
+                    $scope.Aplicacion = {};
+                    $scope.Solicitudes = [];
+                    $scope.Preguntas = [];
+                    $scope.Documentos = [];
+                    $scope.Fotos = [];
+                    $scope.Huellas = [];
+                    $scope.Hijos = [];
+                    $scope.DocName = '';
+                    $scope.FamiliaId = '';
+                    $scope.NumDomicilios = 0;
+                    $scope.NumDatos = 0;
+                    $scope.NumEncuestas = 0;
+                    $scope.numDomicilio = 0;
+                    $scope.numDato = 1;
+                    $scope.numEncuesta = 0;
+                    $scope.VersionEncuestaActual = '';
+                    $scope.Asiste = [];
+
+                    $scope.map = null;
+                    $scope.marker = null;                    
+
+                    $scope.init = function (model) {
+                        $scope.FamiliaId = model.FamiliaId;
+                        $scope.Beneficiario = model.Beneficiario;
+                        $scope.Carencias = model.Carencias;
+                        $scope.Domicilio = model.Domicilio;
+                        $scope.Aplicacion = model.Aplicacion;
+                        $scope.Solicitudes = model.Solicitudes;
+                        $scope.Preguntas = model.Preguntas;
+                        $scope.Documentos = model.Documentos;
+                        $scope.Fotos = model.Fotos;
+                        $scope.Huellas = model.Huellas;
+                        $scope.Hijos = model.Hijos;
+                        $scope.NumDatos = model.NumDatos;
+                        $scope.NumDomicilios = model.NumDomicilios;
+                        $scope.NumEncuestas = model.NumEncuestas;
+                        $scope.VersionEncuestaActual = model.VersionEncuestaActual;
+                        $scope.Asiste = model.Asiste;
+
+                        $scope.map = new google.maps.Map(document.getElementById('domicilio'), { zoom: 8, center: { lat: 21.0676524, lng: -101.2601372 }, streetViewControl: false });
+
+                        if ($scope.Domicilio != null && $scope.Domicilio.Latitud != null) {                            
+                            new google.maps.Marker({ position: { lat: parseFloat($scope.Domicilio.Latitud), lng: parseFloat($scope.Domicilio.Longitud) }, map: $scope.map });
+                        }                        
+                        if ($scope.Domicilio != null && $scope.Domicilio.LatitudAtm != null) {                                                        
+                            new google.maps.Marker({ position: { lat: parseFloat($scope.Domicilio.LatitudAtm), lng: parseFloat($scope.Domicilio.LongitudAtm) }, map: $scope.map });
+                        }
+                    };
+
+                    $scope.verDato = function (direccion) {
+                        if (direccion == 'siguiente') {
+                            $scope.numDato++;
+                        } else {
+                            $scope.numDato--;
+                        }
+                        
+                        $http.post(baseUrl + 'Beneficiarios/VerDatos/', {
+                            Numero: $scope.numDato,
+                            BeneficiarioId: $scope.FamiliaId
+                        })
+                            .then(function (response) {
+                                $scope.Beneficiario = response.data;
+                            });
+                    };
+
+                    $scope.verDomicilio = function (direccion) {
+                        if (direccion == 'siguiente') {
+                            $scope.numDomicilio++;
+                        } else {
+                            $scope.numDomicilio--;
+                        }
+                        $http.post(baseUrl + 'Domicilio/Ver/', { Direccion: direccion, Numero: $scope.numDomicilio, BeneficiarioId: $scope.FamiliaId }).then(function (response) {
+                            $scope.Domicilio = response.data;
+                            if ($scope.marker != null) {
+                                $scope.marker.setMap(null);
+                                $scope.marker = null;
+                            }
+                            if ($scope.Domicilio.Latitud != 0 && $scope.Domicilio.Longitud != 0) {
+                                let latlon = { lat: parseFloat($scope.Domicilio.Latitud), lng: parseFloat($scope.Domicilio.Longitud) };
+                                $scope.marker = new google.maps.Marker({
+                                    position: latlon,
+                                    map: $scope.map
+                                });
+                                $scope.map.setZoom(12);
+                                $scope.map.panTo(latlon);
+                            }
+                        });
+                    };
+
+                    $scope.verEncuesta = function (direccion) {
+                        if (direccion == 'siguiente') {
+                            $scope.numEncuesta++;
+                        } else {
+                            $scope.numEncuesta--;
+                        }
+                        $http.post(baseUrl + 'Beneficiarios/VerEncuesta/', { Direccion: direccion, Numero: $scope.numEncuesta, BeneficiarioId: $scope.FamiliaId }).then(function (response) {
+                            $scope.Aplicacion = response.data.Aplicacion;
+                            $scope.Preguntas = response.data.Preguntas;
+                            $http.post(baseUrl + 'Beneficiarios/VerCarencias/', { Direccion: direccion, Numero: $scope.numEncuesta, BeneficiarioId: $scope.Aplicacion.Id }).then(function (response) {
+                                $scope.Carencias = response.data.Carencias;
+                            });
+                        });
+                    };
+
+                    $scope.CambiarImagen = function (imagen) {
+                        axios.get(baseUrl + 'Solicitudes/GetImagen/' + imagen.Id).then(function (response) {
+                            $scope.imagenBase64 = response.data;
+                            $scope.DocName = imagen.Nombre;
+                            setTimeout(function () {
+                                $scope.$apply(function () {
+                                    $('#myModal').css("display", "block");
+                                });
+                            })
+                        });
+                    };
+                    
+                    $scope.CambiarHuella = function (huella) {
+                        axios.get(baseUrl + 'Solicitudes/GetImagen/' + huella.archivoId).then(function (response) {
+                            $scope.imagenBase64 = response.data;
+                            $scope.DocName = huella.nombre;
+                            setTimeout(function () {
+                                $scope.$apply(function () {
+                                    $('#myModal').css("display", "block");
+                                });
+                            })
+                        });
+                    };
+
+                    $scope.ConfirmarDomicilio = function (id) {
+                        setTimeout(function () {
+                            $scope.$apply(function () {
+                                $('#domicilioModal').css("display", "block");
+                            });
+                        });
+                    };
+
+                    $scope.showDomicilioModal = function (Id, BeneficiarioId) {
+                        $uibModal.open({
+                            ariaLabelledBy: 'modal-title',
+                            ariaDescribedBy: 'modal-body',
+                            templateUrl: 'modalDomicilio',
+                            controller: 'modalDomicilioController',
+                            controllerAs: '$modalDomicilio',
+                            size: 'md',
+                            resolve: {
+                                Id: function () { return Id; },
+                                BeneficiarioId: function () { return BeneficiarioId; }
+                            }
+                        }).result.then(function () { }, function () { });
+                    };
+
+                    $scope.showBeneficiarioModal = function (Id, Numero) {
+                        $uibModal.open({
+                            ariaLabelledBy: 'modal-title',
+                            ariaDescribedBy: 'modal-body',
+                            templateUrl: 'modalBeneficiario',
+                            controller: 'modalBeneficiarioController',
+                            controllerAs: '$modalBeneficiario',
+                            size: 'md',
+                            resolve: {
+                                Id: function () { return Id; },
+                                Numero: function () { return Numero; }
+                            }
+                        }).result.then(function () { }, function () { });
+                    };
+
+                    $scope.Close = function () {
+                        $('#myModal').css("display", "none");
+                    };
+                });
+
+            app.controller('modalDomicilioController',
+                function ($scope, $http, $uibModalInstance, Id, BeneficiarioId) {
+                    $modalDomicilio = this;
+                    $modalDomicilio.Id = Id;
+                    $modalDomicilio.BeneficiarioId = BeneficiarioId;
+
+                    $modalDomicilio.activar = function () {
+                        $http.post(baseUrl + 'Domicilio/Activar/' + $modalDomicilio.Id).then(function (response) {
+                            if (response.data == 'ok') {
+                                window.location.href = baseUrl + "Beneficiarios/Ver/" + $modalDomicilio.BeneficiarioId;
+                            }
+                        });
+                    };
+
+                    $modalDomicilio.close = function () {
+                        $uibModalInstance.close();
+                    };
+                }
+            );
+
+            app.controller('modalBeneficiarioController',
+                function ($scope, $http, $uibModalInstance, Id, Numero) {
+                    $modalBeneficiario = this;
+                    $modalBeneficiario.Id = Id;
+                    $modalBeneficiario.Numero = Numero;
+
+                    $modalBeneficiario.activar = function () {
+                        $http.post(baseUrl + 'Beneficiarios/Activar/' + $modalBeneficiario.Id + "." + $modalBeneficiario.Numero)
+                            .then(function (response) {
+                                if (response.data == 'ok') {
+                                    window.location.href = baseUrl + "Beneficiarios/Ver/" + $modalBeneficiario.Id;
+                                }
+                            });
+                    };
+
+                    $modalBeneficiario.close = function () {
+                        $uibModalInstance.close();
+                    };
+                }
+            );
+        })();
+    </script>
+}
+
+@section Styles
+    {
+    <style>
+        .card-body{
+            padding: 0.5rem;
+        }       
+        .encuesta {
+            max-height: 31vh;
+            overflow-y: auto;
+        }
+
+        .strong {
+            font-weight: bold;
+        }
+
+        #map {
+            height: 400px;
+            width: 100%; /* The width is the width of the web page */
+        }
+
+        .col-6, .col-12 {
+            margin-bottom: 10px;
+        }
+        
+        .table-header{
+            background-color: #0159bc;
+            border-color: #0159bc;
+            color: #FFF;
+            font-size: 12px;
+        }
+        
+        .carencias th{
+            text-align: center;
+        }
+        
+        .carencias td{
+            font-size: 12px;
+        }
+        
+        .radio{
+            width: 15px;
+            height: 15px;
+            display: block;
+            margin: auto;
+            border-radius: 50%;
+        }
+
+        .rojo {
+            background-color: #FF0000;
+        }
+        
+        .azul{
+            background-color: #0159bc;     
+        }
+    </style>
+}

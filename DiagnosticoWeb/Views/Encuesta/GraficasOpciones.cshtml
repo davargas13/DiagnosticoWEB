@@ -1,0 +1,233 @@
+@{
+    ViewData["Title"] = "Uso de preguntas";
+}
+@using DiagnosticoWeb.Code
+@using System.Security.Claims;
+<div ng-app="SedeshuApp" ng-controller="indexController" ng-init="init(@JsonSedeshu.SerializeObject(Model))">
+    <partial name="_Loading_Partial" />
+    <div ng-cloak>
+        <div class="card border-cards">
+            <div class="card-header bg-cards text-white">
+                <div class="d-flex justify-content-between">
+                    <h5>Uso de preguntas</h5>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="d-flex flex-wrap">
+                    <div class="col-5">
+                        <label>Período</label>
+                        <br>
+                        <div class="d-flex">
+                            <input type="date" ng-model="Filtros.Inicio" placeholder="yyyy-MM-dd" class="form-control filtro"/>
+                            <span class="al filtro">Al</span>
+                            <input type="date" ng-model="Filtros.Fin" placeholder="yyyy-MM-dd" class="form-control filtro"/>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <label for="pregunta">Pregunta</label>
+                        <select class="selectpicker2 form-control" id="pregunta" ng-model="Filtros.PreguntaId" data-live-search="true">
+                            <option value="">[Todas]</option>
+                            <option ng-repeat="pregunta in Preguntas" ng-value="pregunta.Id">{{pregunta.Nombre}}</option>
+                        </select>
+                    </div>
+                    <div class="col-3">
+                        <label for="folio">Folio</label>
+                        <input type="text" class="form-control" ng-model="Filtros.Folio">
+                    </div>
+                    <div class="col-3 mt-1">
+                        <label for="municipio">Municipio</label>
+                        <select class="selectpicker2" id="municipio" ng-model="Filtros.MunicipioId" ng-change="getLocalidades(); getZonas();"
+                                data-live-search="true">
+                            <option value="">[Todos]</option>
+                            <option ng-repeat="municipio in Municipios" ng-value="municipio.Id">{{municipio.Nombre}}</option>
+                        </select>
+                    </div>
+                    <div class="col-3 mt-1">
+                        <label for="localidad">Localidad</label>
+                        <select class="selectpicker2" id="localidad" ng-model="Filtros.LocalidadId" ng-change="getAgebs()"
+                                data-live-search="true">
+                            <option value="">[Todas]</option>
+                            <option ng-repeat="localidad in Localidades" ng-value="localidad.Id">{{localidad.Nombre}}</option>
+                        </select>
+                    </div>
+                    <div class="col-3 mt-1">
+                        <label for="ageb">Ageb</label>
+                        <select class="selectpicker2" id="ageb" ng-model="Filtros.AgebId" data-live-search="true">
+                            <option value="">[Todas]</option>
+                            <option ng-repeat="ageb in Agebs" ng-value="ageb.Id">{{ageb.Nombre}}</option>
+                        </select>
+                    </div>
+                    <div class="col-3 mt-1">
+                        <label for="zona">Polígono</label>
+                        <select class="selectpicker2" id="zona" ng-model="Filtros.ZonaImpulsoId" data-live-search="true">
+                            <option value="">[Todos]</option>
+                            <option ng-repeat="zona in Zonas" ng-value="zona.Id">{{zona.Nombre}}</option>
+                        </select>
+                    </div>
+                    <div class="col-2 mt-2">
+                        <br>
+                        <button ng-if="!cargando" class="mt-2 btn btn-primary" ng-click="getResultados()">
+                            <i class="fa fa-search"></i> Buscar
+                        </button>
+                        <button ng-if="cargando" class="mt-2 btn btn-primary">
+                            <i class="fa fa-spinner fa-spin"></i> Buscar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card border-cards">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <h6>Preguntas inactivas</h6>
+                    <button class="btn btn-sm btn-default" ng-click="mostrarInactivas = !mostrarInactivas">
+                        <i class="fa fa-arrow-down"></i>
+                    </button>
+                </div>
+                <div ng-show="mostrarInactivas" class="bloque">
+                    <div ng-repeat="resultado in ResultadosInactivos" class="m-2 p-2 border-bottom">
+                        <div class="d-flex justify-content-between">
+                            <h6>{{resultado.Numero +" "+ resultado.Pregunta}}</h6>
+                            <button ng-if="resultado.Mostrar" class="btn btn-xs btn-light" ng-click="resultado.Mostrar = false">
+                                <i class="fa fa-arrow-down"></i>
+                            </button>
+                            <button ng-if="!resultado.Mostrar" class="btn btn-xs btn-light" ng-click="resultado.Mostrar = true">
+                                <i class="fa fa-arrow-up"></i>
+                            </button>
+                        </div>
+                        <div ng-show="resultado.Mostrar">
+                            <div class="m-2 d-block" ng-repeat="respuesta in resultado.Respuestas">
+                                <span>{{respuesta.Nombre}} : {{respuesta.Numero}}</span>
+                                <span class="ml-2 font-weight-bold">({{respuesta.Numero>0?((respuesta.Numero/resultado.Total*100).toFixed(2)):0 }}%)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <h6>Preguntas activas</h6>
+                    <button class="btn btn-sm btn-default" ng-click="mostrarActivas = !mostrarActivas">
+                        <i class="fa fa-arrow-down"></i>
+                    </button>
+                </div>
+                <div ng-show="mostrarActivas" class="bloque">
+                    <div ng-repeat="resultado in ResultadosActivos" class="m-2 p-2 border-bottom">
+                        <div class="d-flex justify-content-between">
+                            <h6>{{resultado.Numero +" "+ resultado.Pregunta}}</h6>
+                            <button ng-if="resultado.Mostrar" class="btn btn-xs btn-light" ng-click="resultado.Mostrar = false">
+                                <i class="fa fa-arrow-down"></i>
+                            </button>
+                            <button ng-if="!resultado.Mostrar" class="btn btn-xs btn-light" ng-click="resultado.Mostrar = true">
+                                <i class="fa fa-arrow-up"></i>
+                            </button>
+                        </div>
+                        <div ng-show="resultado.Mostrar">
+                            <div class="m-2 d-block" ng-repeat="respuesta in resultado.Respuestas">
+                                <span>{{respuesta.Nombre}} : {{respuesta.Numero}}</span>
+                                <span class="ml-2 font-weight-bold">({{respuesta.Numero>0?((respuesta.Numero/resultado.Total*100).toFixed(2)):0 }}%)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        (function () {
+            var app = angular.module('SedeshuApp', ['ui.bootstrap']);
+            var baseUrl = document.baseURI;
+
+            app.controller('indexController',
+                function ($scope, $http) {        
+                    $scope.ResultadosActivos = [];
+                    $scope.ResultadosInactivos = [];
+                    $scope.Municipios = [];
+                    $scope.Localidades = [];
+                    $scope.Agebs = [];
+                    $scope.Zonas = [];
+                    $scope.Preguntas = [];                    
+                    $scope.mostrarInactivas = false;                    
+                    $scope.mostrarActivas = true;                    
+
+                    $scope.Filtros = {
+                        Inicio: "",
+                        Fin: "",
+                        PreguntaId: "",
+                        Folio: "",
+                        MunicipioId: "",
+                        LocalidadId: "",
+                        AgebId: "",
+                        ZonaImpulsoId: ""
+                    };
+
+                    $scope.init = function (model) {
+                        $scope.Filtros.Inicio = new Date(model.Inicio.substring(0, 4), parseInt(model.Inicio.substring(5, 7)) - 1, model.Inicio.substring(8, 10));
+                        $scope.Filtros.Fin = new Date(model.Fin.substring(0, 4), parseInt(model.Fin.substring(5, 7)) - 1, model.Fin.substring(8, 10));
+                        $scope.Municipios = model.Municipios;
+                        $scope.Preguntas = model.Preguntas;
+                        $scope.getLocalidades();
+                        $scope.getResultados();
+                    };
+                    
+                    $scope.getLocalidades = function () {
+                        $scope.cargando = true;
+                        $http.get(baseUrl + 'Localidad/ByMunicipio/'+$scope.Filtros.MunicipioId).then(
+                            function (response) {
+                                $scope.cargando = false;
+                                $scope.Localidades = response.data;
+                                $scope.refreshSelect();
+                            });
+                    };
+                    
+                    $scope.getZonas = function () {
+                        $scope.cargando = true;
+                        $http.get(baseUrl + 'Zona/ByMunicipio/'+$scope.Filtros.MunicipioId).then(
+                            function (response) {
+                                $scope.cargando = false;
+                                $scope.Zonas = response.data;
+                                $scope.refreshSelect();                                
+                            });
+                    };
+
+                    $scope.getAgebs = function () {
+                        $scope.cargando = true;
+                        $http.get(baseUrl + 'Ageb/ByLocalidad/'+$scope.Filtros.LocalidadId).then(
+                            function (response) {
+                                $scope.cargando = false;
+                                $scope.Agebs = response.data;
+                                $scope.refreshSelect();                            
+                            });
+                    };  
+                    
+                    $scope.getResultados = function(){
+                        $scope.cargando = true;
+                        $http.post(baseUrl+'Encuesta/GetUsoOpciones', $scope.Filtros).then(
+                            function(response) {
+                                $scope.cargando = false;
+                                $scope.ResultadosActivos = response.data.ResultadosActivos;
+                                $scope.ResultadosInactivos = response.data.ResultadosInactivos;
+                            }
+                        );
+                    };
+                    
+                    $scope.refreshSelect = _.debounce(function () {
+                        $('.selectpicker2').selectpicker('refresh');
+                    }, 200);                    
+                }
+            );
+        })();
+    </script>
+}
+
+@section Styles
+{
+    <style>
+
+       .bloque{
+            padding: 5px;
+            border:1px solid lightgray;
+       }
+    </style>
+}

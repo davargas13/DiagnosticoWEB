@@ -1,0 +1,484 @@
+@* @model DiagnosticoWeb.Models.TestData *@
+@{
+    ViewData["Title"] = "FichaFamiliar";
+}
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>FichaFamiliar</title>
+    <style>
+        html {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 16px;
+        }
+
+        .text-center {
+            text-align: center;        
+        }
+        
+        .text-light-blue {
+            color: #00b0ff;
+        }
+        
+        .text-dark-blue {
+            color: #002060;
+        }
+        
+        .text-white {
+            color: #ffffff;
+        }
+
+        .bg-light-blue {
+            background-color: #00B0F0;
+        }
+        .bg-dark-blue {
+            background-color: #002060;
+        }
+        
+        .bg-gray-blue-1 {
+            background-color: #e8eaf6;
+        }
+        
+        .radio {
+            width: 20px;
+            height: 20px;
+            display: block;
+            margin: auto;
+            border-radius: 50%;
+        }
+        
+        .justify  {
+            text-align: justify;
+            text-justify: inter-word;
+        }
+        
+        .bg-light-blue {
+            background-color: #00B0F0;
+        }
+        .bg-dark-blue {
+            background-color: #002060;
+        }
+        .bg-light-gray-1 {
+            background-color: #f0f0f0;
+        }
+        .bg-light-gray-2 {
+            background-color: #dddddd;
+        }
+        .bg-gray-blue-1 {
+            background-color: #e8eaf6;
+        }
+        .bg-gray-blue-2 {
+            background-color: #c5cae9;
+        }
+        .rojo {
+            background-color: #FF0000;
+        }
+        .azul {
+            background-color: #0070C0;
+        }
+        .table-datos {            
+            width: 100%;            
+        }
+        .table-datos .col-container {            
+            display: inline-block;            
+            vertical-align: top;
+        }
+        .table-datos .row-contenedor {
+            display: table-row;
+        }
+        .table-datos .row-titulos {
+            width: 37%;
+            padding-right: 2%;
+            display: table-cell;
+            vertical-align: middle;
+            font-weight: bold;
+        }
+        .table-datos .row-datos {
+            width: 57%; 
+            padding-left: 2%;
+            display: table-cell;
+            vertical-align: middle;
+        }              
+    </style>
+</head>
+<body>
+<div style="page-break-after:always;">
+    <table style="width: 100%">
+        <tr>
+            <td>
+                @Html.Raw("<img src='" + Model.Ruta + "/images/SEDESHU_LOGO.png' id='sedeshu' alt='sedeshu' width='180' />")
+            </td>
+            <th>
+                <h1 class="text-light-blue" style="text-align: center; margin: 0;">Diagnóstico Social</h1>
+                <h2 style="text-align: center; margin: 0;"><b>Guanajuato Grandeza de México</b></h2>
+            </th>
+            <td>
+                @Html.Raw("<img src='" + Model.Ruta + "/images/impulso3.png' id='impulso' alt='impulso' width='200' style='float: right'/>")
+            </td>
+        </tr>
+    </table>
+    <p class="justify">
+        En estricto apego a los artículos 13 y 14 de la Ley de Protección de Datos Personales en Posesión de
+        Sujetos Obligados para el Estado de Guanajuato, se presenta información derivada del levantamiento del
+        diagnóstico social hogar por hogar.
+    </p>
+    <p class="justify">
+        Es importante mencionar que la base de datos contiene información que a la luz de la Ley de Transparencia y
+        Acceso a la Información Pública para el Estado de Guanajuato es considerada como confidencial, por lo que se
+        deberá observar lo que establecen los artículos 76 y 77 fracciones I y II de dicha ley, el primero de ellos
+        refiere que la información confidencial no estará sujeta a temporalidad alguna y sólo podrán tener acceso a
+        ella quienes sean los titulares de la misma, sus representantes y los servidores públicos facultados para ello,
+        y el segundo establece como confidencial la información relativa a datos personales concernientes a una
+        persona identificada o identificable; así como aquella información que entreguen los particulares a los
+        sujetos obligados de conformidad a las atribuciones o funciones según lo dispuesto por las leyes, sus
+        reglamentos o los tratados internacionales.
+    </p>
+    <p class="justify">
+        En esta perspectiva, también es importante decir que la información a la que usted tendrá acceso contiene en
+        lo esencial bases de datos e información que de acuerdo al artículo 2 la Ley de Protección de Datos Personales
+        en Posesión de Sujetos Obligados para el Estado de Guanajuato, se tiene la obligación de proteger por parte de
+        cualquier autoridad, entidad, órgano y organismo de los Poderes Ejecutivo, Legislativo y Judicial. Así como
+        también, se deberá atender a lo señalado por el Artículo 3 de la citada norma, donde se distingue lo
+        concerniente a las bases de datos siendo estas un conjunto ordenado de datos personales referentes a una
+        persona física identificada o identificable, condicionado a criterios determinados que determinan su
+        tratamiento, debiendo tener las medidas de seguridad necesarias que permitan garantizar la protección,
+        confidencialidad e integridad de los datos personales. Por esta razón, la información a la que tendrá acceso,
+        deberá utilizarse únicamente para los fines estrictamente del desarrollo social y humano en el Estado.
+    </p>
+    <p class="justify">
+        De igual forma, y de acuerdo a lo señalado en el artículo 46 de la propia Ley, le comento que con
+        independencia del tipo de sistema en el que se encuentren los datos personales o el tipo de tratamiento que
+        se efectúe, usted adquiere la responsabilidad de establecer y mantener las medidas de seguridad de carácter
+        administrativo, físico y técnico para la protección de los datos personales, que permitan protegerlos contra
+        daño, pérdida, alteración, destrucción o su uso, acceso o tratamiento no autorizado, así como garantizar su
+        confidencialidad, integridad y disponibilidad, es por ello, que los datos contenidos en la base son
+        intransferibles, por lo que se prohíbe revelar, copiar, reproducir, explotar, comercializar, alterar,
+        duplicar, divulgar o difundir a terceros, parcial o totalmente la información.
+    </p>
+    <p class="justify">
+        No omito señalar que en caso de incumplir con la Ley de Protección de Datos Personales en Posesión de
+        Sujetos Obligados para el Estado de Guanajuato, mediante alguna de las causales de responsabilidad
+        administrativa señaladas en el artículo 194, serán consideradas como graves para efectos de su sanción
+        administrativa, atendiendo de manera adicional a lo señalado en lo establecido en los artículos 55, 56 y 57
+        de la Ley de Responsabilidades Administrativas para el Estado de Guanajuato, en correlación a los dispuesto
+        en la legislación en materia de transparencia, acceso a la información pública y protección de datos personales.
+    </p>
+    <p class="justify">
+        Por lo anterior, el uso de la información a la que tendrá acceso queda bajo la estricta responsabilidad de
+        Usted para su operación.
+    </p>
+</div>
+@{
+    var iHoja = 0;
+    var iIntegrante = 0;
+}
+@foreach (var Hoja in Model.Hojas)
+{
+@* <div style="page-break-after:always;"> *@
+<div style="@(iHoja < Model.Hojas.Count - 1 ? "page-break-after:always;" : "")">
+    <table style="width: 100%">
+        <tr>
+            <td>
+                @Html.Raw("<img src='" + Model.Ruta + "/images/SEDESHU_LOGO.png' id='sedeshu' alt='sedeshu' width='180' />")
+            </td>
+            <th>
+                <h1 class="text-light-blue" style="text-align: center; margin: 0;">Diagnóstico Social</h1>
+                <h2 style="text-align: center; margin: 0;"><b>Guanajuato Grandeza de México</b></h2>
+            </th>
+            <td>
+                @Html.Raw("<img src='" + Model.Ruta + "/images/impulso3.png' id='impulso' alt='impulso' width='200' style='float: right'/>")
+            </td>
+        </tr>
+    </table>
+    <div class="table-datos">
+        <div class="col-container" style="width: 12%">
+            <img src="data:image/jpg;base64, @Model.Qr" alt="qr" width="150">
+        </div>
+        <div class="col-container" style="width: 40%">
+            <div class="row-contenedor">
+                <div class="text-right text-dark-blue row-titulos">
+                    Folio
+                </div>
+                <div class="text-left bg-light-gray-1 row-datos">
+                    @Model.Beneficiario.Folio
+                </div>
+            </div>
+            <div class="row-contenedor">
+                <div class="text-right text-dark-blue row-titulos">
+                    Municipio
+                </div>
+                <div class="text-left bg-light-gray-2 row-datos">
+                    @Model.Domicilio.Municipio
+                </div>
+            </div>
+            <div class="row-contenedor">
+                <div class="text-right text-dark-blue row-titulos">
+                    Región
+                </div>
+                <div class="text-left bg-light-gray-1 row-datos">
+                    @Model.Domicilio.Region
+                </div>
+            </div>
+            <div class="row-contenedor">
+                <div class="text-right text-dark-blue row-titulos">
+                    Posición municipio IDH 2015
+                </div>
+                <div class="text-left bg-light-gray-2 row-datos">
+                    @Model.Domicilio.IndiceDesarrolloHumano
+                </div>
+            </div>
+            <div class="row-contenedor">
+                <div class="text-right text-dark-blue row-titulos">
+                    Localidad
+                </div>
+                <div class="text-left bg-light-gray-1 row-datos">
+                    @Model.Domicilio.Localidad
+                </div>
+            </div>
+            <div class="row-contenedor">
+                <div class="text-right text-dark-blue row-titulos">
+                    Grado de marginación de localidad
+                </div>
+                <div class="text-left bg-light-gray-2 row-datos">
+                    @Model.Domicilio.MarginacionLocalidad
+                </div>
+            </div>
+            <div class="row-contenedor">
+                <div class="text-right text-dark-blue row-titulos">
+                    Clave AGEB
+                </div>
+                <div class="text-left bg-light-gray-1 row-datos">
+                    @Model.Domicilio.AgebCalculado
+                </div>
+            </div>
+        </div>
+        <div class="col-container" style="width: 40%">
+            <div class="row-contenedor">
+                <div class="text-right text-dark-blue row-titulos">
+                    Dependencia responsable
+                </div>
+                <div class="text-left bg-light-gray-1 row-datos">
+                    @Model.Dependencia
+                </div>
+            </div>
+            <div class="row-contenedor">
+                <div class="text-right text-dark-blue row-titulos">
+                    Grado de marginación de AGEB
+                </div>
+                <div class="text-left bg-light-gray-1 row-datos">
+                    @Model.Domicilio.MarginacionAgeb
+                </div>
+            </div>
+            <div class="row-contenedor">
+                <div class="text-right text-dark-blue row-titulos">
+                    Colonia
+                </div>
+                <div class="text-left bg-light-gray-2 row-datos">
+                    @Model.Domicilio.NombreAsentamiento
+                </div>
+            </div>
+            <div class="row-contenedor">
+                <div class="text-right text-dark-blue row-titulos">
+                    Calle
+                </div>
+                <div class="text-left bg-light-gray-1 row-datos">
+                    @Model.Domicilio.Domicilio
+                </div>
+            </div>
+            <div class="row-contenedor">
+                <div class="text-right text-dark-blue row-titulos">
+                    Número exterior
+                </div>
+                <div class="text-left bg-light-gray-1 row-datos">
+                    @Model.Domicilio.NumExterior
+                </div>
+            </div>
+            <div class="row-contenedor">
+                <div class="text-right text-dark-blue row-titulos">
+                    Código postal
+                </div>
+                <div class="text-left bg-light-gray-1 row-datos">
+                    @Model.Domicilio.CodigoPostal
+                </div>
+            </div>
+            <div class="row-contenedor">
+                <div class="text-right text-dark-blue row-titulos">
+                    Número de integrantes
+                </div>
+                <div class="text-left bg-light-gray-2 row-datos">
+                    @Model.NumIntegrantes
+                </div>
+            </div>
+            <div class="row-contenedor">
+                <div class="text-right text-dark-blue row-titulos">
+                    Fecha diagnóstico
+                </div>
+                <div class="text-left bg-light-gray-1 row-datos">
+                    @Model.Aplicacion.FechaInicio
+                </div>
+            </div>
+        </div>
+    </div>
+    <table>
+        <thead>
+        <tr>
+            @*<th rowspan="2" class="bg-dark-blue text-white">Preocupacion COVID</th>
+            <th rowspan="2" class="bg-dark-blue text-white">Pérdida de empleo</th>*@
+            <th rowspan="2" class="bg-dark-blue text-white">Propiedad de la vivienda</th>
+            <th colspan="4" class="bg-dark-blue text-white">Carencia por calidad y espacions de vivienda</th>
+            <th colspan="4" class="bg-dark-blue text-white">Carencia de acceso a servicios básicos de vivienda</th>
+            <th rowspan="2" class="bg-dark-blue text-white">Indicador de carencia por acceso a la alimentación</th>
+        </tr>
+        <tr>
+            <th class="bg-light-blue text-white">Pisos</th>
+            <th class="bg-light-blue text-white">Techos</th>
+            <th class="bg-light-blue text-white">Muros</th>
+            <th class="bg-light-blue text-white">Hacinamiento</th>
+            <th class="bg-light-blue text-white">Agua</th>
+            <th class="bg-light-blue text-white">Drenaje</th>
+            <th class="bg-light-blue text-white">Electricidad</th>
+            <th class="bg-light-blue text-white">Combustible*</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="text-center">
+            @*<td class="bg-gray-blue-1">@( Model.Aplicacion.PreocupacionCovid > 3 ? (Model.Aplicacion.PreocupacionCovid > 7 ? "Alta" : "Media") :"Baja")</td>
+            <td class="bg-gray-blue-1"><i class="radio @(Model.Aplicacion.PerdidaEmpleo ? "rojo" : "azul")"></i></td>*@
+           <td class="bg-gray-blue-1">@(Model.Aplicacion.PropiedadVivienda?"Propia":"Rentada")</td>
+            <td class="bg-gray-blue-1"><i class="radio @(Model.Aplicacion.Piso ? "rojo" : "azul")"></i></td>
+            <td class="bg-gray-blue-1"><i class="radio @(Model.Aplicacion.Techo ? "rojo" : "azul")"></i></td>
+            <td class="bg-gray-blue-1"><i class="radio @(Model.Aplicacion.Muro ? "rojo" : "azul")"></i></td>
+            <td class="bg-gray-blue-1"><i class="radio @(Model.Aplicacion.Hacinamiento ? "rojo" : "azul")"></i></td>
+            <td class="bg-gray-blue-1"><i class="radio @(Model.Aplicacion.Agua ? "rojo" : "azul")"></i></td>
+            <td class="bg-gray-blue-1"><i class="radio @(Model.Aplicacion.Drenaje ? "rojo" : "azul")"></i></td>
+            <td class="bg-gray-blue-1"><i class="radio @(Model.Aplicacion.Electricidad ? "rojo" : "azul")"></i></td>
+            <td class="bg-gray-blue-1"><i class="radio @(Model.Aplicacion.Combustible ? "rojo" : "azul")"></i></td>
+            <td class="bg-gray-blue-1"><i class="radio @(Model.Aplicacion.Alimentaria ? "rojo" : "azul")"></i></td>
+        </tr>
+        </tbody>
+    </table>
+    <br>
+    <table class="repeated_table">
+        <thead>
+        <tr>
+            <th rowspan="2" class="bg-dark-blue text-white">No.</th>
+            <th rowspan="2" class="bg-dark-blue text-white">Nombre</th>
+            <th rowspan="2" class="bg-dark-blue text-white">Primer apellido</th>
+            <th rowspan="2" class="bg-dark-blue text-white">Segundo apellido</th>
+            <th rowspan="2" class="bg-dark-blue text-white">Edad</th>
+            <th rowspan="2" class="bg-dark-blue text-white">Acta de nacimiento</th>
+            <th rowspan="2" class="bg-dark-blue text-white">Discapacidades permanentes</th>
+            <th rowspan="2" class="bg-dark-blue text-white">Índice de carencias sociales</th>
+            <th colspan="4" class="bg-dark-blue text-white">Carencia por rezago educativo</th>
+            <th rowspan="2" class="bg-dark-blue text-white">Carencia por acceso a servicios de salud</th>
+            <th rowspan="2" class="bg-dark-blue text-white">Carencia por acceso a la seguridad social</th>
+            <th rowspan="2" class="bg-dark-blue text-white">Pérdida de empleo</th>
+        </tr>
+        <tr>
+            <th class="bg-light-blue text-white">Carencia</th>
+            <th class="bg-light-blue text-white">Nivel aprobado</th>
+            <th class="bg-light-blue text-white">Grado aprobado</th>
+            <th class="bg-light-blue text-white">Asiste a la escuela</th>
+        </tr>
+        </thead>
+        <tbody class="text-center">
+        @foreach (var Hijo in Hoja)
+        {
+            <tr class="repeated_row">
+                <td class="bg-light-blue text-white">@(iIntegrante + 1)</td>
+                <td class="@(iIntegrante % 2 == 0 ? "bg-gray-blue-2" : "bg-gray-blue-1")">@Hijo.Nombre</td>
+                <td class="@(iIntegrante % 2 == 0 ? "bg-gray-blue-2" : "bg-gray-blue-1")">@Hijo.ApellidoPaterno</td>
+                <td class="@(iIntegrante % 2 == 0 ? "bg-gray-blue-2" : "bg-gray-blue-1")">@Hijo.ApellidoMaterno</td>
+                <td class="@(iIntegrante % 2 == 0 ? "bg-gray-blue-2" : "bg-gray-blue-1")">
+                    @((Model.Carencias.Count <= 0 || Model.Carencias[iIntegrante] == null) ? "Sin definir" : Model.Carencias[iIntegrante].Edad)
+                </td>
+                <td class="@(iIntegrante % 2 == 0 ? "bg-gray-blue-2" : "bg-gray-blue-1")">
+                    <i class="radio @((Model.Carencias.Count <= 0 || Model.Carencias[iIntegrante] == null) ? "azul" : (Model.Carencias[iIntegrante].TieneActa ? "rojo" : "azul"))"></i>
+                </td>
+                <td class="@(iIntegrante % 2 == 0 ? "bg-gray-blue-2" : "bg-gray-blue-1") d-flex">
+                    @if (Model.Discapacidades[iIntegrante].Caminar)
+                    {
+                        @Html.Raw("<img src='" + Model.Ruta + "/images/caminar.png' width='30' />")
+                    }
+                    @if (Model.Discapacidades[iIntegrante].Ver)
+                    {
+                        @Html.Raw("<img src='" + Model.Ruta + "/images/ver.png' width='30' />")
+                    }
+                    @if (Model.Discapacidades[iIntegrante].Hablar)
+                    {
+                        @Html.Raw("<img src='" + Model.Ruta + "/images/hablar.png' width='30' />")
+                    }
+                    @if (Model.Discapacidades[iIntegrante].Oir)
+                    {
+                        @Html.Raw("<img src='" + Model.Ruta + "/images/oir.png' width='30' />")
+                    }
+                    @if (Model.Discapacidades[iIntegrante].Vestirse)
+                    {
+                        @Html.Raw("<img src='" + Model.Ruta + "/images/vestirse.png' width='30' />")
+                    }
+                    @if (Model.Discapacidades[iIntegrante].Atencion)
+                    {
+                        @Html.Raw("<img src='" + Model.Ruta + "/images/atencion.png' width='30' />")
+                    }
+                    @if (Model.Discapacidades[iIntegrante].Mental)
+                    {
+                        @Html.Raw("<img src='" + Model.Ruta + "/images/mental.png' width='30' />")
+                    }
+                </td>
+                <td class="@(iIntegrante % 2 == 0 ? "bg-gray-blue-2" : "bg-gray-blue-1")">
+                    @((Model.Carencias.Count <= 0 || Model.Carencias[iIntegrante] == null) ? "0" : Model.Carencias[iIntegrante].NumCarencias)
+                </td>
+                <td class="@(iIntegrante % 2 == 0 ? "bg-giHoja++;ray-blue-2" : "bg-gray-blue-1")">
+                    <i class="radio @((Model.Carencias.Count <= 0 || Model.Carencias[iIntegrante] == null) ? "azul" : (Model.Carencias[iIntegrante].Educativa ? "rojo" : "azul"))"></i>
+                </td>
+                <td class="@(iIntegrante % 2 == 0 ? "bg-gray-blue-2" : "bg-gray-blue-1")">
+                    @(Hijo.Estudio)
+                </td>
+                <td class="@(iIntegrante % 2 == 0 ? "bg-gray-blue-2" : "bg-gray-blue-1")">
+                    @(Hijo.GradoEstudio)
+                </td>
+                <td class="@(iIntegrante % 2 == 0 ? "bg-gray-blue-2" : "bg-gray-blue-1")">
+                          @(Model.Preguntas[iIntegrante] == null ? "No asiste" : Model.Preguntas[iIntegrante].RespuestaId == "49" ? "Asiste": "No Asiste")
+                </td>
+                <td class="@(iIntegrante % 2 == 0 ? "bg-gray-blue-2" : "bg-gray-blue-1")">
+                    <i class="radio @((Model.Carencias.Count <= 0 || Model.Carencias[iIntegrante] == null) ? "azul" : (Model.Carencias[iIntegrante].ServicioSalud ? "rojo" : "azul"))"></i>
+                </td>
+                <td class="@(iIntegrante % 2 == 0 ? "bg-gray-blue-2" : "bg-gray-blue-1")">
+                    <i class="radio @((Model.Carencias.Count <= 0 || Model.Carencias[iIntegrante] == null) ? "azul" : (Model.Carencias[iIntegrante].SeguridadSocial ? "rojo" : "azul"))"></i>
+                </td>
+                <td class="@(iIntegrante % 2 == 0 ? "bg-gray-blue-2" : "bg-gray-blue-1")">
+                    <i class="radio @((Model.Carencias.Count <= 0 || Model.Carencias[iIntegrante] == null) ? "azul" : (Model.Carencias[iIntegrante].PerdidaEmpleo ? "rojo" : "azul"))"></i>
+                </td>
+            </tr>
+            iIntegrante++;
+        }           
+        </tbody>
+    </table>
+    <table>
+        <tr>
+            <td>El combustible que se usa para cocinar o calentar los alimentos es leña o carbón sin chimenea</td>
+            <td>@Html.Raw("<img src='" + Model.Ruta + "/images/caminar.png' width='30' />")</td>
+            <td>Dificultad para caminar</td>
+            <td>@Html.Raw("<img src='" + Model.Ruta + "/images/ver.png' width='30' />")</td>
+            <td>Dificultad para ver</td>
+            <td>@Html.Raw("<img src='" + Model.Ruta + "/images/hablar.png' width='30' />")</td>
+            <td>Dificultad para comunicarse</td>
+            <td>@Html.Raw("<img src='" + Model.Ruta + "/images/oir.png' width='30' />")</td>
+            <td>Dificultad para oir</td>
+            <td>@Html.Raw("<img src='" + Model.Ruta + "/images/vestirse.png' width='30' />")</td>
+            <td>Dificultad para bañarse, vestirse</td>
+            <td>@Html.Raw("<img src='" + Model.Ruta + "/images/atencion.png' width='30' />")</td>
+            <td>Dificultad para aprender cosas sencillas</td>
+            <td>@Html.Raw("<img src='" + Model.Ruta + "/images/mental.png' width='30' />")</td>
+            <td>Limitación mental</td>
+        </tr>
+    </table>
+    </div>
+    iHoja++;
+}              
+</body>
+</html>

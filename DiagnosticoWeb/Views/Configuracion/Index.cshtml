@@ -1,0 +1,58 @@
+@{
+    ViewData["Title"] = "Configuración";
+}
+
+<div ng-app="SedeshuApp" ng-controller="indexController">
+    <div class="row justify-content-center">
+        <div class="col-sm-8">
+            <div class="card border-cards">
+                <div class="card-header bg-cards text-white">
+                    <h5 class="float-left">Configuración</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div ng-repeat="radio in radios">
+                            <div class="col-sm-3">
+                                <div class="card mb-3" style="width: 18rem;">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Radio de búsqueda</h5>
+                                        <h6 class="card-subtitle mb-2 text-muted">
+                                            {{ radio.MetrosRadio }} metros.
+                                        </h6><br/>
+                                        <a class="btn btn-sm btn-primary float-right" href="@Url.Action(controller: "Configuracion", action: "CreateEdit")/{{ radio.Id }}">
+                                            <i class="fa fa-edit"></i> Editar
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-auto"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>                
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        (function() {
+            var app = angular.module('SedeshuApp', ['ui.bootstrap']);
+
+            app.controller('indexController',
+                function($scope, $http, $uibModal) {
+                    $scope.radios = [];
+                    
+                    $scope.GetConfiguracion = function () {
+                        $http.post('/Configuracion/GetConfiguracion')
+                            .then(function(response) {
+                                $scope.radios = response.data.Configuraciones;
+                            });
+                    }
+
+                    $scope.GetConfiguracion();
+                }
+            );
+        })();
+    </script>
+}

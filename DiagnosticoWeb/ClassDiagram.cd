@@ -1,0 +1,1474 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="DiagnosticoWeb.Models.Ageb" Collapsed="true">
+    <Position X="13.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAEEAAACAAAACAAgAAAAAAAAgQAAAAAAAAAEgA=</HashCode>
+      <FileName>Models\Ageb.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.AgebApiModel" Collapsed="true">
+    <Position X="15.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAEEAAACAAAACAAAAAAAAAAAgQAAAAAAAAAEAA=</HashCode>
+      <FileName>Models\Ageb.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.AgebArchivo" Collapsed="true">
+    <Position X="17.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Ageb.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.AgebRequest" Collapsed="true">
+    <Position X="20.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAEEAAAEAE=</HashCode>
+      <FileName>Models\Ageb.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.AgebResponse" Collapsed="true">
+    <Position X="22.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAIAAAAAAAAAAAQAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Ageb.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.AgebCreateEditModel" Collapsed="true">
+    <Position X="19" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACACAAAAEAAAAAAAAAAEAAAAAAAQAAQAAAAAAAAAEAA=</HashCode>
+      <FileName>Models\Ageb.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.IdsActualizar" Collapsed="true">
+    <Position X="33" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAABA=</HashCode>
+      <FileName>Models\Ageb.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.ApiModel" Collapsed="true">
+    <Position X="24.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IDgAwAAEAAICFCCIKIAQASQIABAQAwAAgEAAAICAEoA=</HashCode>
+      <FileName>Models\ApiModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.ImagesModel" Collapsed="true">
+    <Position X="36.5" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\ApiModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.RequestSync" Collapsed="true">
+    <Position X="26" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAMAAAAAAAAAAAAQAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\ApiModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.RequestBeneficiarios" Collapsed="true">
+    <Position X="24.25" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAIAgAAAEAAAAAQAAAAAAAAAAAAAAACAAAA=</HashCode>
+      <FileName>Models\ApiModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.ResponseBeneficiarios" Collapsed="true">
+    <Position X="27.75" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAABCAAAA=</HashCode>
+      <FileName>Models\ApiModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.Aplicacion" Collapsed="true">
+    <Position X="26" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>UEACAIAAAAAAiACAACAAAAAAAAAIAgAgAAAAABAAAAI=</HashCode>
+      <FileName>Models\Aplicacion.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.AplicacionApiModel" Collapsed="true">
+    <Position X="27.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EEACAAAAAAAACAAAACAAAAAAAAAIAgAgAAAAABCAAAI=</HashCode>
+      <FileName>Models\Aplicacion.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.AplicacionRespuestaCarencia" Collapsed="true">
+    <Position X="36.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Aplicacion.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.AplicacionRespuestaRequest" Collapsed="true">
+    <Position X="38.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAIAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAgA=</HashCode>
+      <FileName>Models\Aplicacion.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.PreguntaCarenciaRequest" Collapsed="true">
+    <Position X="27.75" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAABAAgA=</HashCode>
+      <FileName>Models\Aplicacion.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.IteracionCarenciaRequest" Collapsed="true">
+    <Position X="17.25" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAA=</HashCode>
+      <FileName>Models\Aplicacion.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.PreguntaCarencia" Collapsed="true">
+    <Position X="26" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAgA=</HashCode>
+      <FileName>Models\Aplicacion.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.AplicacionResponse" Collapsed="true">
+    <Position X="34.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAACCAAAAAAAAAAAAAAAAAAAAAAAAAEAA=</HashCode>
+      <FileName>Models\Aplicacion.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.AplicacionPreguntaResponse" Collapsed="true">
+    <Position X="33" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACIAAAAAAAAAAAEAAAAAQAAAAAAAAAAAAAAAAAEAA=</HashCode>
+      <FileName>Models\Aplicacion.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.AplicacionPregunta" Collapsed="true">
+    <Position X="29.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAgASCAAACAAAASEAAIAAgAAACBAAAAAAAI=</HashCode>
+      <FileName>Models\AplicacionPregunta.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.AplicacionPreguntaApiModel" Collapsed="true">
+    <Position X="31.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAASAAAACAAAASEAAIAAgAAACBAAAAAAAA=</HashCode>
+      <FileName>Models\AplicacionPregunta.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.ApplicationUser" Collapsed="true">
+    <Position X="13.75" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AKAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\ApplicationUser.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.Archivo" Collapsed="true">
+    <Position X="15.5" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAACAAAACAAgAAAABAAAgAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Archivo.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.ArchivoApiModel" Collapsed="true">
+    <Position X="17.25" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAECAAAAAAAACAAAACAAgAAAABAAAgAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Archivo.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.ArchivoRequest" Collapsed="true">
+    <Position X="19" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Archivo.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.DescargaImagenApiModel" Collapsed="true">
+    <Position X="31.25" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Archivo.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.Beneficiario" Collapsed="true">
+    <Position X="20.75" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>UAACBAAEBAIECAAAgiAAgEAAAEAEAgAIAAAQCEYAAAo=</HashCode>
+      <FileName>Models\Beneficiario.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.BeneficiarioApiModel" Collapsed="true">
+    <Position X="22.5" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAACBAAEAAAECAAAAiAAgEBAAAAEAgAIAAAACEIAAAI=</HashCode>
+      <FileName>Models\Beneficiario.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.ReponseBeneficiarioIndex" Collapsed="true">
+    <Position X="22.5" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAAAAAAAACAAAAAAAAAAAAAAAAACAAAAIAAAAA=</HashCode>
+      <FileName>Models\Beneficiario.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.BeneficiariosResponse" Collapsed="true">
+    <Position X="34.75" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAQAQAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Beneficiario.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.BeneficiariosRequest" Collapsed="true">
+    <Position X="33" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAAAAAAAAACAAAAAEAAAAAAAAAAAAAAAEIAAAAA=</HashCode>
+      <FileName>Models\Beneficiario.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.BeneficiarioResponse" Collapsed="true">
+    <Position X="29.5" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAsAgCCAFAAAAAAAQAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Beneficiario.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.BeneficiarioResponseModel" Collapsed="true">
+    <Position X="31.25" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAACBAAABAAEAAAAgAAAgEAAAAAAAAAgAAAQCAQAAAg=</HashCode>
+      <FileName>Models\Beneficiario.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.VerDatosRequest" Collapsed="true">
+    <Position X="29.5" Y="13.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABABAAA=</HashCode>
+      <FileName>Models\Beneficiario.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.BeneficiarioEdit" Collapsed="true">
+    <Position X="24.25" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAkAAAAAAAAQAAAAAAAQAAAEAAAAAAAIA=</HashCode>
+      <FileName>Models\Beneficiario.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.BeneficiarioEditModel" Collapsed="true">
+    <Position X="26" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAACBAAEAAAAAAAAAAAAgEAAAAAEAAAIAAAACEIAAAA=</HashCode>
+      <FileName>Models\Beneficiario.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.BeneficiarioHistorico" Collapsed="true">
+    <Position X="27.75" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>UAACBAAEBAAAiAAAgCAAgEAAAAAEAgAIAAAQCFYAAAo=</HashCode>
+      <FileName>Models\BeneficiarioHistorico.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.Carencia" Collapsed="true">
+    <Position X="36.5" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAABAAAACAAAACAAgCAAAAAAAgAAAAAAgAABEAA=</HashCode>
+      <FileName>Models\Carencia.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.CarenciaApiModel" Collapsed="true">
+    <Position X="38.25" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAACAAAACAAgAAAAAAAAgAAAAAAgAAAEAA=</HashCode>
+      <FileName>Models\Carencia.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.Configuracion" Collapsed="true">
+    <Position X="13.75" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAACAAAACAAAAAAAAAAAAAAAAAAAAAAAAQ=</HashCode>
+      <FileName>Models\Configuracion.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.ConfiguracionModel" Collapsed="true">
+    <Position X="15.5" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQ=</HashCode>
+      <FileName>Models\Configuracion.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.ConfiguracionResponse" Collapsed="true">
+    <Position X="17.25" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Configuracion.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.Dependencia" Collapsed="true">
+    <Position X="19" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAACCAAAACAAgCAAAAAAAgAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Dependencia.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.DependenciaIndex" Collapsed="true">
+    <Position X="24.25" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAAAAAAAAAAAAAAAAAAACAAAAAQAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Dependencia.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.DependenciasResponse" Collapsed="true">
+    <Position X="27.75" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Dependencia.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.DependenciasResponseSelect" Collapsed="true">
+    <Position X="29.5" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Dependencia.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.DependenciasRequest" Collapsed="true">
+    <Position X="26" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAAEAAAAAA=</HashCode>
+      <FileName>Models\Dependencia.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.DependenciaCreateEditModel" Collapsed="true">
+    <Position X="22.5" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAgCAAAAAQAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Dependencia.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.DependenciaApiModel" Collapsed="true">
+    <Position X="20.75" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAACAAAACAAgAAAAAAAAgAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Dependencia.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.Discapacidad" Collapsed="true">
+    <Position X="34.75" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAACAAAACAAgAAAAAAAAgAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Discapacidad.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.DiscapacidadApiModel" Collapsed="true">
+    <Position X="36.5" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAACAAAACAAgAAAAAAAAgAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Discapacidad.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.DiscapacidadArchivo" Collapsed="true">
+    <Position X="38.25" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Discapacidad.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.DiscapacidadResponse" Collapsed="true">
+    <Position X="17.25" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAEAAAAAAAAA=</HashCode>
+      <FileName>Models\Discapacidad.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.DiscapacidadRequest" Collapsed="true">
+    <Position X="15.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAEEAAAAAE=</HashCode>
+      <FileName>Models\Discapacidad.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.DiscapacidadCreateEditModel" Collapsed="true">
+    <Position X="13.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAEgAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Discapacidad.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.Domicilio" Collapsed="true">
+    <Position X="19" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QCACAAAAEGAAiAAACCBgAAQgAQYAAgQkCABAghAAEgI=</HashCode>
+      <FileName>Models\Domicilio.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.DomicilioApiModel" Collapsed="true">
+    <Position X="20.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAEGAACAAACCAgAAQgAAYAAgQECABAghAAEAI=</HashCode>
+      <FileName>Models\Domicilio.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.DomicilioResponse" Collapsed="true">
+    <Position X="26" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QCACAAAAAGAAAAAAEAAgAAAAAQQAAAAkCAAAAgAAEgA=</HashCode>
+      <FileName>Models\Domicilio.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.VerDomicilioRequest" Collapsed="true">
+    <Position X="31.25" Y="13.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABABAAA=</HashCode>
+      <FileName>Models\Domicilio.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.DomicilioEdit" Collapsed="true">
+    <Position X="22.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAEAAAAAAAAAAQAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Domicilio.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.DomicilioEditModel" Collapsed="true">
+    <Position X="24.25" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAEGAAAAAACAAgAAAAAAQAAAQECABAAhAAEAA=</HashCode>
+      <FileName>Models\Domicilio.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.Encuesta" Collapsed="true">
+    <Position X="27.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAQABDAAACAAAACAAiAAAAAAAAgAgAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Encuesta.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.EncuestaResponse" Collapsed="true">
+    <Position X="13.75" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Encuesta.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.EncuestaModelResponse" Collapsed="true">
+    <Position X="34.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAABAAAACAAAAAAgAAAAAAAAAAgAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Encuesta.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.EncuestaEditarModelList" Collapsed="true">
+    <Position X="33" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAAQAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAA=</HashCode>
+      <FileName>Models\Encuesta.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.EncuestaEditarModel" Collapsed="true">
+    <Position X="31.25" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAABAAAACAAAAAAgAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Encuesta.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.ImportarEncuestaViewModel" Collapsed="true">
+    <Position X="13.75" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Encuesta.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.EncuestaApiModel" Collapsed="true">
+    <Position X="29.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAABAAACAAAACAAgAAAAAAAAgAgAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Encuesta.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.EncuestaSolicitudModel" Collapsed="true">
+    <Position X="17.25" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+      <FileName>Models\Encuesta.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.EncuestaValores" Collapsed="true">
+    <Position X="19" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAEAAAAAAAA=</HashCode>
+      <FileName>Models\Encuesta.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.EncuestaNombreModel" Collapsed="true">
+    <Position X="36.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAABAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Encuesta.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.EncuestaResponseCreate" Collapsed="true">
+    <Position X="15.5" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Encuesta.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.EncuestaRequest" Collapsed="true">
+    <Position X="38.25" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAAEAAAAAA=</HashCode>
+      <FileName>Models\Encuesta.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.EncuestaVersion" Collapsed="true">
+    <Position X="20.75" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QBACAAAAEQAACCAAACAAAAAAAAAAAgAgAAAAAAAAAAA=</HashCode>
+      <FileName>Models\EncuestaVersion.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.EncuestaVersionApiModel" Collapsed="true">
+    <Position X="22.5" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAQAACAAAACAAAAAAAAAAAgAgAAAAAAAAAAA=</HashCode>
+      <FileName>Models\EncuestaVersion.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.ErrorViewModel" Collapsed="true">
+    <Position X="24.25" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAIAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\ErrorViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.Estado" Collapsed="true">
+    <Position X="26" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAACAAIACAAgAAAAAAAAgAAAAAAAAAAEAA=</HashCode>
+      <FileName>Models\Estado.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.EstadoApiModel" Collapsed="true">
+    <Position X="27.75" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAACAAIACAAgAAAAAAAAgAAAAAAAAAAEAA=</HashCode>
+      <FileName>Models\Estado.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.EstadoArchivo" Collapsed="true">
+    <Position X="29.5" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Estado.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.EstadoRequest" Collapsed="true">
+    <Position X="17.25" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAEEAAAEAE=</HashCode>
+      <FileName>Models\Estado.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.EstadoResponse" Collapsed="true">
+    <Position X="19" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAEAAAAAAAAAAAAAAAQAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Estado.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.EstadoModel" Collapsed="true">
+    <Position X="15.5" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAIAAAEgAAAAAAAAAAAAAAAAAAAEAA=</HashCode>
+      <FileName>Models\Estado.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.EstadoCivil" Collapsed="true">
+    <Position X="31.25" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAACAAAACAAgAAAAAAAAgAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\EstadoCivil.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.EstadoCivilResponse" Collapsed="true">
+    <Position X="13.75" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAQQAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\EstadoCivil.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.EstadoCivilArchivo" Collapsed="true">
+    <Position X="34.75" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\EstadoCivil.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.EstadoCivilRequest" Collapsed="true">
+    <Position X="38.25" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAEEAAAAAE=</HashCode>
+      <FileName>Models\EstadoCivil.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.EstadoCivilApiModel" Collapsed="true">
+    <Position X="33" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAACAAAACAAgAAAAAAAAgAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\EstadoCivil.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.EstadoCivilCreateEditModel" Collapsed="true">
+    <Position X="36.5" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAEgAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\EstadoCivil.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.Estudio" Collapsed="true">
+    <Position X="20.75" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAACAAAACAAgAAAAAAAAgAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Estudio.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.EstudioApiModel" Collapsed="true">
+    <Position X="22.5" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAACAAAACAAgAAAAAAAAgAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Estudio.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.EstudioArchivo" Collapsed="true">
+    <Position X="24.25" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Estudio.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.EstudioResponse" Collapsed="true">
+    <Position X="29.5" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAIA=</HashCode>
+      <FileName>Models\Estudio.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.EstudioRequest" Collapsed="true">
+    <Position X="27.75" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAEEAAAAAE=</HashCode>
+      <FileName>Models\Estudio.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.EstudioCreateEditModel" Collapsed="true">
+    <Position X="26" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAEgAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Estudio.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.Importacion" Collapsed="true">
+    <Position X="38.25" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAEAAAAEAE=</HashCode>
+      <FileName>Models\Importacion.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.Localidad" Collapsed="true">
+    <Position X="20.75" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACACAAAEAAAACAAAACAAgAAAAAAAAgQAAABAAAAAEAA=</HashCode>
+      <FileName>Models\Localidad.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.LocalidadApiModel" Collapsed="true">
+    <Position X="22.5" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAACAAAACAAgAAAAAAAAgQAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Localidad.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.LocalidadCreateEditModel" Collapsed="true">
+    <Position X="24.25" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAEgAAAAAAQAAQAAABAAAAAEAA=</HashCode>
+      <FileName>Models\Localidad.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.LocalidadRequest" Collapsed="true">
+    <Position X="26" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAEEAAAEAE=</HashCode>
+      <FileName>Models\Localidad.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.ImportarLocalidadRequest" Collapsed="true">
+    <Position X="15.5" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Localidad.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.LocalidadResponse" Collapsed="true">
+    <Position X="27.75" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Localidad.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.Model" Collapsed="true">
+    <Position X="34.75" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Model.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.Municipio" Collapsed="true">
+    <Position X="36.5" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACACAAAkAAAACAAAACAAgAAAAAAAAgAAAAEAAAAAEAg=</HashCode>
+      <FileName>Models\Municipio.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.MunicipioApiModel" Collapsed="true">
+    <Position X="38.25" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAACAAAACAAgAAAAAAAAgAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Municipio.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.MunicipioCreateEditModel" Collapsed="true">
+    <Position X="15.5" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAEAAAAEAAAAAAEgAAAAAAAAAAAAAAAAAAAEAA=</HashCode>
+      <FileName>Models\Municipio.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.MunicipioArchivo" Collapsed="true">
+    <Position X="13.75" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Municipio.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.MunicipioRequest" Collapsed="true">
+    <Position X="19" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAEEAAAAAE=</HashCode>
+      <FileName>Models\Municipio.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.MunicipioResponse" Collapsed="true">
+    <Position X="20.75" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAQQAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Municipio.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.MunicipioListModel" Collapsed="true">
+    <Position X="17.25" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Municipio.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.MunicipioZona" Collapsed="true">
+    <Position X="24.25" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACACAAAgAAAACAAAACABAAAAAAAAAgQAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\MunicipioZona.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.MunicipioZonaApiModel" Collapsed="true">
+    <Position X="26" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAgAAAACAAAACAAAAAAAAAAAgQAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\MunicipioZona.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.Ocupacion" Collapsed="true">
+    <Position X="27.75" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAACAAAACAAgAAAAAAAAgAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Ocupacion.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.OcupacionResponse" Collapsed="true">
+    <Position X="36.5" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAACAAAAAAAAAAAQAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Ocupacion.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.OcupacionArchivo" Collapsed="true">
+    <Position X="31.25" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Ocupacion.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.OcupacionRequest" Collapsed="true">
+    <Position X="34.75" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAEEAAAAAE=</HashCode>
+      <FileName>Models\Ocupacion.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.OcupacionApiModel" Collapsed="true">
+    <Position X="29.5" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAACAAAACAAgAAAAAAAAgAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Ocupacion.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.OcupacionCreateEditModel" Collapsed="true">
+    <Position X="33" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAEgAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Ocupacion.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.Parentesco" Collapsed="true">
+    <Position X="38.25" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAACAAAACAAgAAAAAAAAgAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Parentesco.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.ParentescoResponse" Collapsed="true">
+    <Position X="20.75" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAQAAAAAAAAQAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Parentesco.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.ParentescoArchivo" Collapsed="true">
+    <Position X="15.5" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Parentesco.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.ParentescoRequest" Collapsed="true">
+    <Position X="19" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAEEAAAAAE=</HashCode>
+      <FileName>Models\Parentesco.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.ParentescoApiModel" Collapsed="true">
+    <Position X="13.75" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAACAAAACAAgAAAAAAAAgAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Parentesco.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.ParentescoCreateEditModel" Collapsed="true">
+    <Position X="17.25" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAEgAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Parentesco.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.Pregunta" Collapsed="true">
+    <Position X="22.5" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AFACAIAAAASACACAACAAgAABAAAhQgAICAADAAABECA=</HashCode>
+      <FileName>Models\Pregunta.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.PreguntasEditarModel" Collapsed="true">
+    <Position X="36.5" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AJACAJAACASAAACAAAAAgAABAAAhQAAICAADAECBECA=</HashCode>
+      <FileName>Models\Pregunta.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.PreguntaValidationModel" Collapsed="true">
+    <Position X="38.25" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAgAAAAAABAAAACAABAACAEAA=</HashCode>
+      <FileName>Models\Pregunta.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.RespuestaValidationModel" Collapsed="true">
+    <Position X="17.25" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAgAAAACAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Pregunta.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.PreguntaApiModel" Collapsed="true">
+    <Position X="24.25" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AFACAIAAAACACAAAACAAgAABAAAhQgAICAACAAABACA=</HashCode>
+      <FileName>Models\Pregunta.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.PreguntaEncuestaModel" Collapsed="true">
+    <Position X="29.5" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABACAIAAAASAAAAAAAAAgAABAAAhQAAICAABAAABECA=</HashCode>
+      <FileName>Models\Pregunta.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.PreguntaGrado" Collapsed="true">
+    <Position X="31.25" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAACCAAACAAAASAAAAAAgAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\PreguntaGrado.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.PreguntaGradoCreateModel" Collapsed="true">
+    <Position X="34.75" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAAASAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\PreguntaGrado.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.PreguntaGradoApiModel" Collapsed="true">
+    <Position X="33" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAACAAAACAAAASAAAAAAgAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\PreguntaGrado.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.ProgramaSocial" Collapsed="true">
+    <Position X="13.75" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AKACAAAAAAAACAAAACAAgAAIAAAAAgAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\ProgramaSocial.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.ProgramaSocialModel" Collapsed="true">
+    <Position X="17.25" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIACAAAAAAAAAACAAAAAgAAIAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\ProgramaSocial.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.ProgramaSocialResponse" Collapsed="true">
+    <Position X="20.75" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\ProgramaSocial.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.ListadoProgramaSocial" Collapsed="true">
+    <Position X="19" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACACAAAAAAAAAAAAAAAAgAAIAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\ProgramaSocial.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.ProgramaSocialRequest" Collapsed="true">
+    <Position X="19" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAAEAAAAAA=</HashCode>
+      <FileName>Models\ProgramaSocial.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.ProgramaSocialApiModel" Collapsed="true">
+    <Position X="15.5" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIACAAAAAAAACAAAACAAgAAAAAAAAgAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\ProgramaSocial.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.Respuesta" Collapsed="true">
+    <Position X="31.25" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAACCAAACAAgACAACAgAgAAAAAAAAABAAA=</HashCode>
+      <FileName>Models\Respuesta.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.RespuestasEditarModel" Collapsed="true">
+    <Position X="15.5" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAgAAAACAgAAAAAAAAAAABAAA=</HashCode>
+      <FileName>Models\Respuesta.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.RespuestaApiModel" Collapsed="true">
+    <Position X="33" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAACAAAACAAgACAAAAgAgAAAAAAAAABAAA=</HashCode>
+      <FileName>Models\Respuesta.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.RespuestaEncuestaModel" Collapsed="true">
+    <Position X="34.75" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAgAAAACAgAAAAAAAAAAABAAA=</HashCode>
+      <FileName>Models\Respuesta.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.RespuestaGrado" Collapsed="true">
+    <Position X="36.5" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAACAAAACAACAQAAAAAAgAAAABAAABAAAI=</HashCode>
+      <FileName>Models\RespuestaGrado.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.RespuestaGradoApiModel" Collapsed="true">
+    <Position X="38.25" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAACAAAACAAAAQAAAAAAgAAAABAAABAAAA=</HashCode>
+      <FileName>Models\RespuestaGrado.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.RespuestaGradoCreateModel" Collapsed="true">
+    <Position X="13.75" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAAAQAAAAAAAAAAABAAABAAAA=</HashCode>
+      <FileName>Models\RespuestaGrado.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.Sexo" Collapsed="true">
+    <Position X="19" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAACAAAACAAgAAAAAAAAgAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Sexo.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.SexoApiModel" Collapsed="true">
+    <Position X="20.75" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAACAAAACAAgAAAAAAAAgAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Sexo.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.SexoArchivo" Collapsed="true">
+    <Position X="22.5" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Sexo.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.SexoResponse" Collapsed="true">
+    <Position X="27.75" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAQAAAAAAQAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Sexo.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.SexoRequest" Collapsed="true">
+    <Position X="26" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAEEAAAAAE=</HashCode>
+      <FileName>Models\Sexo.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.SexoCreateEditModel" Collapsed="true">
+    <Position X="24.25" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAEgAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Sexo.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.Solicitud" Collapsed="true">
+    <Position X="29.5" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>UAACAAAAAAgAyAAAECAAAAAAAAAAAgAACAAAABIAAAI=</HashCode>
+      <FileName>Models\Solicitud.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.SolicitudApiModel" Collapsed="true">
+    <Position X="31.25" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAACAAAAAAAASAAAACAAAAAAACAAAgAACAAAABIAAAA=</HashCode>
+      <FileName>Models\Solicitud.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.SolicitudesListModel" Collapsed="true">
+    <Position X="36.5" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>UAAAAAAAAEAAoAAAECAAAAAAAAAAAQAAAABABAAAEAA=</HashCode>
+      <FileName>Models\Solicitud.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.SolicitudesRequest" Collapsed="true">
+    <Position X="38.25" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAAAAAAAAACAAAAAEAAAAAAAAAAAAAAAEIAAAAA=</HashCode>
+      <FileName>Models\Solicitud.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.SolicitudesResponse" Collapsed="true">
+    <Position X="13.75" Y="12.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAQAAAIAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Solicitud.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.VerSolicitudModel" Collapsed="true">
+    <Position X="33" Y="13.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAEAACCAAAAAABAAAAAAAAAAAAIAAAAAAAA=</HashCode>
+      <FileName>Models\Solicitud.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.ImagenModel" Collapsed="true">
+    <Position X="34.75" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAgAAAABAEAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Solicitud.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.ResponseSolicitudIndex" Collapsed="true">
+    <Position X="29.5" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAAAAAAAACAAAAAAAAAAAAAAAAACAAAAIAAAAA=</HashCode>
+      <FileName>Models\Solicitud.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.Filtro&lt;T&gt;" Collapsed="true">
+    <Position X="31.25" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Solicitud.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.DictaminacionModel" Collapsed="true">
+    <Position X="33" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Solicitud.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.SolicitudIndex" Collapsed="true">
+    <Position X="15.5" Y="12.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAABAAAAAAAAAAAgAAAgAAAAAAAAAAAAAAAAAAAAgA=</HashCode>
+      <FileName>Models\Solicitud.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.SolicitudDashboard" Collapsed="true">
+    <Position X="33" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EKAAIAACAAIAAACAAAIAAAAAAEAAIgQAAAAAAIAAABA=</HashCode>
+      <FileName>Models\Solicitud.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.SolicitudDashboardRequest" Collapsed="true">
+    <Position X="34.75" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAEAAAAAAAAAAAAAAAAAAAAAQAAAAAAAABAAA=</HashCode>
+      <FileName>Models\Solicitud.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.TipoAsentamiento" Collapsed="true">
+    <Position X="17.25" Y="12.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAACAAAACAAgAAAAAAAAgAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\TipoAsentamiento.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.TipoAsentamientoApiModel" Collapsed="true">
+    <Position X="19" Y="12.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAACAAAACAAgAAAAAAAAgAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\TipoAsentamiento.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.TipoAsentamientoArchivo" Collapsed="true">
+    <Position X="20.75" Y="12.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\TipoAsentamiento.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.TipoAsentamientoResponse" Collapsed="true">
+    <Position X="26" Y="12.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAIAAAAAAAAAAAAAQAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\TipoAsentamiento.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.TipoAsentamientoRequest" Collapsed="true">
+    <Position X="24.25" Y="12.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAEEAAAAAE=</HashCode>
+      <FileName>Models\TipoAsentamiento.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.TipoAsentamientoCreateEditModel" Collapsed="true">
+    <Position X="22.5" Y="12.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAEgAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\TipoAsentamiento.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.Trabajador" Collapsed="true">
+    <Position X="27.75" Y="12.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAACACCAAAASAAgAAAAAAAAgACAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Trabajador.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.TrabajadorApiModel" Collapsed="true">
+    <Position X="29.5" Y="12.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAACAACAAAASAAgAAAAAAAAgACAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Trabajador.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.TrabajadorCreateEditModel" Collapsed="true">
+    <Position X="33" Y="12.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AKACAAAAACAAAAAAAAAAAgQAAgAAAgACAQAAAAAAAAA=</HashCode>
+      <FileName>Models\Trabajador.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.TrabajadorList" Collapsed="true">
+    <Position X="15.5" Y="13.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACACAAAAACAAAAAAAQAAgAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Trabajador.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.TrabajadoresCampoRequest" Collapsed="true">
+    <Position X="38.25" Y="12.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAQAAkAAAAAAAAAAAAAAAEAAAAAA=</HashCode>
+      <FileName>Models\Trabajador.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.TrabajadoresCampoResponse" Collapsed="true">
+    <Position X="13.75" Y="13.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAgA=</HashCode>
+      <FileName>Models\Trabajador.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.TrabajadorCampoCreateEditModel" Collapsed="true">
+    <Position X="31.25" Y="12.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIACAAAAACAAAAAAAAAAggAAAAAAAAACAQAAAAAAAAA=</HashCode>
+      <FileName>Models\Trabajador.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.TrabajadorRequest" Collapsed="true">
+    <Position X="22.5" Y="13.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAAAAkAAAAAAAAAAAAQAAEAAAAAA=</HashCode>
+      <FileName>Models\Trabajador.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.TrabajadorResponse" Collapsed="true">
+    <Position X="24.25" Y="13.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAgA=</HashCode>
+      <FileName>Models\Trabajador.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.TrabajadorModelList" Collapsed="true">
+    <Position X="17.25" Y="13.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAACAAAAEAAAAAAAQAAAAAAAAAAQAAAAAAAAA=</HashCode>
+      <FileName>Models\Trabajador.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.LoginMovilModel" Collapsed="true">
+    <Position X="29.5" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAQAAAAAAAAAAAAACAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Trabajador.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.LoginMovilResponse" Collapsed="true">
+    <Position X="31.25" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Trabajador.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.TrabajadorDependencia" Collapsed="true">
+    <Position X="34.75" Y="12.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QKACAAAAAAAACAAAACAAAAAAAAAAAgAAAAAAAAAAAAI=</HashCode>
+      <FileName>Models\TrabajadorDependencia.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.TrabajadorDependenciaApiModel" Collapsed="true">
+    <Position X="36.5" Y="12.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIACAAAAAAAACAAAACAAAAAAAIAAAgAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\TrabajadorDependencia.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.TrabajadorRegion" Collapsed="true">
+    <Position X="19" Y="13.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAACAAAgAAAACAAAACABAAAAAAAAAgAAAAAAAAAAAAI=</HashCode>
+      <FileName>Models\TrabajadorRegion.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.TrabajadorRegionApiModel" Collapsed="true">
+    <Position X="20.75" Y="13.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAgAAAACAAAACAAAAAAAAAAAgAAAAAAAAAAAAI=</HashCode>
+      <FileName>Models\TrabajadorRegion.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.UsuarioDependencia" Collapsed="true">
+    <Position X="26" Y="13.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AKACAAAAAAAACAAAACAAAAAAAIAAAgAAAAAEAAAAAAA=</HashCode>
+      <FileName>Models\UsuarioDependencia.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.UsuarioRegion" Collapsed="true">
+    <Position X="27.75" Y="13.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAgAAAACAAAACABAAAAAIAAAgAAAAAEAAAAAAA=</HashCode>
+      <FileName>Models\UsuarioRegion.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.Vertiente" Collapsed="true">
+    <Position X="34.75" Y="13.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAABAIACBABACAAgCAAAAAAAwAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Vertiente.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.VertienteApiModel" Collapsed="true">
+    <Position X="36.5" Y="13.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAABAAACBAAACAAgAAAAAAAAgAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Vertiente.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.VertienteCreateEditModel" Collapsed="true">
+    <Position X="19" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAABAAAgACAAAAAgAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Vertiente.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.VertienteRequest" Collapsed="true">
+    <Position X="22.5" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAEAAAAAA=</HashCode>
+      <FileName>Models\Vertiente.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.VertienteResponse" Collapsed="true">
+    <Position X="24.25" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAIAAAAQAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Vertiente.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.VertienteListModel" Collapsed="true">
+    <Position X="20.75" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QCACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Vertiente.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.VertienteArchivo" Collapsed="true">
+    <Position X="38.25" Y="13.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAACAAAAAAAACAAAACAAAAgAAAAAAgAACAAAAAAAAAA=</HashCode>
+      <FileName>Models\VertienteArchivo.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.VertienteArchivoApiModel" Collapsed="true">
+    <Position X="13.75" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAACAAAACAAAAgAAAAAAgAACAAAAAAAAAA=</HashCode>
+      <FileName>Models\VertienteArchivo.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.VertienteCarencia" Collapsed="true">
+    <Position X="15.5" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAACAAAAAAAACACAACAAAAAAAAAAAgAICAAAAAAAAAA=</HashCode>
+      <FileName>Models\VertienteCarencia.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.VertienteCarenciaApiModel" Collapsed="true">
+    <Position X="17.25" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAACAAAACAAAAAAAAAAAgAICAAAAAAAAAA=</HashCode>
+      <FileName>Models\VertienteCarencia.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.Zona" Collapsed="true">
+    <Position X="26" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AKACAAAAAAAACAAAACAAAAAAAAAQAgAAAAEAAAAAEAA=</HashCode>
+      <FileName>Models\Zona.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.ZonaApiModel" Collapsed="true">
+    <Position X="27.75" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIACAAAAAAAACAAAACAAAAAAAAAAAgAAAAAAAAAAEAA=</HashCode>
+      <FileName>Models\Zona.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.MunicipiosZona" Collapsed="true">
+    <Position X="22.5" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Zona.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.ZonaImpulso" Collapsed="true">
+    <Position X="31.25" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACACAAAAAAAACAAAACAAgAAAAAAAAgQAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\ZonaImpulso.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.ZonaImpulsoApiModel" Collapsed="true">
+    <Position X="33" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAACAAAACAAgAAAAAAAAgQAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\ZonaImpulso.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.ZonasImpulsoArchivo" Collapsed="true">
+    <Position X="38.25" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\ZonaImpulso.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.ZonaImpulsoRequest" Collapsed="true">
+    <Position X="34.75" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAEEAAAEAE=</HashCode>
+      <FileName>Models\ZonaImpulso.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.ZonaResponse" Collapsed="true">
+    <Position X="36.5" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAACAAAAAAQAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\ZonaImpulso.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.ZonaCreateEditModel" Collapsed="true">
+    <Position X="29.5" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAEgAAAAAAQAAQAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\ZonaImpulso.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DiagnosticoWeb.Models.LoginModels.LoginViewModel" Collapsed="true">
+    <Position X="33" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAQAAAAAAAAAAAAACAAAAAAAgAAA=</HashCode>
+      <FileName>Models\LoginModels\LoginViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

@@ -1,0 +1,154 @@
+﻿@{
+    ViewData["Title"] = "Bitacora";
+}
+@using DiagnosticoWeb.Code
+<div ng-app="SedeshuApp" ng-controller="indexController" ng-init="init(@JsonSedeshu.SerializeObject(Model))">
+    <partial name="_Loading_Partial" />
+    <div ng-cloak>
+        <div class="card border-cards">
+            <div class="card-header bg-cards text-white">
+                <div class="d-flex justify-content-between">
+                    <h5>Bitácora</h5>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <label>Fecha</label>
+                        <div class="input-group">
+                            <input type="date" class="form-control" ng-model="filtros.FechaInicio">
+                            <div class="input-group-prepend inp">
+                                <span class="input-group-text" id="inputGroupPrepend3">A</span>
+                            </div>
+                            <input type="date" class="form-control" ng-model="filtros.FechaFin">
+                        </div>
+                    </div>
+                    @if (!User.IsInRole("Analista de dependencia"))
+                    {
+                        <div class="col-sm-3">
+                            <label>Usuario</label>
+                            <select class="selectpicker2 form-control" data-live-search="true" ng-model="filtros.UsuarioId">
+                                <option value="">Sin selección</option>
+                                <option ng-repeat="usuario in Usuarios" ng-value="usuario.Id">{{ usuario.Name }}</option>
+                            </select>
+                        </div>
+                    }
+                    <div class="col-sm-3">
+                        <label>Acción</label>
+                        <select class="selectpicker2 form-control" data-live-search="true" ng-model="filtros.Accion">
+                            <option value="">Sin selección</option>
+                            <option ng-repeat="accion in Acciones" ng-value="accion">{{ accion }}</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-2">
+                        <label class="col-sm-12">&nbsp;</label>
+                        <button class="btn btn-info" ng-click="getBitacora()">
+                            <i class="fa fa-search"></i> Buscar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card border-cards">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table" ng-if="!cargando" ng-cloak>
+                        <thead>
+                        <tr>
+                            <th>Usuario</th>
+                            <th>Acción</th>
+                            <th>Mensaje</th>
+                            <th>Fecha</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="b in bitacora">
+                            <td>{{b.Usuario}}</td>
+                            <td>{{b.Accion}}</td>
+                            <td>{{b.Mensaje}}</td>
+                            <td>{{b.CreatedAt | date: 'medium'}}</td>
+                        </tr>
+                        <tr ng-if="bitacora.length == 0">
+                            <td colspan="2">No hay datos para mostrar.</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="float-right">
+                    <ul uib-pagination total-items="totalcount" ng-change="pagechanged()"
+                        items-per-page="pageSize" direction-links="false" ng-model="pageIndex" role="menu"
+                        max-size="maxsize" class="pagination-sm" boundary-links="true" rotate="true"
+                        num-pages="numPages" style="margin-bottom: 0px !important"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (function () {
+            var app = angular.module('SedeshuApp', ['ui.bootstrap']);
+            var baseUrl = document.baseURI;
+
+            app.controller('indexController',
+                function ($scope, $http, $uibModal) {
+                    $scope.bitacora = [];
+                    $scope.Usuarios = [];
+                    $scope.Acciones = [];
+                    $scope.filtros = {
+                        FechaInicio: "",
+                        FechaFin: "",
+                        UsuarioId: "",
+                        Accion: ""
+                    };
+                    $scope.cargando = false;
+                    $scope.maxsize = 5;
+                    $scope.totalcount = 0;
+                    $scope.pageIndex = 1;
+                    $scope.pageSize = 10;
+                    $scope.numPages = 0;
+
+                    $scope.init = function (model) {
+                        $scope.Usuarios = model.Usuarios;
+                        $scope.Acciones = model.Acciones;
+                        
+                        $scope.filtros.FechaInicio = new Date(model.FechaInicio.substring(0, 4), parseInt(model.FechaInicio.substring(5, 7)) - 1, model.FechaInicio.substring(8, 10));
+                        $scope.filtros.FechaFin = new Date(model.FechaFin.substring(0, 4), parseInt(model.FechaFin.substring(5, 7)) - 1, model.FechaFin.substring(8, 10));
+                    };
+
+                    $scope.getBitacora = function () {
+                        $scope.cargando = true;
+                        $http.post(baseUrl + 'Bitacora/getBitacora/',
+                            {
+                                FechaInicio: $scope.filtros.FechaInicio,
+                                FechaFin: $scope.filtros.FechaFin,
+                                UsuarioId: $scope.filtros.UsuarioId, 
+                                Accion: $scope.filtros.Accion, 
+                                PageIndex: $scope.pageIndex,
+                                PageSize: $scope.pageSize
+                            }
+                        ).then(
+                            function (response) {
+                                $scope.bitacora = response.data.Bitacora;
+                                $scope.totalcount = response.data.Total;
+                                $scope.cargando = false;
+                            });
+                    };
+
+                    $scope.refreshSelect = _.debounce(function () {
+                        $('.selectpicker2').selectpicker('refresh');
+                    }, 200);
+
+                    $scope.pagechanged = function () {
+                        $scope.getBitacora();
+                    };
+
+                    $scope.getBitacora();
+                    $scope.refreshSelect();
+                }
+            );
+        })();
+    </script>
+}

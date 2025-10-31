@@ -1,0 +1,4 @@
+26-08-2025 11:53:03 Exception of type 'System.Exception' was thrown.  http://139.70.80.53:8080/datosapi? NotFound
+26-08-2025 11:57:50 Exception of type 'System.Exception' was thrown.  http://139.70.80.53:8080/datosapi? NotFound
+26-08-2025 11:57:50 Object reference not set to an instance of an object.    at DiagnosticoWeb.Code.ImportacionDiagnosticos.CompletarCurp(Beneficiario beneficiario, ApplicationDbContext db, String url, String passwordCurp, DateTime now, HttpClient client, String idApiCurp) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Code\ImportacionDiagnosticos.cs:line 516
+   at DiagnosticoWeb.Controllers.ApiController.CompletarCurp(String id, String conexion, String url, String password, HttpClient client, String idApiCurp) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Controllers\ApiController.cs:line 1989

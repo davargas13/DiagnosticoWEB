@@ -1,0 +1,361 @@
+@using DiagnosticoWeb.Code
+@{
+    ViewData["Title"] = "Edición del domicilio del beneficiario";
+}
+<div ng-app="SedeshuApp" ng-controller="indexController" ng-init="init(@JsonSedeshu.SerializeObject(Model))">
+    <partial name="_Loading_Partial" />
+    <div ng-cloak>
+        <div class="card border-cards">
+            <div class="card-header bg-cards text-white">
+                <div class="d-flex justify-content-between">
+                    <h5>Domicilios</h5>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="d-flex flex-wrap">
+                    <div class="col-5">
+                        <label>Período</label>
+                        <br>
+                        <div class="d-flex">
+                            <input type="date" ng-model="Filtros.Inicio" placeholder="yyyy-MM-dd" class="form-control filtro"/>
+                            <span class="al filtro">Al</span>
+                            <input type="date" ng-model="Filtros.Fin" placeholder="yyyy-MM-dd" class="form-control filtro"/>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <label>Id familia</label>
+                        <input type="text" ng-model="Filtros.Id" class="form-control filtro"/>
+                    </div>
+                    <div class="col-3">
+                        <label>Folio familia</label>
+                        <input type="text" ng-model="Filtros.Folio" class="form-control filtro"/>
+                    </div>
+                    <div class="col-3">
+                        <label>Municipio</label>
+                        <select ng-model="Filtros.MunicipioId" class="form-control selectpicker2" data-live-search="true" 
+                                ng-change="seleccionarMunicipio()">
+                            <option value="">[Todos]</option>
+                            <option ng-repeat="municipio in Municipios" ng-value="municipio.Id">{{municipio.Nombre}}</option>
+                        </select>
+                    </div>
+                    <div class="col-3">
+                        <label>Localidad</label>
+                        <select ng-model="Filtros.LocalidadId" class="form-control selectpicker2" data-live-search="true">
+                            <option value="">[Todas]</option>
+                            <option ng-repeat="localidad in Localidades" ng-value="localidad.Id">{{localidad.Nombre}}</option>
+                        </select>
+                    </div>
+                    <div class="col-3">
+                        <label>Polígono</label>
+                        <select ng-model="Filtros.ZonaImpulsoId" class="form-control selectpicker2" data-live-search="true">
+                            <option value="">[Todos]</option>
+                            <option ng-repeat="zona in Zonas" ng-value="zona.Id">{{zona.Nombre}}</option>
+                        </select>
+                    </div> 
+                    <div class="col-3">
+                        <label>Estatus</label>
+                        <select ng-model="Filtros.EstatusDireccion" class="form-control selectpicker2" data-live-search="true">
+                            <option value="">[Todos]</option>
+                            <option value="1">Sin intento</option>
+                            <option value="2">Con intento</option>
+                        </select>
+                    </div> 
+                    <div class="col-6">
+                        <div class="mt-4">
+                            <button class="btn btn-sm btn-primary" ng-click="cargarDomicilios()" ng-if="!loading">
+                                <i class="fa fa-search"></i> Buscar
+                            </button>
+                            <button class="btn btn-sm btn-primary" ng-if="loading" disabled="disabled">
+                                <i class="fa fa-spinner fa-spin"></i> Buscar
+                            </button>
+                            <button class="btn btn-sm btn-primary" ng-click="exportar()">
+                                <i class="fa fa-file-excel"></i> Exportar
+                            </button>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="mt-4">
+                            <button class="btn btn-sm btn-primary" ng-click="mostrarImportacion()">
+                                <i class="fa fa-upload"></i> Importar
+                            </button>
+                            <button class="btn btn-sm btn-primary" ng-click="completarDomicilios()" ng-if="!loadingCompletar">
+                                <i class="fa fa-address-book"></i> Actualizar domicilios
+                            </button>
+                            <button class="btn btn-sm btn-primary" ng-if="loadingCompletar">
+                                <i class="fa fa-spinner fa-spin"></i> Actualizar domicilios
+                            </button>
+                            <form id="form" asp-controller="Domicilio" asp-action="ExportarDomiciliosIncompletos" method="post" target="_blank">
+                                <input id="PageIndex" name="PageIndex" type="hidden">
+                                <input id="PageSize" name="PageSize" type="hidden">
+                                <input id="Inicio" name="Inicio" type="hidden">
+                                <input id="Fin" name="Fin" type="hidden">
+                                <input id="Id" name="Id" type="hidden">
+                                <input id="Folio" name="Folio" type="hidden">
+                                <input id="MunicipioId" name="MunicipioId" type="hidden">
+                                <input id="LocalidadId" name="LocalidadId" type="hidden">
+                                <input id="ZonaImpulsoId" name="ZonaImpulsoId" type="hidden">
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card border-cards">
+            <div class="card-body">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Familia</th>
+                        <th>Dirección</th>                        
+                        <th>Polígono</th>
+                        <th>Municipio</th>
+                        <th>Localidad</th>
+                        <th>Coordenadas</th>                        
+                        <th>Fecha de registro</th>
+                    </tr>
+                    <tr ng-repeat="domicilio in Domicilios">
+                        <td>
+                            <span class="small">{{domicilio.Id}}</span>
+                            <br>
+                            <span class="small">{{domicilio.Folio}}</span>
+                            <br>
+                            <span class="small">Intentos : {{domicilio.NumIntentosCoordenadas}}</span>
+                        </td>
+                        <td>
+                            <span class="mt-1 d-block">{{domicilio.DomicilioN}}</span>
+                            <span class="mt-1 d-block">{{domicilio.NumInterior}}</span>
+                            <span class="mt-1 d-block">{{domicilio.EntreCalle1+" "+domicilio.EntreCalle2}}</span>
+                        </td>
+                        <td>{{domicilio.ZonaImpulsoCalculada}}</td>
+                        <td>{{domicilio.MunicipioCalculado}}</td>
+                        <td>{{domicilio.LocalidadCalculado}}</td>
+                        <td>
+                            <span>{{domicilio.Latitud}}</span>
+                            <br />
+                            <span>{{domicilio.Longitud}}</span>                             
+                        </td>                        
+                        <td>{{ domicilio.CreatedAt | date:'dd/MM/yyyy' }}</td>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+                <div class="d-flex justify-content-between">
+                    <div>
+                        {{totalcount}} de {{GranTotal}} domicilios
+                    </div>
+                    <div>
+                        <ul uib-pagination total-items="totalcount" ng-change="pagechanged()"
+                            items-per-page="Filtros.PageSize" direction-links="false" ng-model="Filtros.PageIndex" role="menu"
+                            max-size="maxsize" class="pagination-sm" boundary-links="true" rotate="true"
+                            num-pages="numPages" style="margin-bottom: 0px !important"></ul>
+                    </div>
+                </div>
+                <div ng-if="granTotal > 0">
+                    <a class="btn btn-sm btn-danger" asp-controller="Domicilio" asp-action="CompletarDirecciones" target="_blank">Completar direcciones {{GranTotal}}</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/ng-template" id="myModalContent">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modal-title">Importación de domicilios</h5>
+            </div>
+            <div class="modal-body" id="modal-body">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <label>Archivo (xlsx). {{$conf.file}}</label>
+                        <button class="btn btn-sm btn-primary" onclick="$('#file').click();">
+                            <i class="fa fa-file-upload"></i> Seleccionar archivo
+                        </button>
+                    </div>
+                    <div class="col-sm-12">
+                        <span class="text-danger small" style="width: 100%;">{{ errors["File"] }}</span>
+                    </div>
+                    <div class="col-sm-12 mt-3 mb-3" ng-if="file != '' && file != null" ng-cloak>
+                        <span class="file-span" ng-if="file.name.split('.')[file.name.split('.').length - 1] == 'xlsx'">
+                            <i class="fa fa-file-excel text-success"></i> {{ file.name }}
+                        </span>
+                        <span class="file-span-red" ng-if="file.name.split('.')[file.name.split('.').length - 1] != 'xlsx'">{{ file.name }}</span>
+                    </div>
+                </div>
+                <input type="file" id="file" fileread="file" name="file" style="display: none;" />
+            </div>
+            <div class="modal-footer" style="padding-top: 5px; padding-bottom: 5px;">
+                <button class="btn btn-sm btn-light" type="button" ng-click="$conf.cancelar()">Cancelar</button>
+                <button class="btn btn-sm btn-primary" type="button" ng-click="$conf.importar()" ng-if="!$conf.guardando">
+                    <i class="fa fa-file-upload"></i> Importar
+                </button>
+                <button class="btn btn-sm btn-primary" type="button" ng-if="$conf.guardando" disabled>
+                    <i class="fa fa-spinner fa-spin"></i> Importar
+                </button>
+            </div>
+        </script>
+</div>
+                
+@section Scripts{
+    <script>
+        (function () {
+            var app = angular.module('SedeshuApp', ['ui.bootstrap']);
+            var baseUrl = document.baseURI;
+
+            app.controller('indexController',function ($scope, $http, $uibModal) {                    
+                $scope.maxsize = 5;
+                $scope.totalcount = 0;                   
+                $scope.GranTotal = 0;                   
+                $scope.numPages = 0;    
+                $scope.guardando = false;
+                $scope.loadingCompletar = false;
+                $scope.loading = false;
+                
+                $scope.Filtros = {
+                    Inicio:'',
+                    Fin:'',
+                    Id:'',
+                    Folio:'',
+                    MunicipioId:'',
+                    LocalidadId:'',
+                    ZonaImpulsoId:'',
+                    EstatusDireccion:'',
+                    PageIndex:1,
+                    PageSize:10,
+                };
+                
+                $scope.Domicilios = [];
+                $scope.Municipios = [];
+                $scope.Localidades = [];                   
+                
+                $scope.init = function (model) {                        
+                    $scope.Filtros.Inicio = new Date(model.Inicio.substring(0, 4), parseInt(model.Inicio.substring(5, 7)) - 1, model.Inicio.substring(8, 10));
+                    $scope.Filtros.Fin = new Date(model.Fin.substring(0, 4), parseInt(model.Fin.substring(5, 7)) - 1, model.Fin.substring(8, 10));
+                    $scope.GranTotal = model.NumDomiciliosSinCalculo;
+                    $scope.Municipios = model.Municipios;
+                    $scope.refreshSelect();
+                    $scope.cargarDomicilios();
+                };
+                
+                $scope.seleccionarMunicipio = function () {                    
+                    $http.get(baseUrl + 'Localidad/ByMunicipio/'+ $scope.Filtros.MunicipioId).then(function (response) {
+                        $scope.Localidades = response.data;
+                        $scope.refreshSelect();
+                    });
+                    $http.get(baseUrl + 'Zona/ByMunicipio/' + $scope.Filtros.MunicipioId).then(function (response) {
+                        $scope.Zonas = response.data;
+                        $scope.refreshSelect();
+                    });
+                };
+
+                $scope.cargarDomicilios = function () {
+                    $scope.loading = true;
+                    $http.post(baseUrl + 'Domicilio/GetDomiciliosIncompletos', $scope.Filtros).then(function (response) {
+                        $scope.Domicilios = response.data.Domicilios;
+                        $scope.totalcount = response.data.Total;
+                        $scope.granTotal = response.data.GranTotal;
+                        $scope.loading = false;
+                    });
+                };
+                
+                $scope.exportar = function () {
+                    document.getElementById("PageIndex").value = 0;
+                    document.getElementById("PageSize").value = 0;                        
+                    document.getElementById("Inicio").value = $scope.Filtros.Inicio.toISOString().substring(0, 10);
+                    document.getElementById("Fin").value = $scope.Filtros.Fin.toISOString().substring(0, 10);
+                    document.getElementById("Id").value = $scope.Filtros.Id;
+                    document.getElementById("Folio").value = $scope.Filtros.Folio;
+                    document.getElementById("MunicipioId").value = $scope.Filtros.MunicipioId;
+                    document.getElementById("LocalidadId").value = $scope.Filtros.LocalidadId;
+                    document.getElementById("ZonaImpulsoId").value = $scope.Filtros.ZonaImpulsoId;
+                    document.getElementById("form").submit();
+                };                    
+
+                $scope.pagechanged = function () {
+                    $scope.cargarDomicilios();
+                };
+                
+                $scope.completarDomicilios = function () {
+                        $scope.loadingCompletar = true;
+                        $http.post(baseUrl + 'Domicilio/ActualizarCalculados', {                           
+                            Inicio: $scope.Inicio,
+                            Fin: $scope.Fin,
+                            Valores: null
+                        }).then(function () {       
+                            window.location.href = baseUrl + 'Domicilio/VerDomiciliosIncompletos';
+                            $scope.loadingCompletar = false;
+                        });
+                    };                
+                
+                $scope.refreshSelect = _.debounce(function () {
+                    $('.selectpicker2').selectpicker('refresh');
+                }, 200);
+                
+                $scope.mostrarImportacion = function (size, parentSelector) {
+                    var parentElem = parentSelector ?
+                        angular.element($document[0].querySelector('#modal ' + parentSelector)) : undefined;
+                    var modalInstance = $uibModal.open({
+                        animation: $scope.animationsEnabled,
+                        ariaLabelledBy: 'modal-title',
+                        ariaDescribedBy: 'modal-body',
+                        templateUrl: 'myModalContent',
+                        size: size,
+                        controller: 'modalController',
+                        controllerAs: '$conf',
+                        appendTo: parentElem,
+                    });
+
+                    modalInstance.result.then(function () {
+                        $scope.cargarDomicilios();
+                    }, function () { });
+                }
+            }).directive("fileread", [function () {
+                return {
+                    scope: {
+                        fileread: "="
+                    },
+                    link: function (scope, element, attributes) {
+                        element.bind("change", function (changeEvent) {
+                            scope.$apply(function () {
+                                if (changeEvent.target.files[0] != undefined) {
+                                    scope.fileread = changeEvent.target.files[0];
+                                }
+                            });
+                        });
+                    }
+                }
+            }]);
+            
+            app.controller('modalController', function ($scope, $http, $uibModalInstance) {
+                $conf = this;
+                $conf.guardando = false;                
+
+                $conf.importar = function () {
+                    $conf.guardando = true;
+                    var fm = new FormData();
+                    fm.append("File", $scope.file);                        
+                    axios.post(baseUrl + 'Domicilio/ImportarDomiciliosIncompletos/', fm).then(function (response) {
+                        if (response.data == "ok") {
+                            window.location.href = baseUrl + 'Domicilio/VerDomiciliosIncompletos';
+                            $conf.cancelar();
+                        } else {
+                            $scope.cargarErrores(response.data);
+                        }
+                        $conf.guardando = false;
+                        $scope.$apply();
+                    });
+                }
+
+                $scope.cargarErrores = function (errors) {
+                    $scope.errors = [];
+                    for (var i = 0; i < errors.length; i++) {
+                        $scope.errors[errors[i].Key] = errors[i].Error;
+                    }
+                };
+
+                $conf.cancelar = function () {
+                    $uibModalInstance.close();
+                };
+            });
+        })();
+    </script>
+}
+
+@section Styles{
+}

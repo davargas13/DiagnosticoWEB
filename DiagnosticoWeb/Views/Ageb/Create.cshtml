@@ -1,0 +1,129 @@
+@using DiagnosticoWeb.Code
+@using System.Security.Claims
+<div ng-app="SedeshuApp" ng-controller="createController" ng-init="init(@JsonSedeshu.SerializeObject(Model))">
+    <partial name="_Loading_Partial" />
+    <slot ng-cloak>
+        <div class="card">
+            <div class="card-header bg-cards text-white d-flex justify-content-between">
+                @if (string.IsNullOrEmpty(Model.Id))
+                {
+                    <h5>Crear Ageb</h5>
+                }
+                else
+                {
+                    <h5>Editar Ageb</h5>
+                }
+                <a class="btn btn-sm btn-header" asp-controller="Ageb" asp-action="Index">
+                    <i class="fa fa-backward"></i> Regresar
+                </a>
+            </div>
+            <div class="card-body">
+                <div class="d-flex flex-wrap">
+                    <div class="col-sm-4">
+                        <label class="required">Id <small>{{ ageb.Id.length }} / 16</small></label>
+                        <input class="form-control" ng-model="ageb.Id" maxlength="16" ng-disabled="ageb.IdAnterior != ''"/>
+                        <span class="text-danger small">{{ errors["Id"] }}</span>
+                    </div>
+                    <div class="col-sm-4">
+                        <label class="required">Clave <small>{{ ageb.Clave.length }} / 255</small></label>
+                        <input class="form-control" ng-model="ageb.Clave" maxlength="255" />
+                        <span class="text-danger small">{{ errors["Clave"] }}</span>
+                    </div>
+                    <div class="col-sm-4">
+                        <label class="required">Municipio</label>
+                        <select class="selectpicker2 form-control" ng-model="ageb.MunicipioId" data-live-search="true" 
+                                ng-change="GetLocalidades()">
+                            <option ng-repeat="mun in Municipios" ng-value="mun.Id">{{mun.Nombre}}</option>
+                        </select>
+                        <span class="text-danger small">{{ errors["MunicipioId"] }}</span>
+                    </div>
+                    <div class="col-sm-4">
+                        <label class="required">Localidad</label>
+                        <select class="selectpicker2 form-control" ng-model="ageb.LocalidadId" data-live-search="true">
+                            <option ng-repeat="localidad in Localidades" ng-value="localidad.Id">{{localidad.Nombre}}</option>
+                        </select>
+                        <span class="text-danger small">{{ errors["LocalidadId"] }}</span>
+                    </div>
+                </div>
+            </div>
+            @if (((ClaimsIdentity)User.Identity).HasClaim("Permiso", "catalogos.editar") || (string.IsNullOrEmpty(Model.Id) &&
+                ((ClaimsIdentity)User.Identity).HasClaim("Permiso", "catalogos.crear")))
+            {
+                <div class="card-footer">
+                    <button class="btn btn-sm btn-success" ng-click="Guardar()" ng-if="!guardando">
+                        <i class="fa fa-save"></i> Guardar
+                    </button>
+                    <button class="btn btn-sm btn-success" disabled ng-if="guardando">
+                        <i class="fa fa-spinner fa-spin"></i> Guardar
+                    </button>
+                </div>
+            }
+        </div>
+    </slot>
+</div>
+
+@section Scripts {
+    <script>
+        (function () {
+            var app = angular.module('SedeshuApp', ['ui.bootstrap']);
+            var baseUrl = document.baseURI;
+
+            app.controller('createController',
+                function ($scope, $http, $uibModal) {
+                    $scope.Municipios = [];
+                    $scope.Localidades = [];
+                    $scope.ageb = {
+                        Id: "",
+                        IdAnterior: "",
+                        Clave: "",
+                        MunicipioId: "",
+                        LocalidadId: "",
+                    };
+                    $scope.guardando = false;
+
+                    $scope.init = function (ageb) {
+
+                        $scope.ageb.Id = ageb.Id;
+                        $scope.ageb.IdAnterior = ageb.IdAnterior;
+                        $scope.ageb.Clave = ageb.Clave;
+                        $scope.ageb.MunicipioId = ageb.MunicipioId;
+                        $scope.ageb.LocalidadId = ageb.LocalidadId;
+                        $scope.Municipios = ageb.Municipios;
+                        $scope.Localidades = ageb.Localidades;
+                        $scope.refreshSelect();
+                        $scope.GetLocalidades();
+                    };
+
+                    $scope.refreshSelect = _.debounce(function () {
+                        $('.selectpicker2').selectpicker('refresh');
+                    }, 200);
+
+                    $scope.GetLocalidades = function () {
+                        $http.get(baseUrl + 'Localidad/ByMunicipio/' + $scope.ageb.MunicipioId).then(function (response) {
+                            $scope.Localidades = response.data;
+                            $scope.refreshSelect();
+                        });
+                    }
+
+                    $scope.Guardar = function () {
+                        $scope.guardando = true;
+                        $http.post(baseUrl + 'Ageb/Guardar', $scope.ageb).then(function (response) {
+                            if (response.data == "ok") {
+                                window.location.href = baseUrl + 'Ageb';
+                            } else {
+                                $scope.cargarErrores(response.data);
+                            }
+                            $scope.guardando = false;
+                        });
+                    }
+
+                    $scope.cargarErrores = function (errors) {
+                        $scope.errors = [];
+                        for (var i = 0; i < errors.length; i++) {
+                            $scope.errors[errors[i].Key] = errors[i].Error;
+                        }
+                    };
+                })
+        })();
+    </script>
+}

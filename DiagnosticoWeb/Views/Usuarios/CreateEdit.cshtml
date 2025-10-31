@@ -1,0 +1,236 @@
+@using Newtonsoft.Json
+@using System.Security.Claims
+<div ng-app="SedeshuApp" ng-controller="createController" ng-init="init(@JsonConvert.SerializeObject(Model))">
+    <partial name="_Loading_Partial" />
+    <div ng-cloak>
+        <div class="card border-cards">
+            <div class="card-header bg-cards text-white">
+                @if (string.IsNullOrEmpty(Model.Id))
+                {
+                    <h5 class="float-left">Crear usuario</h5>
+                }
+                else
+                {
+                    <h5 class="float-left">Editar usuario</h5>
+                }
+                <a class="btn btn-sm btn-header float-right" asp-controller="Usuarios" asp-action="Index">
+                    <i class="fa fa-backward"></i> Regresar
+                </a>
+            </div>
+            <div class="card-body">
+                <div class="d-flex flex-wrap">
+                    <div class="col-4">
+                        <label class="required">Nombre completo <small ng-bind="usuario.Name.length + ' / 100'"></small></label>
+                        <input class="form-control" ng-model="usuario.Name" />
+                        <strong class="small text-danger">{{ errors["Name"] }}</strong>
+                    </div>
+                    <div class="col-4">
+                        <label class="required">Correo electrónico <small ng-bind="usuario.Email.length + ' / 100'"></small></label>
+                        <input class="form-control" ng-model="usuario.Email" />
+                        <strong class="small text-danger">{{ errors["Email"] }}</strong>
+                    </div>
+                    <div class="col-4">
+                        <label class="required">Nombre de usuario <small ng-bind="usuario.UserName.length + ' / 50'"></small></label>
+                        <input class="form-control" ng-model="usuario.UserName" />
+                        <strong class="small text-danger">{{ errors["UserName"] }}</strong>
+                    </div>
+                    <div class="col-4">
+                        <label class="required">Contraseña <small ng-bind="usuario.Password.length + ' / 50'"></small></label>
+                        <input type="password" class="form-control" ng-model="usuario.Password" />
+                        <strong class="small text-danger">{{ errors["Password"] }}</strong>
+                    </div>
+                    <div class="col-4">
+                        <label class="required">Rol</label>
+                        <select class="form-control selectpicker2" ng-model="usuario.Rol" data-title="Sin selección">
+                            <option ng-repeat="rol in roles" ng-value="rol.NormalizedName">{{ rol.Name }}</option>
+                        </select>
+                        <strong class="small text-danger">{{ errors["Rol"] }}</strong>
+                    </div>
+                    <div class="col-4">
+                        <label class="required">Perfil</label>
+                        <select class="form-control selectpicker2" ng-model="usuario.Perfil" data-title="Sin selección">
+                            <option ng-repeat="perfil in perfiles" ng-value="perfil.Id">{{ perfil.Nombre }}</option>
+                        </select>
+                        <strong class="small text-danger">{{ errors["Perfil"] }}</strong>
+                    </div>
+                    <div class="col-4" ng-if="usuario.Rol!='Administrador'">
+                        <label class="required">Dependencia</label>
+                        <select class="form-control selectpicker2" ng-model="usuario.Dependencia" data-title="Sin selección" ng-change="GetRegiones()">
+                            <option ng-repeat="dependencia in dependencias" ng-value="dependencia.Id">{{ dependencia.Nombre }}</option>
+                        </select>
+                        <strong class="small text-danger">{{ errors["Dependencia"] }}</strong>
+                    </div>
+                    <div class="col-sm-12" ng-if="usuario.IsDisabled">
+                        <label class="col-sm-12">&nbsp;</label>
+                        <button class="btn btn-sm btn-info float-right" ng-click="HabilitarUsuario()" ng-if="!guardando">
+                            <i class="fa fa-unlock-alt"></i> Desbloquear usuario
+                        </button>
+                        <button class="btn btn-sm btn-info float-right" ng-click="HabilitarUsuario()" ng-if="guardando" disabled>
+                            <i class="fa fa-spinner fa-spin"></i> Desbloquear usuario
+                        </button>
+                    </div>
+                </div>
+                <hr>
+                <span class="badge badge-info">Regiones</span>
+                <br>
+                <div class="d-flex flex-wrap">
+                    <div class="col-sm-3 region" ng-repeat="region in regiones">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <input type="checkbox" id="{{region.Id}}" ng-model="region.Selected">
+                                <label for="{{region.Id}}">{{region.Clave}}</label>
+                            </div>
+                            <button class="btn btn-sm btn-light" ng-click="MostrarRegion(region)" ng-if="region.Mostrar">
+                                <i class="fa fa-arrow-up"></i>
+                            </button>
+                            <button class="btn btn-sm btn-light" ng-click="MostrarRegion(region)" ng-if="!region.Mostrar">
+                                <i class="fa fa-arrow-down"></i>
+                            </button>
+                        </div>
+                        <table class="table" ng-if="region.Mostrar">
+                            <tr ng-repeat="municipio in region.MunicipioZonas">
+                                <td>{{municipio.Municipio.Nombre}}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            @if (((ClaimsIdentity)User.Identity).HasClaim("Permiso", "usuarios.editar") || (string.IsNullOrEmpty(Model.Id) &&
+                ((ClaimsIdentity)User.Identity).HasClaim("Permiso", "usuarios.crear")))
+            {
+                <div class="card-footer">
+                    <button class="btn btn-sm btn-success" ng-click="Guardar()" ng-if="!guardando">
+                        <i class="fa fa-save"></i> Guardar
+                    </button>
+                    <button class="btn btn-sm btn-success" disabled ng-if="guardando">
+                        <i class="fa fa-spinner fa-spin"></i> Guardar
+                    </button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (function () {
+            var app = angular.module('SedeshuApp', ['ui.bootstrap']);
+            var baseUrl = document.baseURI;
+
+            app.controller('createController',
+                function ($scope, $http, $uibModal) {
+                    $scope.usuario = {
+                        Id: "",
+                        Name: "",
+                        UserName: "",
+                        Password: "",
+                        Email: "",
+                        IsDependencia: "",
+                        IsDisabled: false,
+                        Dependencia: "",
+                        Rol: "",
+                        Perfil: "",
+                        Codigo: "",
+                        Regiones: []
+                    };
+                    $scope.errors = [];
+                    $scope.dependencias = [];
+                    $scope.roles = [];
+                    $scope.perfiles = [];
+                    $scope.regiones = [];
+                    $scope.guardando = false;
+
+                    $scope.init = function (usuario) {
+                        $scope.usuario.Id = usuario.Id;
+                        $scope.usuario.Name = usuario.Name;
+                        $scope.usuario.UserName = usuario.UserName;
+                        $scope.usuario.Email = usuario.Email;
+                        $scope.usuario.Password = usuario.Password;
+                        $scope.usuario.Dependencia = usuario.Dependencia;
+                        $scope.usuario.Rol = usuario.Rol;
+                        $scope.usuario.Perfil = usuario.Perfil;
+                        $scope.usuario.Regiones = usuario.Regiones;
+                        $scope.usuario.IsDependencia = usuario.IsDependencia;
+                        $scope.usuario.IsDisabled = usuario.IsDisabled;
+                        $scope.usuario.Codigo = usuario.Codigo;
+
+                        $scope.dependencias = usuario.Dependencias;
+                        $scope.roles = usuario.Roles;
+                        $scope.perfiles = usuario.Perfiles;
+                        $scope.GetRegiones();
+                        $scope.refreshSelect();
+                    }
+
+                    $scope.Guardar = function () {
+                        $scope.guardando = true;
+                        $scope.usuario.Regiones = [];
+                        _.each($scope.regiones, function (region) {
+                            if (region.Selected) {
+                                $scope.usuario.Regiones.push(region.Id);
+                            }
+                        });
+                        $scope.usuario.IsDependencia = $scope.usuario.Rol == 'Administrador' ? "false" : "true";
+                        $http.post(baseUrl + 'Usuarios/Guardar', $scope.usuario).then(function (response) {
+                            if (response.data === 'ok') {
+                                window.location.href = baseUrl + 'Usuarios';
+                            } else {
+                                $scope.cargarErrores(response.data);
+                            }
+                            $scope.guardando = false;
+                        });
+                    };
+
+                    $scope.HabilitarUsuario = function () {
+                        $scope.guardando = true;
+                        $http.post(baseUrl + "Usuarios/Activar", { Id: $scope.usuario.Id })
+                            .then(function (response) {
+                                if (response.data === 'ok') {
+                                    window.location.href = baseUrl + 'Usuarios';
+                                }
+                                $scope.guardando = false;
+                            });
+                    };
+
+                    $scope.cargarErrores = function (errors) {
+                        $scope.errors = [];
+                        for (var i = 0; i < errors.length; i++) {
+                            $scope.errors[errors[i].Key] = errors[i].Error;
+                        }
+                    };
+
+                    $scope.GetRegiones = function () {
+                        $http.get(baseUrl + 'Dependencias/GetRegiones/' + $scope.usuario.Dependencia).then(function (response) {
+                            $scope.regiones = response.data;
+                            _.each($scope.regiones, function (region) {
+                                region.Mostrar = false;
+                                region.Selected = _.find($scope.usuario.Regiones, function (r) {
+                                    return r == region.Id
+                                }) != null;
+                            });
+                        });
+                    };
+
+                    $scope.MostrarRegion = function (region) {
+                        region.Mostrar = !region.Mostrar;
+                    };
+
+                    $scope.refreshSelect = _.debounce(function () {
+                        $('.selectpicker2').selectpicker('refresh');
+                    }, 200);
+                }
+            );
+        })();
+    </script>
+}
+@section Styles
+    {
+    <style>
+        .region {
+            border: 1px solid #dadada;
+            margin: 5px;
+            padding: 10px;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+    </style>
+}

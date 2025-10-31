@@ -1,0 +1,695 @@
+@using Microsoft.AspNetCore.Authorization;
+@using System.Security.Claims;
+@inject IAuthorizationService AuthorizationService
+@using Newtonsoft.Json
+@{
+    ViewData["Title"] = "Actualización de algoritmo";
+}
+<div ng-app="SedeshuApp" ng-controller="createController" ng-init="init(@JsonConvert.SerializeObject(Model))">
+    <partial name="_Loading_Partial" />
+    <slot ng-cloak>
+        <div class="card">
+            <div class="card-header bg-cards text-white">
+                <h5>Algoritmo para el cálculo de carencias</h5>
+            </div>
+            <div class="card-body">
+                <div class="seccion">
+                    <div class="d-flex justify-content-between">
+                        <h3>Compilados</h3>
+                        <button class="btn btn-sm btn-link" ng-click="Compilados=!Compilados">
+                            <i class="fa fa-plus"></i>
+                        </button>
+                    </div>
+                    <div class="d-flex flex-wrap" ng-if="Compilados">
+                        <div class="col-12">
+                            <p>Aqui podras actualiza el programa que calcula las carencias de los hogares visitados, recuerda que debe ser un archivo java</p>
+                            <p class="small">Recuerda que es necesario subir el archivo con extensión .apk que se utiliza en el aplicativo móvil y este se genera con el siguiente comando</p>
+                            <p class="small">./dx --dex --output="coneval.apk" "coneval.jar"</p>
+                        </div>
+                        <div class="col-4">
+                            <label>Archivo .jar <span class="small">(version {{UltimaVersion}})</span></label>
+                            <input type="file" name="jar" id="jar" class="form-control"/>
+                            <span class="text-danger small" style="width: 100%;">{{ errors["Jar"] }}</span>
+                        </div>
+                        <div class="col-4">
+                            <label>Archivo .apk <span class="small">(version {{UltimaVersion}})</span></label>
+                            <input type="file" name="apk" id="apk" class="form-control"/>
+                            <span class="text-danger small" style="width: 100%;">{{ errors["Apk"] }}</span>
+                        </div>
+                        <div class="col-4">
+                            <label>Código fuente <span class="small">(version {{UltimaVersion}})</span></label>
+                            <input type="file" name="apk" id="zip" class="form-control"/>
+                            <span class="text-danger small" style="width: 100%;">{{ errors["Zip"] }}</span>
+                        </div>
+                        <div class="col-12">
+                            <button class="btn btn-info mt-4" ng-click="subirArchivo()" ng-if="!guardando">
+                                <i class="fa fa-upload"></i> Subir archivos
+                            </button>
+                            <button class="btn btn-info mt-4" ng-if="guardando" disabled>
+                                <i class="fa fa-spinner fa-spin"></i> Subir archivos
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="seccion">
+                    <div class="d-flex justify-content-between">
+                        <h3>Historial de versiones</h3>
+                        <button class="btn btn-sm btn-link" ng-click="HistorialVersiones=!HistorialVersiones">
+                            <i class="fa fa-plus"></i>
+                        </button>
+                    </div>
+                    <table class="table" ng-if="HistorialVersiones">
+                        <tr>
+                            <td>Versión</td>
+                            <td>Fecha de registro</td>
+                            <td>Fecha de modificación</td>
+                            <td>Usuario</td>
+                            <td>Autorizo</td>
+                            <td>Fecha de autorización</td>
+                            <td></td>
+                        </tr>
+                        <tr ng-repeat="version in Versiones">
+                            <td>
+                                <input type="checkbox" name="version" ng-attr-id="{{ 'version-' + version.Id }}" ng-model="version.Selected" ng-change="seleccionarVersion(version)">
+                                <label ng-attr-for="{{ 'version-' + version.Id }}">{{version.Version}}</label>
+                            </td>
+                            <td>{{version.CreatedAt}}</td>
+                            <td>{{version.UpdatedAt}}</td>
+                            <td>{{version.Usuario}}</td>
+                            <td>{{version.Autorizador}}</td>
+                            <td>
+                                <span ng-if="version.FechaAutorizacion!=''">{{version.FechaAutorizacion}}</span>
+                                @if (((ClaimsIdentity) User.Identity).HasClaim("Permiso", "algoritmo.autorizar"))
+                                {
+                                    <button ng-if="version.FechaAutorizacion==''&&version.Autorizable" class="btnt btn-sm btn-primary" ng-click="modalConfirmar(version)">Autorizar</button>
+                                }
+                            </td>
+                            <td>
+                                <a ng-href="{{baseUrl+'Configuracion/GetArchivo/coneval'+version.Version+'.jar'}}" class="btn btn-xsm btn-primary" target="_blank">jar</a>
+                                <a ng-href="{{baseUrl+'Configuracion/GetArchivo/coneval'+version.Version+'.apk'}}" class="btn btn-xsm btn-primary" target="_blank">apk</a>
+                                <a ng-href="{{baseUrl+'Configuracion/GetArchivo/coneval'+version.Version+'.zip'}}" class="btn btn-xsm btn-primary" target="_blank">zip</a>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="seccion">
+                    <div class="d-flex justify-content-between">
+                        <h3>Pruebas en esta versión</h3>
+                        <button class="btn btn-sm btn-link" ng-click="Pruebas=!Pruebas">
+                            <i class="fa fa-plus"></i>
+                        </button>
+                    </div>
+                    <table class="table" ng-if="Pruebas">
+                        <tr>
+                            <td>Folio</td>
+                            <td>Fecha</td>
+                            <td>Educativa</td>
+                            <td>Salud</td>
+                            <td>Seguro social</td>
+                            <td>Vivienda</td>
+                            <td>Servicios de vivienda</td>
+                            <td>Alimentaria</td>
+                            <td>Detalle</td>
+                        </tr>
+                        <tr ng-repeat="resultado in Resultados">
+                            <td class="small">{{resultado.Folio}}</td>
+                            <td>{{resultado.CreatedAt}}</td>
+                            <td class="text-center">
+                                <span class="carencia carente" ng-if="resultado.Educativa"></span>
+                                <span class="carencia no_carente" ng-if="!resultado.Educativa"></span>
+                            </td>
+                            <td class="text-center">
+                                <span class="carencia carente" ng-if="resultado.ServicioSalud"></span>
+                                <span class="carencia no_carente" ng-if="!resultado.ServicioSalud"></span>
+                            </td>
+                            <td class="text-center">
+                                <span class="carencia carente" ng-if="resultado.SeguridadSocial"></span>
+                                <span class="carencia no_carente" ng-if="!resultado.SeguridadSocial"></span>
+                            </td>
+                            <td class="text-center">
+                                <span class="carencia carente" ng-if="resultado.Vivienda"></span>
+                                <span class="carencia no_carente" ng-if="!resultado.Vivienda"></span>
+                            </td>
+                            <td class="text-center">
+                                <span class="carencia carente" ng-if="resultado.Servicios"></span>
+                                <span class="carencia no_carente" ng-if="!resultado.Servicios"></span>
+                            </td>
+                            <td class="text-center">
+                                <span class="carencia carente" ng-if="resultado.Alimentaria"></span>
+                                <span class="carencia no_carente" ng-if="!resultado.Alimentaria"></span>
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-primary" ng-click="seleccionarResultado(resultado)">
+                                    Ver
+                                </button>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                @if (((ClaimsIdentity) User.Identity).HasClaim("Permiso", "algoritmo.gestionar"))
+                {
+                    <div class="seccion">
+                        <div class="d-flex justify-content-between">
+                            <h3>Probar algoritmo</h3>
+                            <button class="btn btn-sm btn-link" ng-click="Probar=!Probar">
+                                <i class="fa fa-plus"></i>
+                            </button>
+                        </div>
+                        <div ng-if="Probar">
+                            <div class="col-3 p-0">
+                                <input type="text" class="form-control" ng-model="Filtros.Folio" placeholder="Folio de familia">
+                                <button ng-if="loading" class="btn btn-sm btn-primary mt-2">
+                                    <i class="fa fa-spinner fa-spin"></i> Buscar
+                                </button>
+                                <button ng-if="!loading" class="btn btn-sm btn-primary mt-2" ng-click="buscarFamilia()">
+                                    <i class="fa fa-search"></i> Buscar
+                                </button>
+                            </div>
+                            <table class="table mt-2">
+                                <tr>
+                                    <th>Jefe de familia</th>
+                                    <th>Folio</th>
+                                    <th>Calle</th>
+                                    <th>Municipio</th>
+                                    <th>Localidad</th>
+                                    <th></th>
+                                </tr>
+                                <tr>
+                                    <td>{{Familia.Estatus ? Familia.Nombres:'Esta familia no cuenta con el diagnóstico completo'}}</td>
+                                    <td>{{Familia.Folio}}</td>
+                                    <td>{{Familia.Calle}}</td>
+                                    <td>{{Familia.Municipio}}</td>
+                                    <td>{{Familia.Localidad}}</td>
+                                    <td>
+                                        <button ng-if="!probando" class="btn btn-sm btn-info" ng-click="probarResultados(Familia)">
+                                            <i class="fa fa-file"></i> Probar resultados
+                                        </button>
+                                        <button ng-if="probando" class="btn btn-sm btn-info" disabled>
+                                            <i class="fa fa-spinner fa-spin"></i> Probar resultados
+                                        </button>
+                                    </td>
+                                </tr>
+                            </table>
+                            <div class="col-12">
+                                <span class="text-danger small">{{ error }}</span>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </slot>
+    <script type="text/ng-template" id="resultadoHogar.html">
+            <div class="modal-header" style="padding-top: 10px; padding-bottom: 10px;">
+                <h5 class="modal-title">Análisis de hogar</h5>
+            </div>
+            <div class="modal-body">            
+                <div class="seccion">
+                    <label class="subtitle">Educativa</label>
+                    <div class="d-flex">
+                        <div class="col-2">
+                            <label>Educativa</label>
+                            <span ng-if="$modal.Resultado.Educativa" class="carenciaModal carente"></span>
+                            <span ng-if="!$modal.Resultado.Educativa" class="carenciaModal no_carente"></span>
+                        </div>
+                        <div class="col-2">
+                            <label>Inasistencia</label>
+                            <span ng-if="$modal.Resultado.Inasistencia" class="carenciaModal carente"></span>
+                            <span ng-if="!$modal.Resultado.Inasistencia" class="carenciaModal no_carente"></span>
+                        </div>
+                        <div class="col-2">
+                            <label>Primaria completa</label>
+                            <span ng-if="$modal.Resultado.PrimariaIncompleta" class="carenciaModal carente"></span>
+                            <span ng-if="!$modal.Resultado.PrimariaIncompleta" class="carenciaModal no_carente"></span>
+                        </div>
+                        <div class="col-2">
+                            <label>Secundaria completa</label>
+                            <span ng-if="$modal.Resultado.SecundariaIncompleta" class="carenciaModal carente"></span>
+                            <span ng-if="!$modal.Resultado.SecundariaIncompleta" class="carenciaModal no_carente"></span>
+                        </div> 
+                        <div class="col-2">
+                            <label>Analfabetismo</label>
+                            <span ng-if="$modal.Resultado.Analfabetismo" class="carenciaModal carente"></span>
+                            <span ng-if="!$modal.Resultado.Analfabetismo" class="carenciaModal no_carente"></span>
+                        </div>    
+                    </div>                    
+                </div>
+                <div class="seccion">
+                    <label class="subtitle">Salud y seguro social</label>
+                    <div class="d-flex">
+                        <div class="col-2">
+                            <label>Servicios de salud</label>
+                            <span ng-if="$modal.Resultado.ServicioSalud" class="carenciaModal carente"></span>
+                            <span ng-if="!$modal.Resultado.ServicioSalud" class="carenciaModal no_carente"></span>
+                        </div>
+                        <div class="col-2">                        
+                            <label>Seguro social</label>
+                            <span ng-if="$modal.Resultado.SeguridadSocial" class="carenciaModal carente"></span>
+                            <span ng-if="!$modal.Resultado.SeguridadSocial" class="carenciaModal no_carente"></span>
+                        </div>
+                        <div class="col-2">
+                            <label>Pea</label>
+                            <span ng-if="$modal.Resultado.Pea" class="carenciaModal carente"></span>
+                            <span ng-if="!$modal.Resultado.Pea" class="carenciaModal no_carente"></span>
+                        </div>
+                        <div class="col-2">
+                            <label>Discapacidad</label>
+                            <span ng-if="$modal.Resultado.Discapacidad" class="carenciaModal carente"></span>
+                            <span ng-if="!$modal.Resultado.Discapacidad" class="carenciaModal no_carente"></span>
+                        </div>
+                        <div class="col-2">
+                            <label>Tiene acta</label>
+                            <span ng-if="$modal.Resultado.TieneActa" class="carenciaModal carente"></span>
+                            <span ng-if="!$modal.Resultado.TieneActa" class="carenciaModal no_carente"></span>
+                        </div>
+                    </div>                
+                </div>                
+                <div class="seccion">
+                    <label class="subtitle">Vivienda</label>
+                    <div class="d-flex">
+                        <div class="col-2">
+                            <label>Vivienda</label>
+                            <span ng-if="$modal.Resultado.Vivienda" class="carenciaModal carente"></span>
+                            <span ng-if="!$modal.Resultado.Vivienda" class="carenciaModal no_carente"></span>
+                        </div>
+                        <div class="col-2">
+                            <label>Piso</label>
+                            <span ng-if="$modal.Resultado.Piso" class="carenciaModal carente"></span>
+                            <span ng-if="!$modal.Resultado.Piso" class="carenciaModal no_carente"></span>
+                        </div>
+                        <div class="col-2">
+                            <label>Techo</label>
+                            <span ng-if="$modal.Resultado.Techo" class="carenciaModal carente"></span>
+                            <span ng-if="!$modal.Resultado.Techo" class="carenciaModal no_carente"></span>
+                        </div>
+                        <div class="col-2">
+                            <label>Muro</label>
+                            <span ng-if="$modal.Resultado.Muro" class="carenciaModal carente"></span>
+                            <span ng-if="!$modal.Resultado.Muro" class="carenciaModal no_carente"></span>
+                        </div>
+                        <div class="col-2">
+                            <label>Hacinamiento</label>
+                            <span ng-if="$modal.Resultado.Hacinamiento" class="carenciaModal carente"></span>
+                            <span ng-if="!$modal.Resultado.Hacinamiento" class="carenciaModal no_carente"></span>
+                        </div>                        
+                    </div>
+                </div>
+                <div class="seccion">
+                    <label class="subtitle">Servicios</label>
+                    <div class="d-flex">
+                        <div class="col-2">
+                            <label>Vivienda</label>
+                            <span ng-if="$modal.Resultado.Servicios" class="carenciaModal carente"></span>
+                            <span ng-if="!$modal.Resultado.Servicios" class="carenciaModal no_carente"></span>
+                        </div>
+                        <div class="col-2">
+                            <label>Agua</label>
+                            <span ng-if="$modal.Resultado.Agua" class="carenciaModal carente"></span>
+                            <span ng-if="!$modal.Resultado.Agua" class="carenciaModal no_carente"></span>
+                        </div>
+                        <div class="col-2">
+                            <label>Drenaje</label>
+                            <span ng-if="$modal.Resultado.Drenaje" class="carenciaModal carente"></span>
+                            <span ng-if="!$modal.Resultado.Drenaje" class="carenciaModal no_carente"></span>
+                        </div>
+                        <div class="col-2">
+                            <label>Electricidad</label>
+                            <span ng-if="$modal.Resultado.Electricidad" class="carenciaModal carente"></span>
+                            <span ng-if="!$modal.Resultado.Electricidad" class="carenciaModal no_carente"></span>
+                        </div>
+                        <div class="col-2">
+                            <label>Combustible</label>
+                            <span ng-if="$modal.Resultado.Combustible" class="carenciaModal carente"></span>
+                            <span ng-if="!$modal.Resultado.Combustible" class="carenciaModal no_carente"></span>
+                        </div>                        
+                    </div>
+                </div>
+                <div class="seccion">
+                    <label class="subtitle">Alimentaria</label>
+                    <div class="d-flex">
+                        <div class="col-2">
+                            <label>Alimentaria</label>
+                            <span ng-if="$modal.Resultado.Alimentaria" class="carenciaModal carente"></span>
+                            <span ng-if="!$modal.Resultado.Alimentaria" class="carenciaModal no_carente"></span>
+                        </div>
+                        <div class="col-2">
+                            <label>Grado alimentaria</label>
+                            <span>{{$modal.Resultado.GradoAlimentaria}}</span>                        
+                        </div>                                            
+                    </div>
+                </div>
+                <div class="seccion">
+                    <label class="subtitle">Nivel de pobreza</label>
+                    <div class="d-flex">
+                        <div class="col-2">
+                            <label>Número de carencias</label>
+                            <br>
+                            <span>{{$modal.Resultado.NumCarencias}}</span>
+                        </div>
+                        <div class="col-2">
+                            <label>Ingreso</label>
+                            <br>
+                            <span>{{$modal.Resultado.Ingreso.toFixed(2)}}</span>
+                        </div>
+                        <div class="col-2">
+                            <label>Linea bienestar</label>
+                            <br>
+                            <span>{{$modal.Resultado.LineaBienestar}}</span>                        
+                        </div>            
+                        <div class="col-2">
+                            <label>Nivel Pobreza</label>
+                            <br>
+                            <span>{{$modal.Resultado.NivelPobreza}}</span>                        
+                        </div>  
+                        <div class="col-2">
+                            <label>PropiedadVivienda</label>
+                            <span ng-if="$modal.Resultado.PropiedadVivienda" class="carenciaModal carente"></span>
+                            <span ng-if="!$modal.Resultado.PropiedadVivienda" class="carenciaModal no_carente"></span>
+                        </div>
+                    </div>
+                </div>                
+                <div class="seccion">
+                    <label class="subtitle">Percepción</label>
+                    <div class="d-flex">
+                        <div class="col-2">
+                            <label>Seguridad pública</label>
+                            <span ng-if="$modal.Resultado.SeguridadPublica" class="carenciaModal carente"></span>
+                            <span ng-if="!$modal.Resultado.SeguridadPublica" class="carenciaModal no_carente"></span>
+                        </div>
+                        <div class="col-2">
+                            <label>Seguridad parque</label>
+                            <span ng-if="$modal.Resultado.SeguridadParque" class="carenciaModal carente"></span>
+                            <span ng-if="!$modal.Resultado.SeguridadParque" class="carenciaModal no_carente"></span>
+                        </div>
+                        <div class="col-2">
+                            <label>Confianza en liderez</label>
+                            <span ng-if="$modal.Resultado.ConfianzaLiderez" class="carenciaModal carente"></span>
+                            <span ng-if="!$modal.Resultado.ConfianzaLiderez" class="carenciaModal no_carente"></span>
+                        </div>            
+                        <div class="col-2">
+                            <label>Confianza en instituciones</label>
+                            <span ng-if="$modal.Resultado.ConfianzaInstituciones" class="carenciaModal carente"></span>
+                            <span ng-if="!$modal.Resultado.ConfianzaInstituciones" class="carenciaModal no_carente"></span>
+                        </div>                                            
+                    </div>
+                </div>
+                <div class="seccion">
+                    <label class="subtitle">Movilidad</label>
+                    <div class="d-flex">
+                        <div class="col-2">
+                            <label>Movilidad</label>
+                            <br>
+                            <span>{{$modal.Resultado.Movilidad}}</span>
+                        </div>
+                        <div class="col-2">
+                            <label>Redes sociales</label>
+                            <br>
+                            <span>{{$modal.Resultado.RedesSociales}}</span>
+                        </div>
+                        <div class="col-2">
+                            <label>Tejido</label>
+                            <br>
+                            <span>{{$modal.Resultado.Tejido}}</span>
+                        </div>
+                        <div class="col-2">
+                            <label>Satisfaccion</label>
+                            <br>
+                            <span>{{$modal.Resultado.Satisfaccion}}</span>
+                        </div>            
+                                                                
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="padding-top: 5px; padding-bottom: 5px;">
+                <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" ng-click="$modal.dismiss()">Cancelar</button>            
+            </div>
+    </script>
+    <script type="text/ng-template" id="confirmar.html">
+            <div class="modal-header" style="padding-top: 10px; padding-bottom: 10px;">
+                <h5 class="modal-title">Análisis de hogar</h5>
+            </div>
+            <div class="modal-body">
+                <div class="seccion">
+                    <label class="subtitle">Autorización de nueva versión</label>
+                    <div class="d-flex">
+                        <div class="col-12">
+                            <label>¿Está seguro de querer autorizar esta nueva versión?</label>
+                            <label>{{$confirmar.Version.Usuario}}</label>
+                            <label>{{$confirmar.Version.CreatedAt}}</label>
+                            <label>{{$scope.Resultados.length}}</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="padding-top: 5px; padding-bottom: 5px;">
+                <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" ng-click="$confirmar.dismiss()">Cancelar</button>            
+                <button type="button" class="btn btn-sm btn-success" data-dismiss="modal" ng-click="$confirmar.confirmarAutorizacion()">Aceptar</button>            
+            </div>
+    </script>    
+</div>
+@section Scripts {
+    <script>
+        (function () {
+            var app = angular.module('SedeshuApp', ['ui.bootstrap']);
+            var baseUrl = document.baseURI;
+
+            app.controller('createController',
+                function ($scope, $http, $uibModal) {
+                    $scope.error = '';
+                    $scope.guardando = false;
+                    $scope.probando = false;
+                    $scope.loading = false;
+                    $scope.Versiones = [];
+                    $scope.UltimaVersion = 1;
+                    $scope.errors = [];
+                    $scope.Resultados = [];
+                    $scope.Resultado = {};
+                    $scope.Filtros = {
+                        Folio:''
+                    };
+                    $scope.Configuracion = {
+                       Id: 0,
+                       Nombre: '',
+                       Valor: ''
+                   };
+                    $scope.Familia = {
+                       Id: '',
+                       Folio: '',
+                       Nombres: '',
+                       Calle: '',
+                       Municipio: '',
+                       Localidad: '',
+                       NumIntegrantes: 1,
+                       ZonaImpulso: '1',
+                       Version:1,
+                       Estatus:true
+                   };
+                    $scope.HistorialVersiones = true;
+                    $scope.Pruebas = false;
+                    $scope.Compilados = false;
+                    $scope.Probar = false;
+                    $scope.subirVersion = true;
+                    
+                   $scope.init = function(model) {
+                       $scope.Configuracion.Id = model.Id;
+                       $scope.Configuracion.Nombre = model.Nombre;
+                       $scope.Configuracion.Valor = model.Valor;
+                       $scope.Versiones = model.Versiones;
+                       let selected = _.find($scope.Versiones, function(version) {
+                           return version.Selected;
+                         });
+                       $scope.UltimaVersion = selected.Version;
+                       $scope.seleccionarVersion(selected);                       
+                       $scope.subirVersion = selected.Autorizador!='';
+                   };
+                   
+                    $scope.subirArchivo = function () {
+                        $scope.guardando = true;
+                        let jar = document.getElementById('jar').files[0];
+                        let apk = document.getElementById('apk').files[0];
+                        let zip = document.getElementById('zip').files[0];
+                        let fm = new FormData();
+                        fm.append('Jar', jar);
+                        fm.append('Apk', apk);
+                        fm.append('Zip', zip);
+                        $http.post(baseUrl + 'Configuracion/GuardarAlgoritmo', fm).then(function (response) {
+                            $scope.guardando = false;
+                            if (response.data == "ok") {
+                                window.location.href = baseUrl + 'Configuracion/Algoritmo';
+                            } else {
+                                $scope.cargarErrores(response.data);
+                            }                            
+                        });
+                    };
+                    
+                    $scope.seleccionarVersion = function(version){                        
+                        $scope.Resultados = [];
+                        if (version.Selected){
+                            _.each($scope.Versiones, function(v) {                                
+                              if (v.Version != version.Version){
+                                  v.Selected = false;
+                              }
+                            });
+                            $http.get(baseUrl+'Configuracion/GetResultados/'+version.Id).then(function(response) {
+                              $scope.Resultados = response.data;                              
+                            });
+                        }else{
+                            version.Selected = true;
+                        }
+                    };                    
+                    
+                    $scope.seleccionarResultado = function(resultado){
+                        $scope.Resultado = {};
+                        $http.get(baseUrl+'Configuracion/GetResultado/'+resultado.Id).then(function(response) {
+                          $scope.Resultado = response.data;                          
+                          $scope.modalResultado();
+                        });
+                    }; 
+                    
+                    $scope.buscarFamilia =  function(){
+                        $scope.Familia = {Estatus:false};
+                        $http.post(baseUrl+'Configuracion/BuscarFamilia', $scope.Filtros).then(function(response) {
+                             let selected = _.find($scope.Versiones, function(version) {
+                                return version.Selected;
+                              });
+                            $scope.Familia = response.data;
+                            $scope.Familia.Version = selected.Version;                             
+                        });
+                    };
+                    
+                    $scope.probarResultados = function(familia){
+                        $scope.probando = true;
+                        $scope.error = '';
+                        $http.post(baseUrl+'Configuracion/ProbarResultado/', familia).then(function(response) {
+                            $scope.probando = false;
+                            if (response.data=='ok'){
+                                let selected = _.find($scope.Versiones, function(version) {
+                                    return version.Selected;
+                                });
+                                $scope.seleccionarVersion(selected);
+                                $scope.Pruebas = true;
+                            }else{
+                                $scope.error = response.data;
+                            }
+                        }).catch(function (err){
+                            $scope.probando = false;
+                            $scope.error = err.data;
+                        });
+                    };
+
+                    $scope.cargarErrores = function (errors) {
+                        $scope.errors = [];
+                        for (var i = 0; i < errors.length; i++) {
+                            $scope.errors[errors[i].Key] = errors[i].Error;
+                        }
+                    };
+                    
+                    $scope.modalResultado = function () {
+                        $uibModal.open({
+                            ariaLabelledBy: 'modal-title',
+                            ariaDescribedBy: 'modal-body',
+                            templateUrl: 'resultadoHogar.html',
+                            controller: 'resultadoController',
+                            controllerAs: '$modal',
+                            size: 'xl',
+                            resolve: {
+                                Resultado: function () { return $scope.Resultado; }
+                            }
+                        });
+                    };
+                    
+                    $scope.modalConfirmar = function (version) {
+                        $uibModal.open({
+                            ariaLabelledBy: 'modal-title',
+                            ariaDescribedBy: 'modal-body',
+                            templateUrl: 'confirmar.html',
+                            controller: 'confirmarController',
+                            controllerAs: '$confirmar',
+                            size: 'md',
+                            resolve: {
+                                Version: function () { 
+                                    return version; 
+                                }
+                            }
+                        });
+                    };
+                });
+            
+            app.controller('resultadoController',
+                function ($scope, $http, $uibModalInstance, Resultado) {
+                    $modal = this;
+                    $modal.Resultado = Resultado;                                                                         
+
+                    $modal.dismiss = function () {
+                        $uibModalInstance.dismiss('cancel');
+                    };
+
+                    $modal.close = function () {
+                        $uibModalInstance.close($modal);
+                    };                 
+                }
+            );
+            
+            app.controller('confirmarController',
+                function ($scope, $http, $uibModalInstance, Version) {
+                    $confirmar = this;
+                    $confirmar.Version = Version;                    
+                    
+                    $confirmar.confirmarAutorizacion = function () {
+                        $http.post(baseUrl+'Configuracion/AutorizarAlgoritmo', $confirmar.Version).then(function(response) {
+                          if (response.data =='ok'){
+                              window.location.href = baseUrl+'Configuracion/Algoritmo';
+                          }
+                        });
+                    };
+                    
+                    $confirmar.dismiss = function () {
+                        $uibModalInstance.dismiss('cancel');
+                    };
+
+                    $confirmar.close = function () {
+                        $uibModalInstance.close($confirmar);
+                    };                 
+                }
+            );
+        })();
+    </script>
+}
+@section Styles
+{
+    <style>
+        .seccion{
+            border: 1px solid lightgray;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .carencia{
+            display: block;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            margin: auto;
+            opacity: 0.8;
+        }        
+        
+        .carenciaModal{
+            display: block;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;            
+            opacity: 0.8;
+        }
+        
+        .carente{
+            background-color: #dc3545;
+        }
+        .no_carente{
+            background-color: #1e7e34;
+        }
+        
+        .subtitle{
+        font-weight: bold;
+        }
+    </style>
+}

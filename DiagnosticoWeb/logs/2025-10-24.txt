@@ -1,0 +1,27 @@
+24-10-2025 12:30:15 Object reference not set to an instance of an object.    at DiagnosticoWeb.Controllers.HomeController.Buscar(DashboardRequest request) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Controllers\HomeController.cs:line 199
+   at lambda_method(Closure , Object , Object[] )
+   at Microsoft.Extensions.Internal.ObjectMethodExecutor.Execute(Object target, Object[] parameters)
+   at Microsoft.AspNetCore.Mvc.Internal.ActionMethodExecutor.SyncObjectResultExecutor.Execute(IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.InvokeActionMethodAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.InvokeNextActionFilterAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.Rethrow(ActionExecutedContext context)
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.InvokeInnerFilterAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.InvokeNextResourceFilter()
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.Rethrow(ResourceExecutedContext context)
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.InvokeFilterPipelineAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.InvokeAsync()
+   at Microsoft.AspNetCore.Builder.RouterMiddleware.Invoke(HttpContext httpContext)
+   at DiagnosticoWeb.Startup.<>c__DisplayClass5_0.<<Configure>b__0>d.MoveNext() in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Startup.cs:line 110
+--- End of stack trace from previous location where exception was thrown ---
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware.Invoke(HttpContext context)
+24-10-2025 14:13:07 Exception of type 'System.Exception' was thrown.  https://seguimiento.guanajuato.gob.mx/apiinformacionsocial/api/renapo/pordatos Gone
+24-10-2025 14:14:26 Exception of type 'System.Exception' was thrown.  https://seguimiento.guanajuato.gob.mx/apiinformacionsocial/api/renapo/pordatos Gone
+24-10-2025 14:14:27 Exception of type 'System.Exception' was thrown.  http://139.70.80.53:8080/datosapi? NotFound
+24-10-2025 14:15:59 Exception of type 'System.Exception' was thrown.  http://139.70.80.53:8080/datosapi? NotFound
+24-10-2025 14:16:00 Exception of type 'System.Exception' was thrown.  https://seguimiento.guanajuato.gob.mx/apiinformacionsocial/api/renapo/pordatos Gone
+24-10-2025 14:29:36 Exception of type 'System.Exception' was thrown.  http://139.70.80.53:8080/datosapi? NotFound
+24-10-2025 14:29:37 Exception of type 'System.Exception' was thrown.  https://seguimiento.guanajuato.gob.mx/apiinformacionsocial/api/renapo/pordatos Gone

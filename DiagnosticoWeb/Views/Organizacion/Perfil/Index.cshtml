@@ -1,0 +1,128 @@
+﻿@{
+    ViewData["Title"] = "Perfiles";
+}
+@using System.Security.Claims
+<div ng-app="SedeshuApp" ng-controller="indexController" ng-init="init(@Model)">
+    <partial name="_Loading_Partial" />
+    <div ng-cloak>
+        <div class="card border-cards">
+            <div class="card-header bg-cards text-white">
+                <div class="d-flex justify-content-between">
+                    <h5>Perfiles</h5>
+                    @if (((ClaimsIdentity)User.Identity).HasClaim("Permiso", "perfil.crear"))
+                    {
+                        <a class="btn btn-sm btn-header" asp-controller="Organizacion" asp-action="CreateEditPerfil">
+                            <i class="fa fa-plus"></i> Crear
+                        </a>
+                    }
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-sm-3">
+                        <label>Perfil</label>
+                        <input class="form-control" ng-model="perfil" ng-keypress="$event.keyCode == 13 ? getPermisos() : null" />
+                    </div>
+                    <div class="col-sm-2">
+                        <label class="col-sm-12">&nbsp;</label>
+                        <button class="btn btn-info" ng-click="getPermisos()">
+                            <i class="fa fa-search"></i> Buscar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card border-cards">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table" ng-if="!cargando">
+                        <thead>
+                        <tr>
+                            <th>Perfil</th>
+                            <th>Sistema</th>
+                            <th>Permisos</th>
+                            <th class="no-stretch"></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="perfil in perfiles">
+                            <td>{{ perfil.Nombre }}</td>
+                            <td>{{ perfil.Sistema==0?'General':(perfil.Sistema==1?'Diagnóstico':'Seguimiento') }}</td>
+                            <td>{{ perfil.Permisos }} permiso(s).</td>
+                            <td>
+                                @if (((ClaimsIdentity) User.Identity).HasClaim("Permiso", "perfil.editar"))
+                                {
+                                    <a class="btn btn-sm btn-info lineal" href="@Url.Action(action: "CreateEditPerfil", controller: "Organizacion")/{{ perfil.Id }}" style="white-space: nowrap;">
+                                        <i class="fa fa-edit"></i> Editar
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a class="btn btn-sm btn-info lineal" href="@Url.Action(action: "CreateEditPerfil", controller: "Organizacion")/{{ perfil.Id }}" style="white-space: nowrap;">
+                                        <i class="fa fa-eye"></i> Ver
+                                    </a>
+                                }
+                            </td>
+                        </tr>
+                        <tr ng-if="perfiles.length == 0">
+                            <td colspan="3">No hay datos para mostrar.</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-sm-12" style="text-align: center;" ng-if="cargando">
+                    <i class="fa fa-spinner fa-spin"></i>
+                </div>
+                <div class="float-right" ng-show="!cargando">
+                    <ul uib-pagination total-items="totalcount" ng-change="pagechanged()"
+                        items-per-page="pageSize" direction-links="false" ng-model="pageIndex" role="menu"
+                        max-size="maxsize" class="pagination-sm" boundary-links="true" rotate="true"
+                        num-pages="numPages" style="margin-bottom: 0px !important"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        (function () {
+            var baseUrl = document.baseURI;
+            var app = angular.module('SedeshuApp', ['ui.bootstrap']);
+
+            app.controller('indexController',
+                function ($scope, $http) {
+                    $scope.perfiles = [];
+                    $scope.perfil = "";
+                    $scope.maxsize = 5;
+                    $scope.totalcount = 0;
+                    $scope.pageIndex = 1;
+                    $scope.pageSize = 10;
+                    $scope.numPages = 0;
+                    $scope.cargando = false;
+
+                    $scope.getPermisos = function () {
+                        $scope.cargando = true;
+                        $http.post(baseUrl + 'Organizacion/getPermisos', {
+                            Perfil: $scope.perfil,
+                            PageIndex: $scope.pageIndex,
+                            PageSize: $scope.pageSize
+                        })
+                            .then(function (response) {
+                                $scope.perfiles = response.data.Perfiles;
+                                $scope.totalcount = response.data.Total;
+                                $scope.cargando = false;
+                            });
+                    };
+
+                    $scope.pagechanged = function () {
+                        $scope.getPermisos();
+                    };
+
+                    $scope.getPermisos();
+                }
+            );
+        })();
+    </script>
+}

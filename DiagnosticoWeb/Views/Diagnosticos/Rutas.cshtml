@@ -1,0 +1,308 @@
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+@using DiagnosticoWeb.Code
+@{
+    ViewData["Title"] = "Rutas";
+}
+@using System.Security.Claims;
+<div ng-app="SedeshuApp" ng-controller="indexController" ng-init="init(@JsonSedeshu.SerializeObject(Model))">
+    <partial name="_Loading_Partial" />
+    <div ng-cloak>
+        <div class="card border-cards">
+            <div class="card-header bg-cards text-white">
+                <h5>Listado de rutas de los trabajadores</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex flex-wrap">
+                    <div class="col-3">
+                        <label class="required">Dependencias</label>
+                        <select class="selectpicker2 form-control" ng-model="DependenciaId" 
+                                ng-change="seleccionarDependencia()" data-live-search="true" data-title="Seleccione">
+                            <option ng-repeat="dependencia in dependencias" 
+                                    ng-value="dependencia.Id">{{dependencia.Nombre}}</option>
+                        </select>
+                        <span class="text-danger small">
+                            {{ errors["DependenciaId"] }}
+                        </span>
+                    </div>
+                    <div class="col-3">
+                        <label class="required">Trabajadores</label>
+                        <select class="selectpicker2 form-control" ng-model="TrabajadorId" 
+                                data-live-search="true" data-title="Seleccione" 
+                                ng-disabled="trabajadores.length <= 0">
+                            <option ng-repeat="trabajador in trabajadores" 
+                                    ng-value="trabajador.Id">{{trabajador.Nombre}}</option>
+                        </select>
+                        <span class="text-danger small">
+                            {{ errors["TrabajadorId"] }}
+                        </span>
+                    </div>
+                    <div class="col-3">
+                        <label>Municipios</label>
+                        <select class="selectpicker2 form-control" ng-model="MunicipiosId" multiple
+                                ng-change="seleccionarMunicipios()" data-live-search="true" data-title="Seleccione">
+                            <option ng-repeat="Municipio in municipios" 
+                                    ng-value="Municipio.Id">{{Municipio.Nombre}}</option>
+                        </select>
+                    </div>
+                    <div class="col-3">
+                        <label>Localidades</label>
+                        <select class="selectpicker2 form-control" ng-model="LocalidadesId" multiple
+                                ng-change="seleccionarLocalidad()" data-live-search="true" data-title="Seleccione" 
+                                ng-disabled="locGrupos == '' || locGrupos.length <= 0">
+                            <optgroup ng-repeat="(municipio, localidades) in locGrupos" label="{{municipio}}">
+                                <option ng-repeat="localidad in localidades" ng-value="localidad.Id">
+                                    {{localidad.Nombre}}
+                                </option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    <div class="col-3">
+                        <label>Agebs</label>
+                        <select class="selectpicker2 form-control" ng-model="AgebsId" multiple
+                                data-live-search="true" data-title="Seleccione" 
+                                ng-disabled="agGrupos == '' || agGrupos.length <= 0">
+                            <optgroup ng-repeat="(localidad, agebs) in agGrupos" label="{{localidad}}">
+                                <option ng-repeat="ageb in agebs" ng-value="ageb.Id">
+                                    {{ageb.Clave}}
+                                </option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    <div class="col-5">
+                        <label class="required">Período</label>
+                        <br>
+                        <div class="d-flex">
+                            <input type="date" ng-model="Inicio" placeholder="yyyy-MM-dd" class="form-control filtro" required/>
+                            <span class="text-danger small">
+                                {{ errors["Inicio"] }}
+                            </span>
+                            <span class="al filtro">a</span>
+                            <input type="date" ng-model="Fin" placeholder="yyyy-MM-dd" class="form-control filtro" required/>
+                            <span class="text-danger small">
+                                {{ errors["Fin"] }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-2">
+                        <br>
+                        <button class="mt-2 btn btn-info" ng-click="cargarRutas()" ng-if="!loading" 
+                                ng-disabled="loading || DependenciaId == '' || TrabajadorId == '' || Inicio == '' || Fin == ''">
+                            <i class="fa fa-search"></i> Buscar
+                        </button>
+                        <button class="mt-2 btn btn-info" ng-if="loading">
+                            <i class="fa fa-spinner fa-spin"></i> Buscar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card border-cards">
+            <div class="card-body">
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Beneficiario</th>
+                        <th>Municipio</th>
+                        <th>Localidad</th>
+                        <th>Ageb</th>
+                        <th>Domicilio</th>
+                        <th>Fecha aplicación</th>
+                        @* <th>Latitud</th> *@
+                        @* <th>Longitud</th> *@
+                    </tr>
+                    <tr ng-repeat="domicilio in domicilios">
+                        <td>{{domicilio.Beneficiario.Nombre}}</td>
+                        <td>{{domicilio.Municipio}}</td>
+                        <td>{{domicilio.Localidad}}</td>
+                        <td>{{domicilio.Ageb}}</td>
+                        <td>{{domicilio.Domicilio}}</td>
+                        <td>{{domicilio.FechaInicio}}</td>
+                        @* <td>{{domicilio.Latitud}}</td> *@
+                        @* <td>{{domicilio.Longitud}}</td> *@
+                    </tr>
+                        <tr>
+                            <th>Total</th>
+                            <th colspan="5">{{ totalcount }} domicilios</th>
+                        </tr>
+                </table>
+            </div>
+        </div>
+        <div class="card border-cards">
+            <div class="card-body">
+                <div id="map"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=@Configuration["GoogleApi:ApiKey"]"></script>
+    <script>
+        (() => {
+            var app = angular.module('SedeshuApp', ['ui.bootstrap']);
+            var baseUrl = document.baseURI;
+
+            app.controller('indexController',
+                ($scope, $http, $uibModal) => {
+                    $scope.maxsize = 5;
+                    $scope.totalcount = 0;
+                    $scope.granTotal = 0;
+                    $scope.pageIndex = 1;
+                    $scope.pageSize = 10;
+                    $scope.numPages = 0;
+                    $scope.loading = false;
+                    
+                    $scope.dependencias = [];
+                    $scope.trabajadores = [];
+                    $scope.municipios = [];
+                    $scope.locGrupos = [];
+                    $scope.agGrupos = [];
+                    
+                    $scope.DependenciaId = '';
+                    $scope.TrabajadorId = [];
+                    $scope.MunicipiosId = [];
+                    $scope.LocalidadesId = [];
+                    $scope.AgebsId = [];                    
+                    $scope.Inicio = "";
+                    $scope.Fin = "";
+                                     
+                    $scope.cluster = null;
+                    $scope.map = null;
+                    $scope.markers = [];
+
+                    $scope.init = model => {
+                        $scope.Inicio = new Date(model.Inicio.substring(0, 4), parseInt(model.Inicio.substring(5, 7)) - 1, model.Inicio.substring(8, 10));
+                        $scope.Fin = new Date(model.Fin.substring(0, 4), parseInt(model.Fin.substring(5, 7)) - 1, model.Fin.substring(8, 10));
+                        $scope.dependencias = model.Dependencias;
+                        $scope.municipios = model.Municipios;
+                        $scope.refreshSelect();
+                        
+                        let initMap = {lat: 21.0676524, lng: -101.2601372};
+                        $scope.map = new google.maps.Map(
+                            document.getElementById('map'), {zoom: 10, center: initMap}
+                        );
+                    };
+                    
+                    $scope.seleccionarDependencia = () => {
+                        $scope.loading = true;
+                        $http.get(baseUrl + 'Diagnosticos/GetTrabajadoresDependencia/' + $scope.DependenciaId).then(response => {
+                            let trabajadores = response.data.Trabajadores;
+                            $scope.TrabajadorId = [];
+                            if (trabajadores != null && trabajadores.length > 0) {
+                                $scope.trabajadores = trabajadores;
+                            } else {
+                                $scope.trabajadores = [];
+                            }
+                            $scope.refreshSelect();
+                            $scope.loading = false;
+                        });
+                    };
+                    
+                    $scope.seleccionarMunicipios = () => {
+                        $scope.loading = true;
+                        if ($scope.MunicipiosId.length > 0) {
+                            $http.get(baseUrl + 'Localidad/ByMunicipios/' + $scope.MunicipiosId.join()).then(response => {
+                                let localidades = response.data;
+                                if (localidades != null) {
+                                    $scope.locGrupos = localidades;
+                                }
+                                $scope.refreshSelect();
+                                $scope.loading = false;
+                            });
+                        } else {
+                            $scope.locGrupos = [];
+                            $scope.LocalidadesId = [];
+                            $scope.refreshSelect();
+                            $scope.loading = false;
+                        }
+                    };
+                    
+                    $scope.seleccionarLocalidad = () => {
+                        $scope.loading = true;
+                        if ($scope.LocalidadesId.length > 0) {
+                            $http.get(baseUrl + 'Ageb/ByLocalidades/' + $scope.LocalidadesId.join()).then(response => {
+                                let agebs = response.data;
+                                if (agebs != null) {
+                                    $scope.agGrupos = agebs;
+                                }
+                                $scope.refreshSelect();
+                                $scope.loading = false;
+                            });
+                        } else {
+                            $scope.agGrupos = [];
+                            $scope.AgebsId = [];
+                            $scope.refreshSelect();
+                            $scope.loading = false;
+                        }
+                    };
+                    
+                    $scope.cargarRutas = () => {
+                        if ($scope.DependenciaId != '' && $scope.TrabajadorId != '' 
+                        && $scope.Inicio != '' && $scope.Fin != '') {
+                            $scope.loading = true;
+                            _.each($scope.markers, function(m) {
+                                m.setMap(null);
+                            });
+                            if ($scope.cluster!=null){
+                                $scope.cluster.clearMarkers();
+                            }
+                            $scope.markers = [];
+                            $http.post(baseUrl + 'Diagnosticos/GetRutas', {
+                                TrabajadorId: $scope.TrabajadorId,
+                                MunicipiosId: $scope.MunicipiosId.join() != "" ? $scope.MunicipiosId.join() : null,
+                                LocalidadesId: $scope.LocalidadesId.join() != "" ? $scope.LocalidadesId.join() : null,
+                                AgebsId: $scope.AgebsId.join() != "" ? $scope.AgebsId.join() : null,
+                                Inicio: $scope.Inicio,
+                                Fin: $scope.Fin,
+                            }).then(response => {
+                                $scope.domicilios = response.data.Domicilios;
+                                $scope.totalcount = response.data.Total;
+                                _.each(response.data.Domicilios, (domicilio, i) => {
+                                    if (domicilio.Latitud !=''  && domicilio.Latitud != '0'){
+                                        let latlon = {lat: parseFloat(domicilio.Latitud), lng: parseFloat(domicilio.Longitud)};
+                                        let contador = i + 1;
+                                        let marker = new google.maps.Marker({
+                                            position: latlon,
+                                            map: $scope.map,
+                                            // url: baseUrl +"Beneficiarios/Ver/"+domicilio.Id,                                        
+                                            title: domicilio.DomicilioN,
+                                            label: "" + contador,
+                                        });
+                                        $scope.markers.push(marker);
+                                        // google.maps.event.addListener(marker, 'click', function() {
+                                        //     window.location.href = marker.url;
+                                        // });
+                                    }
+                                });
+                                $scope.loading = false;
+                            });
+                        }
+                    };
+                    
+                    $scope.refreshSelect = _.debounce(() => {
+                        $('.selectpicker2').selectpicker('refresh');
+                    }, 100);
+                }
+            );
+        })();
+    </script>
+}
+
+@section Styles
+{
+    <style>
+        #map {
+            height: 600px; /* The height is 400 pixels */
+            width: 100%; /* The width is the width of the web page */
+        }
+        
+        .col-4, .col-12 {
+            margin-bottom: 10px;
+        }   
+        
+        .bootstrap-select .dropdown-menu{           
+            max-width: 250px !important;
+        }
+    </style>
+}

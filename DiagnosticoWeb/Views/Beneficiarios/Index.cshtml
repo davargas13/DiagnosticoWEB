@@ -1,0 +1,350 @@
+@using DiagnosticoWeb.Code
+@{
+    ViewData["Title"] = "Familias visitados";
+}
+@using System.Security.Claims;
+<div ng-app="SedeshuApp" ng-controller="indexController" ng-init="init(@JsonSedeshu.SerializeObject(Model))">
+    <partial name="_Loading_Partial" />
+    <div ng-cloak>
+        <div class="card border-cards">
+            <div class="card-header bg-cards text-white">
+                <h5>Listado de familias visitadas</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex flex-wrap">
+                    <div class="col-4">
+                        <label>Campos</label>
+                        <select multiple class="selectpicker2 form-control" ng-change="seleccionarFiltro()" ng-model="selected" 
+                                data-title="Campos" data-live-search="true">
+                            <optgroup ng-repeat="(index, filtro) in filtros" label="{{index}}">
+                                <option ng-repeat="valor in filtro" ng-value="valor.Key">{{corregirFiltro(valor.Key, false)}}</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    <div class="col-5">
+                        <label>Período</label>
+                        <br>
+                        <div class="d-flex">
+                            <input type="date" ng-model="Inicio" placeholder="yyyy-MM-dd" class="form-control filtro" />
+                            <span class="al filtro">Al</span>
+                            <input type="date" ng-model="Fin" placeholder="yyyy-MM-dd" class="form-control filtro" />
+                        </div>
+                    </div>
+                    <div class="col-4" ng-repeat="(icatalogo, catalogo) in catalogos" ng-if="catalogo.Mostrar">
+                        <label>{{corregirFiltro(catalogo.Nombre, true)}}</label>
+                        <select class="selectpicker2 form-control" ng-if="catalogo.Multiple" ng-model="valores[icatalogo]" ng-change="seleccionarValor(icatalogo)"
+                                data-live-search="true" data-title="Seleccione">
+                            <option value="">[Todos]</option>
+                            <option ng-repeat="valor in catalogo.Items" ng-value="valor.Id">{{valor.Nombre}}</option>
+                        </select>
+                        <input class="form-control" ng-if="!catalogo.Multiple" ng-model="valores[icatalogo]">
+                    </div>
+                    <div class="col-3">
+                        <br>
+                        <button class="mt-2 btn btn-info" ng-click="cargarBeneficiarios()" ng-if="!loading">
+                            <i class="fa fa-search"></i> Buscar
+                        </button>
+                        <button class="mt-2 btn btn-info" ng-if="loading">
+                            <i class="fa fa-spinner fa-spin"></i> Buscar
+                        </button>
+                        <form id="form" asp-controller="Beneficiarios" asp-action="exportarExcel" method="post" target="_blank">
+                            <input id="PageIndex" name="PageIndex" type="hidden">
+                            <input id="PageSize" name="PageSize" type="hidden">
+                            <input id="Valores" name="Valores" type="hidden">
+                            <input id="Inicio" name="Inicio" type="hidden">
+                            <input id="Fin" name="Fin" type="hidden">
+                            <input id="Hijos" name="Hijos" type="hidden">
+                            <input id="Tipo" name="Tipo" type="hidden">
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card border-cards">
+            <div class="card-body">
+                <div class="mt-2 mb-2 d-flex align-content-end">
+                    @if (((ClaimsIdentity)User.Identity).HasClaim("Permiso", "beneficiarios.exportar"))
+                    {
+                        <button class="mt-4 btn btn-info" ng-click="confirmar()" ng-if="!loading">
+                            <i class="fa fa-file-excel"></i> Exportar
+                        </button>
+                    }
+                </div>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Folio</th>
+                                <th>Informante</th>
+                                <th>Municipio</th>
+                                <th>Localidad</th>
+                                <th>Polígono</th>
+                                <th>Estatus</th>
+                                <th>Fecha de registro</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="beneficiario in beneficiarios">
+                                <td>
+                                    <span class="m-1 small">{{ beneficiario.Folio }}</span>
+                                    @if (((ClaimsIdentity)User.Identity).HasClaim("Permiso", "beneficiarios.editar"))
+                                    {
+                                        <a class="btn btn-sm btn-info mt-1" href="@Url.Action(controller: "Beneficiarios", action: "Ver")/{{ beneficiario.Id }}">
+                                            <i class="fa fa-edit"></i> Ver
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <a class="btn btn-sm btn-info mt-1" href="@Url.Action(controller: "Beneficiarios", action: "Ver")/{{ beneficiario.Id }}">
+                                            <i class="fa fa-eye"></i> Ver
+                                        </a>
+                                    }
+                                </td>
+                                <td>{{ beneficiario.Nombre+" "+beneficiario.ApellidoPaterno+" "+beneficiario.ApellidoMaterno }}</td>
+                                <td>{{ beneficiario.Municipio}}</td>
+                                <td>{{ beneficiario.Localidad }}</td>
+                                <td>{{ beneficiario.ZonaImpulso}}</td>
+                                <td>{{beneficiario.EstatusInformacion}}</td>
+                                <td>{{ beneficiario.FechaRegistro | date:'dd/MM/yyyy' }}</td>
+                            </tr>
+                            <tr ng-if="beneficiarios.length == 0">
+                                <td colspan="6">No hay datos para mostrar.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="d-flex justify-content-between">
+                    <div>
+                        {{totalcount}} de {{granTotal}} familias
+                    </div>
+                    <div>
+                        <ul uib-pagination total-items="totalcount" ng-change="pagechanged()"
+                            items-per-page="pageSize" direction-links="false" ng-model="pageIndex" role="menu"
+                            max-size="maxsize" class="pagination-sm" boundary-links="true" rotate="true"
+                            num-pages="numPages" style="margin-bottom: 0px !important"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/ng-template" id="modalHijos.html">
+        <div class="modal-header" style="padding-top: 10px; padding-bottom: 10px;">
+            <h5 class="modal-title">Exportar listado de familias</h5>
+        </div>
+        <div class="modal-body">
+            <input type="checkbox" id="MostrarHijos">
+            <label for="MostrarHijos" class="modal-title">Deseo exportar la información de los hijos</label>
+        </div>
+        <div class="modal-footer" style="padding-top: 5px; padding-bottom: 5px;">
+            <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" ng-click="$conf.dismiss()">Cancelar</button>
+            <button class="btn btn-sm btn-info" ng-click="$conf.exportar()">
+                <i class="fa fa-file-excel"></i> Exportar
+            </button>
+        </div>
+    </script>
+</div>
+
+@section Scripts{
+    <script>
+        (function () {
+            var app = angular.module('SedeshuApp', ['ui.bootstrap']);
+            var baseUrl = document.baseURI;
+
+            app.controller('indexController',
+                function ($scope, $http, $uibModal) {
+
+                    $scope.selected = [];
+                    $scope.maxsize = 5;
+                    $scope.totalcount = 0;
+                    $scope.granTotal = 0;
+                    $scope.pageIndex = 1;
+                    $scope.pageSize = 10;
+                    $scope.numPages = 0;
+                    $scope.beneficiarios = [];
+                    $scope.Inicio = '';
+                    $scope.Fin = '';
+                    $scope.loading = false;
+                    $scope.filtros = {};
+                    $scope.catalogos = {};
+                    $scope.valores = {};
+
+                    $scope.init = function (model) {
+                        $scope.Inicio = new Date(model.Inicio.substring(0, 4), parseInt(model.Inicio.substring(5, 7)) - 1, model.Inicio.substring(8, 10));
+                        $scope.Fin = new Date(model.Fin.substring(0, 4), parseInt(model.Fin.substring(5, 7)) - 1, model.Fin.substring(8, 10));
+                        $scope.cargarBeneficiarios();
+                        $scope.cargarFiltros();
+                    };
+
+                    $scope.corregirFiltro = function (filtro, cortar) {
+                        var nueva =  filtro == 'ApellidoPaterno' ? 'PrimerApellido' : (filtro == 'ApellidoMaterno' ? 'SegundoApellido' : filtro.charAt(0).toUpperCase() + filtro.slice(1));
+                        if (cortar){
+                            nueva = nueva.length > 40 ? nueva.substring(0,40) +"..." : nueva;                            
+                        }
+                        return nueva;
+                    };
+
+                    $scope.cargarFiltros = function () {
+                        axios.get(baseUrl + 'Beneficiarios/BuildFiltros').then(function (response) {
+                            $scope.filtros = response.data.Filtros;
+                            _.each(response.data.Filtros, function (categoria) {
+                                _.each(categoria, function (filtro) {
+                                    $scope.catalogos[filtro.Key.replace(/ /g,"")] = {Items:[], Mostrar:false, Multiple:filtro.Value, Nombre:filtro.Key};
+                                    $scope.valores[filtro.Key.replace(/ /g, "")] = null;
+                                })
+                            });
+
+                            setTimeout(function () {
+                                $scope.$apply(function () {
+                                    $scope.refreshSelect();
+                                });
+
+                            })
+                        });
+                    }
+
+                    $scope.cargarCatalogo = function (catalogo) {
+                        let municipioId = ($scope.valores.Municipio == null || $scope.valores.Municipio == '') ? '0' : $scope.valores.Municipio;
+                        let cat = $scope.catalogos[catalogo.replace(/ /g, "")];
+                        if (cat.Multiple) {
+                            if (cat.Items.length == 0 || catalogo == 'Localidad' || catalogo == 'Ageb') {
+                                axios.get(baseUrl + 'Solicitudes/BuildCatalogos/' + catalogo.split(".-")[0] + '/' + municipioId).then(function (response) {
+                                    setTimeout(function () {
+                                        $scope.$apply(function () {
+                                            cat.Items = response.data;
+                                            $scope.refreshSelect();
+                                        });
+                                    })
+                                });
+                            } else {
+                                setTimeout(function () {
+                                    $scope.$apply(function () {
+                                        $scope.refreshSelect();
+                                    });
+                                });
+                            }
+                        }
+                        cat.Mostrar = true;
+                    }
+
+                    $scope.seleccionarFiltro = function () {
+                        _.each($scope.filtros, function (filtro, index) {
+                            _.each(filtro, function (f) {
+                                if (_.find($scope.selected, function (selected) {
+                                    return selected == f.Key;
+                                }) == null) {
+                                    $scope.catalogos[f.Key.replace(/ /g, "")].Mostrar = false;
+                                    $scope.valores[f.Key.replace(/ /g, "")] = "";
+                                }
+                            });
+                        })
+                        _.each($scope.selected, function (selected) {
+                            $scope.cargarCatalogo(selected);
+                        })
+                    }
+
+                    $scope.seleccionarValor = function (catalogo) {
+                        if (catalogo == 'Municipio') {
+                            if ($scope.catalogos.Localidad.Mostrar) {
+                                $scope.cargarCatalogo('Localidad');
+                            }
+                            if ($scope.catalogos.Ageb.Mostrar) {
+                                $scope.cargarCatalogo('Ageb');
+                            }
+                        }
+                    }
+
+
+                    $scope.cargarBeneficiarios = function () {
+                        $scope.loading = true;
+                        $http.post(baseUrl + 'Beneficiarios/ObtenerBeneficiarios', {
+                            PageIndex: $scope.pageIndex,
+                            PageSize: $scope.pageSize,
+                            Inicio: $scope.Inicio,
+                            Fin: $scope.Fin,
+                            Valores: JSON.stringify($scope.valores)
+                        }).then(function (response) {
+                            $scope.beneficiarios = response.data.Beneficiarios;
+                            $scope.totalcount = response.data.Total;
+                            $scope.granTotal = response.data.GranTotal;
+                            $scope.loading = false;
+                        });
+                    };
+
+                    $scope.pagechanged = function () {
+                        $scope.cargarBeneficiarios();
+                    };
+
+                    $scope.refreshSelect = _.debounce(function () {
+                        $('.selectpicker2').selectpicker('refresh');
+                    }, 100);
+
+                    $scope.confirmar = function () {
+                        $uibModal.open({
+                            ariaLabelledBy: 'modal-title',
+                            ariaDescribedBy: 'modal-body',
+                            templateUrl: 'modalHijos.html',
+                            controller: 'confirmationController',
+                            controllerAs: '$conf',
+                            size: 'md',
+                            resolve: {
+                                Inicio: function () { return $scope.Inicio; },
+                                Fin: function () { return $scope.Fin; },
+                                valores: function () { return $scope.valores; },
+                            }
+                        }).result.then(function () {
+                            $scope.Encuesta.Preguntas.splice(index, 1);
+                        }, function () { });
+                    };
+
+                    $scope.exportar = function (tipo) {
+                        document.getElementById("PageIndex").value = 0;
+                        document.getElementById("PageSize").value = 0;
+                        document.getElementById("Valores").value = JSON.stringify($scope.valores);
+                        document.getElementById("Inicio").value = $scope.Inicio.toISOString().substring(0, 10);
+                        document.getElementById("Fin").value = $scope.Fin.toISOString().substring(0, 10);
+                        document.getElementById("Tipo").value = tipo;
+                        document.getElementById("form").submit();
+                    };
+                }
+            );
+
+            app.controller('confirmationController',
+                function ($scope, $http, $uibModalInstance, valores, Inicio, Fin) {
+                    $conf = this;
+                    $conf.valores = valores;
+                    $conf.Inicio = Inicio;
+                    $conf.Fin = Fin;
+
+                    $conf.dismiss = function () {
+                        $uibModalInstance.dismiss('cancel');
+                    };
+
+                    $conf.exportar = function () {
+                        document.getElementById("PageIndex").value = 0;
+                        document.getElementById("PageSize").value = 0;
+                        document.getElementById("Valores").value = JSON.stringify($conf.valores);
+                        document.getElementById("Inicio").value = $conf.Inicio.toISOString().substring(0, 10);
+                        document.getElementById("Fin").value = $conf.Fin.toISOString().substring(0, 10);
+                        document.getElementById("Hijos").value = document.getElementById("MostrarHijos").checked;
+                        document.getElementById("Tipo").value = "Beneficiarios";
+                        document.getElementById("form").submit();
+                    }
+                }
+            );
+        })();
+    </script>
+}
+
+@section Styles
+    {
+    <style>
+        .col-4, .col-12 {
+            margin-bottom: 10px;
+        }
+
+        .bootstrap-select .dropdown-menu {
+            max-width: 250px !important;
+        }
+    </style>
+}

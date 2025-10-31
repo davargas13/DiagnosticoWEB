@@ -1,0 +1,674 @@
+@using DiagnosticoWeb.Code
+@{
+    ViewData["Title"] = "Estadisticos basicos";
+}
+@using System.Security.Claims;
+<div ng-app="SedeshuApp" ng-controller="indexController" ng-init="init(@JsonSedeshu.SerializeObject(Model))">
+    <partial name="_Loading_Partial" />
+    <div ng-cloak>
+        <div class="card border-cards">
+            <div class="card-header bg-cards text-white">
+                <h5>Estadisticos básicos</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex flex-wrap">
+                    <div class="col-4">
+                        <label>Campos</label>
+                        <select multiple class="selectpicker2 form-control" ng-change="seleccionarFiltro()" ng-model="selected" 
+                                data-title="Campos" data-live-search="true">
+                            <optgroup ng-repeat="(index, filtro) in filtros" label="{{index}}">
+                                <option ng-repeat="valor in filtro" ng-value="valor.Key">{{corregirFiltro(valor.Key, false)}}</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    <div class="col-5">
+                        <label>Período</label>
+                        <br>
+                        <div class="d-flex">
+                            <input type="date" ng-model="Inicio" placeholder="yyyy-MM-dd" class="form-control filtro" />
+                            <span class="al filtro">Al</span>
+                            <input type="date" ng-model="Fin" placeholder="yyyy-MM-dd" class="form-control filtro" />
+                        </div>
+                    </div>
+                    <div class="col-4" ng-repeat="(icatalogo, catalogo) in catalogos" ng-if="catalogo.Mostrar">
+                        <label>{{corregirFiltro(catalogo.Nombre, true)}}</label>
+                        <select class="selectpicker2 form-control" ng-if="catalogo.Multiple" ng-model="valores[icatalogo]" ng-change="seleccionarValor(icatalogo)"
+                                data-live-search="true" data-title="Seleccione">
+                            <option value="">[Todos]</option>
+                            <option ng-repeat="valor in catalogo.Items" ng-value="valor.Id">{{valor.Nombre}}</option>
+                        </select>
+                        <input class="form-control" ng-if="!catalogo.Multiple" ng-model="valores[icatalogo]">
+                    </div>
+                    <div class="col-3">
+                        <br>
+                        <button class="mt-2 btn btn-info" ng-click="buscar()" ng-if="!loading">
+                            <i class="fa fa-search"></i> Buscar
+                        </button>
+                        <button class="mt-2 btn btn-info" ng-if="loading">
+                            <i class="fa fa-spinner fa-spin"></i> Buscar
+                        </button>                        
+                        @if (((ClaimsIdentity)User.Identity).HasClaim("Permiso", "beneficiarios.exportar"))
+                        {
+                            <button class="mt-2 btn btn-info" ng-click="exportar('Sabana')" ng-if="!loading">
+                                <i class="fa fa-file-pdf"></i> Exportar
+                            </button>
+                        }
+                        <form id="form" asp-controller="Cuadernillos" asp-action="Pdf" method="post" target="_blank">
+                            <input id="PageIndex" name="PageIndex" type="hidden" value="0" />
+                            <input id="PageSize" name="PageSize" type="hidden" value="0" />
+                            <input id="Valores" name="Valores" type="hidden">
+                            <input id="Inicio" name="Inicio" type="hidden">
+                            <input id="Fin" name="Fin" type="hidden">
+                            <input id="Hijos" name="Hijos" type="hidden" value="0" />
+                            <input id="Tipo" name="Tipo" type="hidden" value="0" />
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card border-cards" id="graficas">
+            <div class="card-body">
+                <div class="d-flex flex-wrap">
+                    <div class="col-6 text-center">
+                        <h4>Personas encuestadas</h4>
+                        <h5>{{personas}}</h5>
+                    </div>
+                    <div class="col-6 text-center">
+                        <h4>Viviendas</h4>
+                        <h5>{{viviendas}}</h5>
+                    </div>
+                    <div class="col-4 text-center">
+                        <h4>Pobreza moderada</h4>
+                        <h5>{{pobreza.pobreza_moderada}}</h5>
+                    </div>
+                    <div class="col-4 text-center">
+                        <h4>Pobreza extrema</h4>
+                        <h5>{{pobreza.pobreza_extrema}}</h5>
+                    </div>
+                    <div class="col-4 text-center">
+                        <h3>Pobreza</h3>
+                        <h5>{{pobreza.pobreza_extrema+pobreza.pobreza_moderada}}</h5>
+                    </div>
+                </div>
+                <hr>
+                <div class="d-flex">
+                    <div class="col-6">
+                        <h6>Indicador de carencia por acceso a la alimentación</h6>
+                        <canvas id="alimentariaChart"></canvas>
+                    </div>
+                    <div class="col-6">
+                        <h6>Indicador de carencia por rezago educativo</h6>
+                        <canvas id="educativaChart"></canvas>
+                    </div>
+                </div>
+                <div class="d-flex">
+                    <div class="col-6">
+                        <h6>Indicador de carencia por acceso servicios de salud</h6>
+                        <canvas id="saludChart"></canvas>
+                    </div>
+                    <div class="col-6">
+                        <h6>Indicador de carencia por acceso a la seguridad social</h6>
+                        <canvas id="seguroChart"></canvas>
+                    </div>
+                </div>
+                <div class="d-flex">
+                    <div class="col-6">
+                        <h6>Indicador de carencia por calidad y espacios de la vivienda</h6>
+                        <canvas id="viviendaChart"></canvas>
+                    </div>
+                    <div class="col-6">
+                        <h6>Indicador de carencia de acceso a servicios básicos de la vivienda</h6>
+                        <canvas id="serviciosChart"></canvas>
+                    </div>
+                </div>
+                <div class="col-6 d-block m-auto">
+                    <h6>Grado de tejido social</h6>
+                    <canvas id="tejidoChart"></canvas>
+                </div>
+                <table class="table">
+                    <tr>
+                        <th>Carencias</th>
+                        <th>Personas</th>
+                        <th class="text-center">%</th>
+                        <th>Viviendas</th>
+                        <th class="text-center">%</th>
+                    </tr>
+                    <tr class="text-center">
+                        <td class="text-left">Personas con carencia por acceso a la seguridad social</td>
+                        <td>{{carenciaSocial}}</td>
+                        <td>{{(carenciaSocial/(personas==0?1:personas)*100).toFixed(2)}}</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr class="text-center">
+                        <td class="text-left">Personas con carencia por acceso a la alimentación</td>
+                        <td>{{carenciaAlimentaria}}</td>
+                        <td>{{(carenciaAlimentaria/(personas==0?1:personas)*100).toFixed(2)}}</td>
+                        <td>{{alimentariaFamilia}}</td>
+                        <td>{{(alimentariaFamilia/(viviendas==0?1:viviendas)*100).toFixed(2)}}</td>
+                    </tr>
+                    <tr class="text-center">
+                        <td class="text-left">Personas con carencia por acceso a los servicios de salud</td>
+                        <td>{{carenciaSalud}}</td>
+                        <td>{{(carenciaSalud/(personas==0?1:personas)*100).toFixed(2)}}</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr class="text-center">
+                        <td class="text-left">Personas con carencia de rezago educativo</td>
+                        <td>{{carenciaEducativa}}</td>
+                        <td>{{(carenciaEducativa/(personas==0?1:personas)*100).toFixed(2)}}</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr class="text-center">
+                        <td class="text-left">Personas con carencia por índice de hacinamiento de la vivienda</td>
+                        <td>{{carenciaHacinamiento}}</td>
+                        <td>{{(carenciaHacinamiento/(personas==0?1:personas)*100).toFixed(2)}}</td>
+                        <td>{{hacinamientoFamilia}}</td>
+                        <td>{{(hacinamientoFamilia/(viviendas==0?1:viviendas)*100).toFixed(2)}}</td>
+                    </tr>
+                </table>
+                <hr>
+                <div class="d-flex">
+                    <div class="col-4 edades">
+                        <label class="text-left">65 años y más</label>
+                        <label>{{edades['65 años y mas']["1"]+edades['65 años y mas']["2"]}}</label>
+                        <label>45 a 64 años</label>
+                        <label>{{edades['45 a 64 años']["1"]+edades['45 a 64 años']["2"]}}</label>
+                        <label>30 a 44 años</label>
+                        <label>{{edades['30 a 44 años']["1"]+edades['30 a 44 años']["2"]}}</label>
+                        <label>15 a 29 años</label>
+                        <label>{{edades['15 a 29 años']["1"]+edades['15 a 29 años']["2"]}}</label>
+                        <label>0 a 14 años de edad</label>
+                        <label>{{edades['0 a 14 años de edad']["1"]+edades['0 a 14 años de edad']["2"]}}</label>
+                    </div>
+                    <div class="col-8">
+                        <h6>Población</h6>
+                        <canvas id="edadesChart"></canvas>
+                    </div>
+                </div>
+                <hr />
+                <div class="d-flex">
+                    <div class="col-6">
+                        <h6>Indicador de carencia por rezago educativo</h6>
+                        <canvas id="educativa2Chart"></canvas>
+                    </div>
+                    <div class="col-6">
+                        <h6>Analfabetismo personas de 15 años o más</h6>
+                        <canvas id="analfabetismoChart"></canvas>
+                    </div>
+                </div>
+                <div class="d-flex">
+                    <div class="col-6">
+                        <h6>Rezago educativo por grupo de edad</h6>
+                        <canvas id="gradoEducativaChart"></canvas>
+                    </div>
+                    <div class="col-6">
+                        <h6>Rezago educativo por nivel</h6>
+                        <canvas id="nivelEducativaChart"></canvas>
+                    </div>
+                </div>
+                <div class="d-flex">
+                    <div class="col-6">
+                        <h6>Indicador de carencia por acceso a la alimentación</h6>
+                        <canvas id="alimentaria2Chart"></canvas>
+                    </div>
+                    <div class="col-6">
+                        <h6>Tipo de inseguridad alimentaria</h6>
+                        <canvas id="gradoAlimentariaChart"></canvas>
+                    </div>
+                </div>
+                <div class="d-flex">
+                    <div class="col-6">
+                        <h6>Indicador de carencia por acceso a servicios de salud</h6>
+                        <canvas id="salud2Chart"></canvas>
+                    </div>
+                    <div class="col-6">
+                        <h6>Personas con discapacidad permanente</h6>
+                        <canvas id="discapacidadChart"></canvas>
+                    </div>
+                </div>
+                <div class="d-flex">
+                    <div class="col-6">
+                        <h6>Indicador de carencia por calidad y espacios de la vivienda</h6>
+                        <canvas id="vivienda2Chart"></canvas>
+                    </div>
+                    <div class="col-6">
+                        <h6>Indicador de carencia del material de piso de la vivienda</h6>
+                        <canvas id="pisoChart"></canvas>
+                    </div>
+                </div>
+                <div class="d-flex">
+                    <div class="col-6">
+                        <h6>Indicador de carencia por material de techos de la vivienda</h6>
+                        <canvas id="techoChart"></canvas>
+                    </div>
+                    <div class="col-6">
+                        <h6>Indicador de carencia por material de muros de la vivienda</h6>
+                        <canvas id="muroChart"></canvas>
+                    </div>
+                </div>
+                <div class="col-6 d-block m-auto">
+                    <h6>Indicador de carencia por índice de hacinamiento de la vivienda</h6>
+                    <canvas id="hacinamientoChart"></canvas>
+                </div>
+                <hr>
+                <div class="d-flex">
+                    <div class="col-6">
+                        <h6>Indicador de carencia de acceso a servicios básicos de la vivienda</h6>
+                        <canvas id="servicios2Chart"></canvas>
+                    </div>
+                    <div class="col-6">
+                        <h6>Indicador de carencia de acceso al agua</h6>
+                        <canvas id="aguaChart"></canvas>
+                    </div>
+                </div>
+                <div class="col-6 d-block m-auto">
+                    <h6>Indicador de carencia de servicio de drenaje</h6>
+                    <canvas id="drenajeChart"></canvas>
+                </div>
+                <div class="d-flex">
+                    <div class="col-6">
+                        <h6>Indicador de carencia de servicios de electricidad</h6>
+                        <canvas id="electricidadChart"></canvas>
+                    </div>
+                    <div class="col-6">
+                        <h6>Indicador de carencia de servicios de combustible</h6>
+                        <canvas id="combustibleChart"></canvas>
+                    </div>
+                </div>
+                <div class="d-flex m-4">
+                    <div class="col-6 edades">
+                        <label>No presenta carencia</label>
+                        <label>{{propiedad["Sin carencia"]}}</label>
+                        <label>Presenta carencia</label>
+                        <label>{{propiedad["Con carencia"]}}</label>
+                    </div>
+                    <div class="col-6 d-block m-auto">
+                        <h6>Propiedad de la vivienda</h6>
+                        <canvas id="propiedadChart"></canvas>
+                    </div>
+                </div>
+                <hr>
+                <div class="d-flex">
+                    <div class="col-6">
+                        <h6>Indicador de carencia por acceso a la seguridad social</h6>
+                        <canvas id="seguro2Chart"></canvas>
+                    </div>
+                    <div class="col-6">
+                        <h6>Tiene acta de nacimiento</h6>
+                        <canvas id="actaChart"></canvas>
+                    </div>
+                </div>
+                <div class="d-flex">
+                    <div class="col-6">
+                        <h6>Grado de tejido social</h6>
+                        <canvas id="tejido2Chart"></canvas>
+                    </div>
+                    <div class="col-6">
+                        <h6>Grado de satisfacción en áreas de vida</h6>
+                        <canvas id="satisfaccionChart"></canvas>
+                    </div>
+                </div>
+                <div class="d-flex">
+                    <div class="col-6">
+                        <h6>Grado de percepción de movilidad</h6>
+                        <canvas id="movilidadChart"></canvas>
+                    </div>
+                    <div class="col-6">
+                        <h6>Grado de perfección de redes sociales</h6>
+                        <canvas id="redesChart"></canvas>
+                    </div>
+                </div>
+                <div class="d-flex">
+                    <div class="col-6">
+                        <h6>Grado de confianza en instituciones</h6>
+                        <canvas id="institucionesChart"></canvas>
+                    </div>
+                    <div class="col-6">
+                        <h6>Grado de confianza en líderes o representantes de colonia</h6>
+                        <canvas id="lideresChart"></canvas>
+                    </div>
+                </div>
+                <div class="d-flex">
+                    <div class="col-6">
+                        <h6>Grado de percepción de interacción en espacios públicos</h6>
+                        <canvas id="publicosChart"></canvas>
+                    </div>
+                    <div class="col-6">
+                        <h6>Percepción de seguridad en el parque</h6>
+                        <canvas id="parqueChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script type="text/javascript" src="~/js/Chart.min.js"></script>
+    <script type="text/javascript" src="~/js/chartjs-plugin-labels.min.js"></script>
+    <script>
+        var colores = [
+            'rgba(255, 99, 132, 0.5)',
+            'rgba(54, 162, 235, 0.5)',
+            'rgba(255, 206, 86, 0.5)',
+            'rgba(75, 192, 192, 0.5)',
+            'rgba(153, 102, 255, 0.5)',
+            'rgba(255, 159, 64, 0.5)'
+        ];        
+        (function () {
+            var app = angular.module('SedeshuApp', ['ui.bootstrap']);
+            var baseUrl = document.baseURI;
+
+            app.controller('indexController',
+                function ($scope, $http) {
+                    $scope.loading = false;
+                    $scope.filtros = {};                    
+                    $scope.catalogos = {};
+                    $scope.valores = {};
+                    $scope.personas = 0;
+                    $scope.viviendas = 0;
+                    $scope.pobreza = { pobreza_extrema: 0, pobreza_moderada: 0 };
+                    $scope.carenciaSocial = 0;
+                    $scope.carenciaAlimentaria = 0;
+                    $scope.carenciaSalud = 0;
+                    $scope.carenciaEducativa = 0;
+                    $scope.carenciaHacinamiento = 0;
+                    $scope.alimentariaFamilia = 0;
+                    $scope.hacinamientoFamilia = 0;
+                    $scope.edades = {};
+                    $scope.propiedad = {};
+                    $scope.charts = {'alimentariaChart':null, 'educativaChart':null, 'saludChart':null, 'seguroChart':null,'viviendaChart':null,'serviciosChart':null,'tejidoChart':null,'edadesChart':null,'educativa2Chart':null,'analfabetismoChart':null,'gradoEducativaChart':null,'nivelEducativaChart':null,'alimentaria2Chart':null,'gradoAlimentariaChart':null,'salud2Chart':null,'discapacidadChart':null,'vivienda2Chart':null,'pisoChart':null,'techoChart':null,'muroChart':null,'hacinamientoChart':null,'servicios2Chart':null,'aguaChart':null,'drenajeChart':null,'electricidadChart':null,'combustibleChart':null,'propiedadChart':null,'seguro2Chart':null,'actaChart':null,'tejido2Chart':null,'satisfaccionChart':null,'movilidadChart':null,'redesChart':null,'institucionesChart':null,'lideresChart':null,'publicosChart':null,'parqueChart':null};
+                    
+                    $scope.init = function (model) {
+                        $scope.Inicio = new Date(model.Inicio.substring(0, 4), parseInt(model.Inicio.substring(5, 7)) - 1, model.Inicio.substring(8, 10));
+                        $scope.Fin = new Date(model.Fin.substring(0, 4), parseInt(model.Fin.substring(5, 7)) - 1, model.Fin.substring(8, 10));
+                        $scope.cargarFiltros();
+                        $scope.buscar();
+                    };
+
+                    $scope.corregirFiltro = function (filtro, cortar) {
+                        var nueva =  filtro == 'ApellidoPaterno' ? 'PrimerApellido' : (filtro == 'ApellidoMaterno' ? 'SegundoApellido' : filtro.charAt(0).toUpperCase() + filtro.slice(1));
+                        if (cortar){
+                            nueva = nueva.length > 40 ? nueva.substring(0,40) +"..." : nueva;                            
+                        }
+                        return nueva;
+                    };
+
+                    $scope.cargarFiltros = function () {
+                        axios.get(baseUrl + 'Beneficiarios/BuildFiltros').then(function (response) {
+                            $scope.filtros = response.data.Filtros;
+                            _.each(response.data.Filtros, function (categoria) {
+                                _.each(categoria, function (filtro) {
+                                    $scope.catalogos[filtro.Key.replace(/ /g, "")] = { Items: [], Mostrar: false, Multiple: filtro.Value , Nombre:filtro.Key};
+                                    $scope.valores[filtro.Key.replace(/ /g, "")] = null;
+                                })
+                            });
+
+                            setTimeout(function () {
+                                $scope.$apply(function () {
+                                    $scope.refreshSelect();
+                                });
+
+                            })
+                        });
+                    };
+
+                    $scope.cargarCatalogo = function (catalogo) {
+                        let municipioId = ($scope.valores.Municipio == null || $scope.valores.Municipio == '') ? '0' : $scope.valores.Municipio;
+                        let cat = $scope.catalogos[catalogo.replace(/ /g, "")];
+                        if (cat.Multiple) {
+                            if (cat.Items.length == 0 || catalogo == 'Localidad' || catalogo == 'Ageb') {
+                                axios.get(baseUrl + 'Solicitudes/BuildCatalogos/' + catalogo.split(".-")[0] + '/' + municipioId).then(function (response) {
+                                    setTimeout(function () {
+                                        $scope.$apply(function () {
+                                            cat.Items = response.data;
+                                            $scope.refreshSelect();
+                                        });
+                                    })
+                                });
+                            } else {
+                                setTimeout(function () {
+                                    $scope.$apply(function () {
+                                        $scope.refreshSelect();
+                                    });
+                                });
+                            }
+                        }
+                        cat.Mostrar = true;
+                    };
+
+                    $scope.seleccionarFiltro = function () {
+                        _.each($scope.filtros, function (filtro, index) {
+                            _.each(filtro, function (f) {
+                                if (_.find($scope.selected, function (selected) {
+                                    return selected == f.Key;
+                                }) == null) {
+                                    $scope.catalogos[f.Key.replace(/ /g, "")].Mostrar = false;
+                                    $scope.valores[f.Key.replace(/ /g, "")] = "";
+                                }
+                            });
+                        })
+                        _.each($scope.selected, function (selected) {
+                            $scope.cargarCatalogo(selected);
+                        })
+                    };
+
+                    $scope.seleccionarValor = function (catalogo) {
+                        if (catalogo == 'Municipio') {
+                            if ($scope.catalogos.Localidad.Mostrar) {
+                                $scope.cargarCatalogo('Localidad');
+                            }
+                            if ($scope.catalogos.Ageb.Mostrar) {
+                                $scope.cargarCatalogo('Ageb');
+                            }
+                        }
+                    };
+
+                    $scope.buscar = function () {
+                        $scope.loading = true;
+                        $http.post(baseUrl + 'Cuadernillos/Buscar', { PageIndex: 0, PageSize: 0, Inicio: $scope.Inicio, Fin: $scope.Fin, Valores: JSON.stringify($scope.valores) }).then(function (response) {
+                            $scope.pobreza = response.data.Pobreza;
+                            $scope.personas = response.data.Personas;
+                            $scope.viviendas = response.data.Viviendas;
+                            $scope.carenciaAlimentaria = response.data.AlimentariaPersonas;
+                            $scope.carenciaHacinamiento = response.data.HacinamientoPersonas;
+                            $scope.carenciaSocial = response.data.SeguroSocial["Con carencia"];
+                            $scope.carenciaSalud = response.data.Salud["Con carencia"];
+                            $scope.carenciaEducativa = response.data.Educativas["Con carencia"];
+                            $scope.alimentariaFamilia = response.data.Alimentarias["Con carencia"];
+                            $scope.hacinamientoFamilia = response.data.Hacinamiento["Con carencia"];
+                            $scope.edades = response.data.Edades;
+                            $scope.propiedad = response.data.Propiedad;
+
+                            $scope.graficar('alimentariaChart', response.data.Alimentarias);
+                            $scope.graficar('educativaChart', response.data.Educativas);
+                            $scope.graficar('saludChart', response.data.Salud);
+                            $scope.graficar('seguroChart', response.data.SeguroSocial);
+                            $scope.graficar('viviendaChart', response.data.Vivienda);
+                            $scope.graficar('serviciosChart', response.data.Servicios);
+                            $scope.graficar('tejidoChart', response.data.Tejido);
+                            $scope.graficarEdades('edadesChart', response.data.Edades);
+                            $scope.graficar('educativa2Chart', response.data.Educativas);
+                            $scope.graficar('analfabetismoChart', response.data.Analfabetismo);
+                            $scope.graficar('gradoEducativaChart', response.data.GradoEducativa);
+                            $scope.graficar('nivelEducativaChart', response.data.NivelEducativa);
+                            $scope.graficar('alimentaria2Chart', response.data.Alimentarias);
+                            $scope.graficar('gradoAlimentariaChart', response.data.GradoAlimentarias);
+                            $scope.graficar('salud2Chart', response.data.Salud);
+                            $scope.graficar('discapacidadChart', response.data.Discapacidad);
+                            $scope.graficar('vivienda2Chart', response.data.Vivienda);
+                            $scope.graficar('pisoChart', response.data.Piso);
+                            $scope.graficar('techoChart', response.data.Techo);
+                            $scope.graficar('muroChart', response.data.Muro);
+                            $scope.graficar('hacinamientoChart', response.data.Hacinamiento);
+                            $scope.graficar('servicios2Chart', response.data.Servicios);
+                            $scope.graficar('aguaChart', response.data.Agua);
+                            $scope.graficar('drenajeChart', response.data.Drenaje);
+                            $scope.graficar('electricidadChart', response.data.Electricidad);
+                            $scope.graficar('combustibleChart', response.data.Combustible);
+                            $scope.graficar('propiedadChart', response.data.Propiedad);
+                            $scope.graficar('seguro2Chart', response.data.SeguroSocial);
+                            $scope.graficar('actaChart', response.data.Acta);
+                            $scope.graficar('tejido2Chart', response.data.Tejido);
+                            $scope.graficar('satisfaccionChart', response.data.Satisfaccion);
+                            $scope.graficar('movilidadChart', response.data.Movilidad);
+                            $scope.graficar('redesChart', response.data.Redes);
+                            $scope.graficar('institucionesChart', response.data.Instituciones);
+                            $scope.graficar('lideresChart', response.data.Lideres);
+                            $scope.graficar('publicosChart', response.data.Publicos);
+                            $scope.graficar('parqueChart', response.data.Parque);
+                            $scope.finished();
+                        });
+                    };
+
+                    $scope.graficarEdades = function (canvas, data) {                        
+                        let hombres = [];
+                        let mujeres = [];                        
+                        let labels = [];                        
+                        if (Object.values(data).length > 0) {
+                            _.each(data, function (dato, index) {
+                                hombres.push(dato["1"]*-1);
+                                mujeres.push(dato["2"]);
+                                labels.push(index);
+                            });
+                        }
+                        if ($scope.charts[canvas] != null)
+                        {
+                            $scope.charts[canvas].destroy();
+                        }                        
+                        $scope.charts[canvas]  = new Chart(document.getElementById(canvas), {
+                            responsive: false,
+                            type: 'horizontalBar',
+                            data: {
+                                labels: labels,
+                                datasets: [
+                                    {
+                                        label: "Hombres",
+                                        data: hombres,
+                                        backgroundColor: colores[0],
+                                    },
+                                    {
+                                        label: "Mujeres",
+                                        data: mujeres,
+                                        backgroundColor: colores[1],
+                                    }
+                                ]
+                            },
+                            options: {
+                                animation: {
+                                    duration: 0
+                                },
+                                scales: {
+                                    xAxes: [{
+                                        stacked: true
+                                    }],
+                                    yAxes: [{
+                                        stacked: true
+                                    }]
+                                },
+                            },
+                        });
+                    };
+
+                    $scope.graficar = function (canvas, data) {
+                        let labels = [];
+                        let datos = [];
+                        let colors = [];                        
+                        if (Object.values(data).length > 0) {
+                            let i =  0;
+                            _.each(data, function (carencia, index) {
+                                labels.push(index);
+                                datos.push(carencia);
+                                colors.push(colores[i++]);
+                            });
+                        }
+                       if ($scope.charts[canvas] != null)
+                        {
+                            $scope.charts[canvas].destroy();
+                        }                        
+                        $scope.charts[canvas]  = new Chart(
+                            document.getElementById(canvas), {
+                                responsive: false,
+                                type: 'pie',
+                                data: {
+                                    labels: labels,
+                                    datasets: [
+                                        {
+                                            data: datos,
+                                            backgroundColor: colors
+                                        }
+                                    ],
+                                },
+                                options: {
+                                    animation: {
+                                        duration: 0
+                                    },
+                                    plugins: {
+                                        labels: {                                            
+                                            render: 'percentage'
+                                        }
+                                    }
+                                },
+                            }
+                        );
+                    };
+
+                    $scope.finished = function () {
+                        setTimeout(function () {
+                            $scope.$apply(function () {
+                                $scope.loading = false;
+                                $scope.refreshSelect();
+                            });
+                        })
+                    };
+
+                    $scope.exportar = function (tipo) {
+                        document.getElementById("PageIndex").value = 0;
+                        document.getElementById("PageSize").value = 0;
+                        document.getElementById("Valores").value = JSON.stringify($scope.valores);
+                        document.getElementById("Inicio").value = $scope.Inicio.toISOString().substring(0, 10);
+                        document.getElementById("Fin").value = $scope.Fin.toISOString().substring(0, 10);
+                        document.getElementById("Tipo").value = tipo;
+                        document.getElementById("form").submit();
+                    };
+
+                    $scope.refreshSelect = _.debounce(function () {
+                        $('.selectpicker2').selectpicker('refresh');
+                    }, 200);
+                }
+            );
+        })();
+    </script>
+}
+
+@section Styles
+{
+    <style>
+        .edades label {
+            display: block;
+            padding: 5px;
+            font-size: 1.2rem;
+        }
+
+            .edades label:nth-child(odd) {
+                background-color: #3498db;
+                color: #ffffff;
+            }
+
+        #graficas h6 {
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .table{
+            margin: 20px 0;
+        }
+
+        .bootstrap-select .dropdown-menu{           
+            max-width: 250px !important;
+        }
+    </style>
+}

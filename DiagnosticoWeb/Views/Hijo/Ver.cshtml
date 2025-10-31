@@ -1,0 +1,666 @@
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+@using DiagnosticoWeb.Code
+@using System.Security.Claims
+@{
+    ViewData["Title"] = "Edición de datos del Hijo";
+}
+<div ng-app="SedeshuApp" ng-controller="indexController" ng-init="init(@JsonSedeshu.SerializeObject(Model))">
+    <partial name="_Loading_Partial" />
+    <div ng-cloak>
+        <div class="card border-cards">
+            <div class="card-header bg-cards text-white d-flex justify-content-between">
+                <h5>Edición de datos</h5>
+                <a class="btn btn-sm btn-header" href="/Beneficiarios/Ver/{{Hijo.PadreId}}">
+                    <i class="fa fa-backward"></i> Regresar
+                </a>
+            </div>
+            <div class="card-body">
+                <nav>
+                    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                        <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab"
+                           aria-controls="nav-home" aria-selected="true" ng-click="cambiarPrincipal(true)">Hijos</a>
+                        <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab"
+                           aria-controls="nav-profile" aria-selected="false" ng-click="cambiarPrincipal(false)">Padre o tutor</a>
+                    </div>
+                </nav>
+                <div class="tab-content" id="nav-tabContent">
+                    <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+                        <div class="col-sm-12"><span class="badge badge-info">Datos personales</span></div>
+                        <div class="d-flex flex-wrap">
+                            <div class="col-4 campo">
+                                <label class="required">CURP <span class="small">({{Hijo.Curp.length}}/18)</span></label>
+                                <input type="text" class="form-control" ng-model="Hijo.Curp" ng-blur="completarDatos()">
+                                <span class="text-danger small">{{ errors["Hijo.Curp"] }}</span>
+                            </div>
+                            <div class="col-4 campo">
+                                <label class="required">Primer apellido <span class="small">({{Hijo.ApellidoPaterno.length}}/100)</span></label>
+                                <input type="text" class="form-control" ng-model="Hijo.ApellidoPaterno">
+                                <span class="text-danger small">{{ errors["Hijo.ApellidoPaterno"] }}</span>
+                            </div>
+                            <div class="col-4 campo">
+                                <label>Segundo apellido <span class="small">({{Hijo.ApellidoMaterno.length}}/100)</span></label>
+                                <input type="text" class="form-control" ng-model="Hijo.ApellidoMaterno">
+                            </div>
+                            <div class="col-4 campo">
+                                <label class="required">Nombres <span class="small">({{Hijo.Nombre.length}}/100)</span></label>
+                                <input type="text" class="form-control" ng-model="Hijo.Nombre">
+                                <span class="text-danger small">{{ errors["Hijo.Nombre"] }}</span>
+                            </div>
+                            <div class="col-4 campo">
+                                <label class="required">Fecha de nacimiento</label>
+                                <input type="date" class="form-control" ng-model="Hijo.FechaNacimiento">
+                                <span class="text-danger small">{{ errors["Hijo.FechaNacimiento"] }}</span>
+                            </div>
+                            <div class="col-4 campo">
+                                <label class="required">Parentesco</label>
+                                <select class="selectpicker2 form-control" data-live-search="true" ng-model="Hijo.ParentescoId">
+                                    <option ng-repeat="parentesco in Parentescos" ng-value="parentesco.Id">{{parentesco.Nombre}}</option>
+                                </select>
+                                <span class="text-danger small">{{ errors["Hijo.EstadoId"] }}</span>
+                            </div>
+                            <div class="col-4 campo">
+                                <label class="required">Estado</label>
+                                <select class="selectpicker2 form-control" data-live-search="true" ng-model="Hijo.EstadoId">
+                                    <option ng-repeat="estado in Estados" ng-value="estado.Id">{{estado.Nombre}}</option>
+                                </select>
+                                <span class="text-danger small">{{ errors["Hijo.EstadoId"] }}</span>
+                            </div>
+                            <div class="col-4 campo">
+                                <label class="required">Sexo</label>
+                                <select class="selectpicker2 form-control" data-live-search="true" ng-model="Hijo.SexoId">
+                                    <option ng-repeat="sexo in Sexos" ng-value="sexo.Id">{{sexo.Nombre}}</option>
+                                </select>
+                                <span class="text-danger small">{{ errors["Hijo.SexoId"] }}</span>
+                            </div>
+                            <div class="col-4 campo">
+                                <label class="required">Nivel de estudios</label>
+                                <select class="selectpicker2 form-control" data-live-search="true" ng-model="Hijo.EstudioId">
+                                    <option ng-repeat="estudio in Estudios" ng-value="estudio.Id">{{estudio.Nombre}}</option>
+                                </select>
+                                <span class="text-danger small">{{ errors["Hijo.EstudioId"] }}</span>
+                            </div>
+                            <div class="col-4 campo">
+                                <label class="required">Grado de estudios</label>
+                                <select class="selectpicker2 form-control" data-live-search="true" ng-model="Hijo.GradoEstudioId">
+                                    <option ng-repeat="grado in GradosEstudios" ng-value="grado.Id">{{grado.Nombre}}</option>
+                                </select>
+                                <span class="text-danger small">{{ errors["Hijo.GradoEstudioId"] }}</span>
+                            </div>
+                            <div class="col-4 campo">
+                                <label class="required">Estado civil</label>
+                                <select class="selectpicker2 form-control" data-live-search="true" ng-model="Hijo.EstadoCivilId">
+                                    <option ng-repeat="estadoCivil in EstadosCiviles" ng-value="estadoCivil.Id">{{estadoCivil.Nombre}}</option>
+                                </select>
+                                <span class="text-danger small">{{ errors["Hijo.EstadoCivilId"] }}</span>
+                            </div>
+                            <div class="col-4 campo">
+                                <label class="required">Discapacidad</label>
+                                <select class="selectpicker2 form-control" data-live-search="true" ng-model="Hijo.DiscapacidadId" ng-change="ObtenerGradosDiscapacidad()">
+                                    <option ng-repeat="discapacidad in Discapacidades" ng-value="discapacidad.Id">{{discapacidad.Nombre}}</option>
+                                </select>
+                                <span class="text-danger small">{{ errors["Hijo.DiscapacidadId"] }}</span>
+                            </div>
+                            <div class="col-4 campo">
+                                <label>Grado de discapacidad</label>
+                                <select class="selectpicker2 form-control" data-live-search="true" ng-model="Hijo.DiscapacidadGradoId">
+                                    <option ng-repeat="grado in Grados" ng-value="grado.DiscapacidadGradoId">{{grado.Nombre}}</option>
+                                </select>
+                            </div>
+                            <div class="col-4 campo">
+                                <label>Causa de discapacidad</label>
+                                <select class="selectpicker2 form-control" data-live-search="true" ng-model="Hijo.CausaDiscapacidadId">
+                                    <option ng-repeat="causa in Causas" ng-value="causa.Id">{{causa.Nombre}}</option>
+                                </select>
+                            </div>
+                            <div class="col-4 campo">
+                                <label>Habita el mismo domicilio</label>
+                                <br>
+                                <input type="checkbox" ng-model="Hijo.MismoDomicilio">
+                            </div>
+                        </div>
+                        <slot ng-show="!Hijo.MismoDomicilio">
+                            <hr />
+                            <div class="col-sm-12"><span class="badge badge-info">Domicilio</span></div>
+                            <div class="d-flex flex-wrap">
+                                <div class="col-sm-6 campo">
+                                    <label>Correo electrónico <span class="small">({{Domicilio.Email.length}} / 100)</span></label>
+                                    <input type="text" class="form-control" ng-model="Domicilio.Email">
+                                </div>
+                                <div class="col-sm-6 campo">
+                                    <label class="required">Domicilio <span class="small">({{Domicilio.DomicilioN.length}} / 100)</span></label>
+                                    <input type="text" class="form-control" ng-model="Domicilio.DomicilioN">
+                                    <span class="text-danger small">{{ errors["Domicilio.DomicilioN"] }}</span>
+                                </div>
+                                <div class="col-sm-6 campo">
+                                    <label class="required">Entre calle <span class="small">({{Domicilio.EntreCalle1.length}} / 100)</span></label>
+                                    <input type="text" class="form-control" ng-model="Domicilio.EntreCalle1">
+                                    <span class="text-danger small">{{ errors["Domicilio.EntreCalle1"] }}</span>
+                                </div>
+                                <div class="col-sm-6 campo">
+                                    <label class="required">Entre calle <span class="small">({{Domicilio.EntreCalle2.length}} / 100)</span></label>
+                                    <input type="text" class="form-control" ng-model="Domicilio.EntreCalle2">
+                                    <span class="text-danger small">{{ errors["Domicilio.EntreCalle2"] }}</span>
+                                </div>
+                                <div class="col-sm-3 campo">
+                                    <label class="required">Código postal <span class="small">({{Domicilio.CodigoPostal.length}} / 5)</span></label>
+                                    <input type="text" class="form-control" ng-model="Domicilio.CodigoPostal" maxlength="5">
+                                    <span class="text-danger small">{{ errors["Domicilio.CodigoPostal"] }}</span>
+                                </div>
+                                <div class="col-sm-3 campo">
+                                    <label>Teléfono <span class="small">({{Domicilio.Telefono.length}} / 10)</span></label>
+                                    <input type="text" class="form-control" ng-model="Domicilio.Telefono" maxlength="10">
+                                    <span class="text-danger small">{{ errors["Domicilio.Telefono"] }}</span>
+                                </div>
+                                <div class="col-sm-3 campo">
+                                    <label>Teléfono de casa <span class="small">({{Domicilio.TelefonoCasa.length}} / 10)</span></label>
+                                    <input type="text" class="form-control" ng-model="Domicilio.TelefonoCasa" maxlength="10">
+                                    <span class="text-danger small">{{ errors["Domicilio.TelefonoCasa"] }}</span>
+                                </div>
+                                <div class="col-sm-4 campo">
+                                    <label class="required">Municipio</label>
+                                    <select class="selectpicker2 form-control" data-live-search="true" ng-model="Domicilio.MunicipioId" ng-change="BuscarLocalidades()">
+                                        <option ng-repeat="municipio in Municipios" ng-value="municipio.Id">{{municipio.Nombre}}</option>
+                                    </select>
+                                    <span class="text-danger small">{{ errors["Domicilio.MunicipioId"] }}</span>
+                                </div>
+                                <div class="col-sm-4 campo">
+                                    <label class="required">Localidad</label>
+                                    <select class="selectpicker2 form-control" data-live-search="true" ng-model="Domicilio.LocalidadId" ng-change="BuscarAgebs()">
+                                        <option ng-repeat="localidad in Localidades" ng-value="localidad.Id">{{localidad.Nombre}}</option>
+                                    </select>
+                                    <span class="text-danger small">{{ errors["Domicilio.LocalidadId"] }}</span>
+                                </div>
+                                <div class="col-sm-4 campo">
+                                    <label>AGEB</label>
+                                    <select class="selectpicker2 form-control" data-live-search="true" ng-model="Domicilio.AgebId">
+                                        <option ng-repeat="ageb in Agebs" ng-value="ageb.Id">{{ageb.Clave}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="col-sm-12">
+                                <label>Capturar ubicación en el mapa <input type="checkbox" style="vertical-align: middle;" ng-model="Domicilio.CapturarUbicacion" ng-change="SetMarker()" /></label>
+                                <div id="map" style="height: 300px;"></div>
+                            </div>
+                        </slot>
+                        <div class="col-sm-6 mt-1">
+                            <div class="card card-body">
+                                <span class="badge badge-info mb-3">Documentos</span>
+                                <div class="d-flex flex-wrap" ng-if="Documentos.length > 0">
+                                    <div ng-repeat="imagen in Documentos" class="col-sm-6">
+                                        <div class="card card-body bg-question">
+                                            <small class="text-capitalize" ng-bind="imagen.Nombre"></small>
+                                            <button class="btn btn-xsm btn-light" ng-click="CambiarImagen(imagen)">
+                                                <i class="fa fa-image"></i> Ver
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div ng-if="Documentos.length == 0">
+                                    <span>[No se han capturado documentos del beneficiario]</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 mt-1">
+                            <div class="card card-body">
+                                <span class="badge badge-info mb-3">Huellas</span>
+                                <div class="d-flex flex-wrap" ng-if="Huellas.length > 0">
+                                    <div ng-repeat="huella in Huellas" class="col-sm-6">
+                                        <div class="card card-body bg-question">
+                                            <small class="text-capitalize" ng-bind="huella.nombre"></small>
+                                            <button class="btn btn-xsm btn-light" ng-click="CambiarHuella(huella)" ng-if="huella.archivoId!=null">
+                                                <i class="fa fa-image"></i> Ver
+                                            </button>
+                                            <span class="badge badge-info" ng-if="huella.archivoId==null">{{huella.status==0?'Pendiente':'No ingresado'}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div ng-if="Huellas.length == 0">
+                                    <span>[No se han capturado huellas del beneficiario]</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+                        <div class="col-sm-12"><span class="badge badge-info">Datos personales del padre o tutor</span></div>
+                        <div class="d-flex flex-wrap">
+                            <div class="col-4 campo">
+                                <label class="required">CURP <span class="small">({{Tutor.Curp.length}}/18)</span></label>
+                                <input type="text" class="form-control" ng-model="Tutor.Curp" ng-blur="completarDatos()">
+                                <span class="text-danger small">{{ errors["Tutor.Curp"] }}</span>
+                            </div>
+                            <div class="col-4 campo">
+                                <label class="required">Primer apellido <span class="small">({{Tutor.ApellidoPaterno.length}}/100)</span></label>
+                                <input type="text" class="form-control" ng-model="Tutor.ApellidoPaterno">
+                                <span class="text-danger small">{{ errors["Tutor.ApellidoPaterno"] }}</span>
+                            </div>
+                            <div class="col-4 campo">
+                                <label>Segundo apellido <span class="small">({{Tutor.ApellidoMaterno.length}}/100)</span></label>
+                                <input type="text" class="form-control" ng-model="Tutor.ApellidoMaterno">
+                            </div>
+                            <div class="col-4 campo">
+                                <label class="required">Nombres <span class="small">({{Tutor.Nombre.length}}/100)</span></label>
+                                <input type="text" class="form-control" ng-model="Tutor.Nombre">
+                                <span class="text-danger small">{{ errors["Tutor.Nombre"] }}</span>
+                            </div>
+                            <div class="col-4 campo">
+                                <label class="required">Fecha de nacimiento</label>
+                                <input type="date" class="form-control" ng-model="Tutor.FechaNacimiento">
+                                <span class="text-danger small">{{ errors["Tutor.FechaNacimiento"] }}</span>
+                            </div>
+                            <div class="col-4 campo">
+                                <label class="required">Estado</label>
+                                <select class="selectpicker2 form-control" data-live-search="true" ng-model="Tutor.EstadoId">
+                                    <option ng-repeat="estado in Estados" ng-value="estado.Id">{{estado.Nombre}}</option>
+                                </select>
+                                <span class="text-danger small">{{ errors["Tutor.EstadoId"] }}</span>
+                            </div>
+                            <div class="col-4 campo">
+                                <label class="required">Sexo</label>
+                                <select class="selectpicker2 form-control" data-live-search="true" ng-model="Tutor.SexoId">
+                                    <option ng-repeat="sexo in Sexos" ng-value="sexo.Id">{{sexo.Nombre}}</option>
+                                </select>
+                                <span class="text-danger small">{{ errors["Tutor.SexoId"] }}</span>
+                            </div>
+                            <div class="col-4 campo">
+                                <label class="required">Nivel de estudios</label>
+                                <select class="selectpicker2 form-control" data-live-search="true" ng-model="Tutor.EstudioId">
+                                    <option ng-repeat="estudio in Estudios" ng-value="estudio.Id">{{estudio.Nombre}}</option>
+                                </select>
+                                <span class="text-danger small">{{ errors["Tutor.EstudioId"] }}</span>
+                            </div>
+                            <div class="col-4 campo">
+                                <label class="required">Grado de estudios</label>
+                                <select class="selectpicker2 form-control" data-live-search="true" ng-model="Tutor.GradoEstudioId">
+                                    <option ng-repeat="grado in GradosEstudios" ng-value="grado.Id">{{grado.Nombre}}</option>
+                                </select>
+                                <span class="text-danger small">{{ errors["Tutor.GradoEstudioId"] }}</span>
+                            </div>
+                            <div class="col-4 campo">
+                                <label class="required">Estado civil</label>
+                                <select class="selectpicker2 form-control" data-live-search="true" ng-model="Tutor.EstadoCivilId">
+                                    <option ng-repeat="estadoCivil in EstadosCiviles" ng-value="estadoCivil.Id">{{estadoCivil.Nombre}}</option>
+                                </select>
+                                <span class="text-danger small">{{ errors["Tutor.EstadoCivilId"] }}</span>
+                            </div>
+                            <div class="col-4 campo">
+                                <label class="required">Discapacidad</label>
+                                <select class="selectpicker2 form-control" data-live-search="true" ng-model="Tutor.DiscapacidadId" ng-change="ObtenerGradosDiscapacidad()">
+                                    <option ng-repeat="discapacidad in Discapacidades" ng-value="discapacidad.Id">{{discapacidad.Nombre}}</option>
+                                </select>
+                                <span class="text-danger small">{{ errors["Tutor.DiscapacidadId"] }}</span>
+                            </div>
+                            <div class="col-4 campo">
+                                <label>Grado de discapacidad</label>
+                                <select class="selectpicker2 form-control" data-live-search="true" ng-model="Tutor.DiscapacidadGradoId">
+                                    <option ng-repeat="grado in Grados" ng-value="grado.DiscapacidadGradoId">{{grado.Nombre}}</option>
+                                </select>
+                            </div>
+                            <div class="col-4 campo">
+                                <label>Causa de discapacidad</label>
+                                <select class="selectpicker2 form-control" data-live-search="true" ng-model="Tutor.CausaDiscapacidadId">
+                                    <option ng-repeat="causa in Causas" ng-value="causa.Id">{{causa.Nombre}}</option>
+                                </select>
+                            </div>
+                            <div class="col-4 campo">
+                                <label>Habita el mismo domicilio</label>
+                                <br>
+                                <input type="checkbox" ng-model="Tutor.MismoDomicilio">
+                            </div>
+                        </div>
+                        <slot ng-if="!Tutor.MismoDomicilio">
+                            <hr />
+                            <div class="col-sm-12"><span class="badge badge-info">Domicilio  del padre o tutor</span></div>
+                            <div class="d-flex flex-wrap">
+                                <div class="col-sm-6 campo">
+                                    <label>Correo electrónico <span class="small">({{DomicilioTutor.Email.length}} / 100)</span></label>
+                                    <input type="text" class="form-control" ng-model="DomicilioTutor.Email">
+                                </div>
+                                <div class="col-sm-6 campo">
+                                    <label class="required">Domicilio <span class="small">({{DomicilioTutor.DomicilioN.length}} / 100)</span></label>
+                                    <input type="text" class="form-control" ng-model="DomicilioTutor.DomicilioN">
+                                    <span class="text-danger small">{{ errors["DomicilioTutor.DomicilioN"] }}</span>
+                                </div>
+                                <div class="col-sm-6 campo">
+                                    <label class="required">Entre calle <span class="small">({{DomicilioTutor.EntreCalle1.length}} / 100)</span></label>
+                                    <input type="text" class="form-control" ng-model="DomicilioTutor.EntreCalle1">
+                                    <span class="text-danger small">{{ errors["DomicilioTutor.EntreCalle1"] }}</span>
+                                </div>
+                                <div class="col-sm-6 campo">
+                                    <label class="required">Entre calle <span class="small">({{DomicilioTutor.EntreCalle2.length}} / 100)</span></label>
+                                    <input type="text" class="form-control" ng-model="DomicilioTutor.EntreCalle2">
+                                    <span class="text-danger small">{{ errors["DomicilioTutor.EntreCalle2"] }}</span>
+                                </div>
+                                <div class="col-sm-3 campo">
+                                    <label class="required">Código postal <span class="small">({{DomicilioTutor.CodigoPostal.length}} / 5)</span></label>
+                                    <input type="text" class="form-control" ng-model="DomicilioTutor.CodigoPostal" maxlength="5">
+                                    <span class="text-danger small">{{ errors["DomicilioTutor.CodigoPostal"] }}</span>
+                                </div>
+                                <div class="col-sm-3 campo">
+                                    <label>Teléfono <span class="small">({{DomicilioTutor.Telefono.length}} / 10)</span></label>
+                                    <input type="text" class="form-control" ng-model="DomicilioTutor.Telefono" maxlength="10">
+                                    <span class="text-danger small">{{ errors["DomicilioTutor.Telefono"] }}</span>
+                                </div>
+                                <div class="col-sm-3 campo">
+                                    <label>Teléfono de casa <span class="small">({{DomicilioTutor.TelefonoCasa.length}} / 10)</span></label>
+                                    <input type="text" class="form-control" ng-model="DomicilioTutor.TelefonoCasa" maxlength="10">
+                                    <span class="text-danger small">{{ errors["DomicilioTutor.TelefonoCasa"] }}</span>
+                                </div>
+                                <div class="col-sm-4 campo">
+                                    <label class="required">Municipio</label>
+                                    <select class="selectpicker2 form-control" data-live-search="true" ng-model="DomicilioTutor.MunicipioId" ng-change="BuscarLocalidades()">
+                                        <option ng-repeat="municipio in Municipios" ng-value="municipio.Id">{{municipio.Nombre}}</option>
+                                    </select>
+                                    <span class="text-danger small">{{ errors["DomicilioTutor.MunicipioId"] }}</span>
+                                </div>
+                                <div class="col-sm-4 campo">
+                                    <label class="required">Localidad</label>
+                                    <select class="selectpicker2 form-control" data-live-search="true" ng-model="DomicilioTutor.LocalidadId" ng-change="BuscarAgebs()">
+                                        <option ng-repeat="localidad in Localidades" ng-value="localidad.Id">{{localidad.Nombre}}</option>
+                                    </select>
+                                    <span class="text-danger small">{{ errors["DomicilioTutor.LocalidadId"] }}</span>
+                                </div>
+                                <div class="col-sm-4 campo">
+                                    <label>AGEB</label>
+                                    <select class="selectpicker2 form-control" data-live-search="true" ng-model="DomicilioTutor.AgebId">
+                                        <option ng-repeat="ageb in Agebs" ng-value="ageb.Id">{{ageb.Clave}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </slot>
+                    </div>
+                </div>
+            </div>
+            @if (((ClaimsIdentity)User.Identity).HasClaim("Permiso", "beneficiarios.editar"))
+            {
+                <div class="card-footer">
+                    <button class="btn btn-sm btn-success" ng-click="guardar()" ng-disabled="guardando" ng-if="!guardando && principal">
+                        <i class="fa fa-save"></i> Guardar
+                    </button>
+                    <button class="btn btn-sm btn-success" ng-click="guardarTutor()" ng-disabled="guardando" ng-if="!guardando && !principal">
+                        <i class="fa fa-save"></i> Guardar
+                    </button>
+                    <button class="btn btn-sm btn-success" ng-disabled="guardando" ng-if="guardando">
+                        <i class="fa fa-spinner fa-spin"></i> Guardar
+                    </button>
+                </div>
+            }
+        </div>
+
+        <div id="myModal" class="modal-img" ng-click="Close()" title="Clic para cerrar">
+            <img class="modal-content-img" ng-src="data:image/png;base64,{{ imagenBase64 }}" ng-if="imagenBase64 != ''" />
+            <div id="caption-img">{{ DocName }}</div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=@Configuration["GoogleApi:ApiKey2"]"></script>
+
+    <script>
+        (function () {
+            var app = angular.module('SedeshuApp', ['ui.bootstrap']);
+            var baseUrl = document.baseURI;
+
+            app.controller('indexController',
+                function ($scope, $http, $uibModal) {
+                    $scope.errors = {};
+                    $scope.Hijo = {};
+                    $scope.Domicilio = {};
+                    $scope.DocName = '';
+                    $scope.Tutor = {
+                        FechaNacimiento: "",
+                        MismoDomicilio: false
+                    };
+                    $scope.DomicilioTutor = {};
+                    $scope.Estados = [];
+                    $scope.Estudios = [];
+                    $scope.GradosEstudios = [];
+                    $scope.EstadoCivles = [];
+                    $scope.EstadosCivles = [];
+                    $scope.Documentos = [];
+                    $scope.Huellas = [];
+                    $scope.Discapacidades = [];
+                    $scope.Municipios = [];
+                    $scope.Localidades = [];
+                    $scope.Parentescos = [];
+                    $scope.Agebs = [];
+                    $scope.Grados = [];
+                    $scope.Causas = [];
+                    $scope.Sexos = [];
+                    $scope.guardando = false;
+                    $scope.principal = true;
+
+                    $scope.map = null;
+                    $scope.marker = null;
+                    $scope.ubication = { lat: 21.0676524, lng: -101.2601372 };
+                    $scope.center = null;
+
+                    $scope.init = function (model) {
+                        let fechaNacimiento = model.Hijo.FechaNacimiento;
+                        $scope.Hijo.Id = model.Hijo.Id;
+                        $scope.Hijo.PadreId = model.Hijo.PadreId;
+                        $scope.Hijo.ApellidoPaterno = model.Hijo.ApellidoPaterno;
+                        $scope.Hijo.ApellidoMaterno = model.Hijo.ApellidoMaterno;
+                        $scope.Hijo.Nombre = model.Hijo.Nombre;
+                        $scope.Hijo.FechaNacimiento = new Date(fechaNacimiento.substring(0, 4),
+                            parseInt(fechaNacimiento.substring(5, 7)) - 1, fechaNacimiento.substring(8, 10))
+                        $scope.Hijo.EstadoId = model.Hijo.EstadoId;
+                        $scope.Hijo.Curp = model.Hijo.Curp;
+                        $scope.Hijo.Rfc = model.Hijo.Rfc;
+                        $scope.Hijo.EstudioId = model.Hijo.EstudioId;
+                        $scope.Hijo.EstadoCivilId = model.Hijo.EstadoCivilId;
+                        $scope.Hijo.SexoId = model.Hijo.SexoId;
+                        $scope.Hijo.DiscapacidadId = model.Hijo.DiscapacidadId;
+                        $scope.Hijo.ParentescoId = model.Hijo.ParentescoId;
+                        $scope.Hijo.Comentarios = model.Hijo.Comentarios;
+                        $scope.Hijo.MismoDomicilio = model.Hijo.MismoDomicilio;
+                        $scope.Hijo.GradoEstudioId = model.Hijo.GradoEstudioId;
+                        $scope.Hijo.DiscapacidadGradoId = model.Hijo.DiscapacidadGradoId;
+                        $scope.Hijo.CausaDiscapacidadId = model.Hijo.CausaDiscapacidadId;
+
+                        $scope.Estados = model.Estados;
+                        $scope.Estudios = model.Estudios;
+                        $scope.GradosEstudios = model.GradosEstudios;
+                        $scope.Documentos = model.Documentos;
+                        $scope.Huellas = model.Huellas;
+                        $scope.EstadosCiviles = model.EstadosCiviles;
+                        $scope.Discapacidades = model.Discapacidades;
+                        $scope.Grados = model.Grados;
+                        $scope.Causas = model.Causas;
+                        $scope.Discapacidades = model.Discapacidades;
+                        $scope.Parentescos = model.Parentescos;
+                        $scope.Municipios = model.Municipios;
+                        $scope.Sexos = model.Sexos;
+                        $scope.Domicilio = model.Domicilio;
+                        if (model.Tutor != null) {
+                            $scope.Tutor = model.Tutor;
+                            let fechaNacimientoTutor = model.Tutor.FechaNacimiento;
+                            if (fechaNacimientoTutor != null) {
+                                $scope.Tutor.FechaNacimiento = new Date(fechaNacimientoTutor.substring(0, 4),
+                                    parseInt(fechaNacimientoTutor.substring(5, 7)) - 1, fechaNacimientoTutor.substring(8, 10))
+                            }
+                        }
+
+                        $scope.map = new google.maps.Map(document.getElementById('map'), { zoom: 10, center: $scope.ubication, streetViewControl: false });
+
+                        $scope.map.addListener('center_changed', function () {
+                            $scope.Domicilio.Latitud = parseFloat($scope.map.getCenter().lat());
+                            $scope.Domicilio.Longitud = parseFloat($scope.map.getCenter().lng());
+                            $scope.center = { lat: $scope.Domicilio.Latitud, lng: $scope.Domicilio.Longitud };
+
+                            if ($scope.Domicilio.CapturarUbicacion) {
+                                $scope.marker.setPosition($scope.center);
+                            }
+                        });
+
+                        if ($scope.Domicilio.CapturarUbicacion) {
+                            let latlon = { lat: parseFloat($scope.Domicilio.Latitud), lng: parseFloat($scope.Domicilio.Longitud) };
+                            $scope.marker = new google.maps.Marker({
+                                position: latlon,
+                                map: $scope.map
+                            });
+                            $scope.map.setZoom(10);
+                            $scope.map.panTo(latlon);
+                        }
+
+                        if (model.DomicilioTutor != null) {
+                            $scope.DomicilioTutor = model.DomicilioTutor;
+                        }
+                        $scope.refreshSelect();
+
+                        $scope.ObtenerGradosDiscapacidad();
+                        $scope.BuscarLocalidades();
+                        $scope.BuscarAgebs();
+                    };
+
+                    $scope.SetMarker = function () {
+                        if ($scope.Domicilio.CapturarUbicacion) {
+                            $scope.marker = new google.maps.Marker({
+                                position: $scope.map.getCenter(),
+                                map: $scope.map
+                            });
+
+                            $scope.map.setZoom(10);
+                            $scope.map.panTo($scope.marker);
+                        } else {
+                            $scope.marker.setMap(null);
+                            $scope.marker = null;
+                        }
+                    };
+
+                    $scope.completarDatos = function () {
+                        if ($scope.Hijo.Curp != '') {
+                            let abreviatura = $scope.Hijo.Curp.substring(11, 13);
+                            let fechaNacimiento = $scope.Hijo.Curp.substring(4, 10);
+                            let sexo = $scope.Hijo.Curp.substring(10, 11);
+                            let estado = _.find($scope.Estados, function (estado) {
+                                return estado.Abreviacion == abreviatura;
+                            });
+                            if (estado != null) {
+                                $scope.Hijo.EstadoId = estado.Id;
+                                $scope.Hijo.FechaNacimiento = new Date(fechaNacimiento.substring(0, 2),
+                                    parseInt(fechaNacimiento.substring(3, 4)) - 1, fechaNacimiento.substring(5, 6));
+                                $scope.Hijo.SexoId = _.find($scope.Sexos, function (s) {
+                                    return s.Nombre.startsWith(sexo);
+                                }).Id;
+                            }
+                            $scope.refreshSelect();
+                        }
+                    };
+
+                    $scope.CambiarImagen = function (imagen) {
+                        axios.get(baseUrl + 'Solicitudes/GetImagen/' + imagen.Id).then(function (response) {
+                            $scope.imagenBase64 = response.data;
+                            $scope.DocName = imagen.Nombre;
+                            setTimeout(function () {
+                                $scope.$apply(function () {
+                                    $('#myModal').css("display", "block");
+                                });
+                            })
+                        });
+                    };
+                    
+                    $scope.CambiarHuella = function (imagen) {
+                        axios.get(baseUrl + 'Solicitudes/GetImagen/' + imagen.archivoId).then(function (response) {
+                            $scope.imagenBase64 = response.data;
+                            $scope.DocName = imagen.Nombre;
+                            setTimeout(function () {
+                                $scope.$apply(function () {
+                                    $('#myModal').css("display", "block");
+                                });
+                            })
+                        });
+                    };
+
+                    $scope.Close = function () {
+                        $('#myModal').css("display", "none");
+                    };
+
+                    $scope.ObtenerGradosDiscapacidad = function () {
+                        $http.post(baseUrl + 'Hijo/ObtenerGradoDiscapacidad/', $scope.Hijo.DiscapacidadId)
+                            .then(function (response) {
+                                $scope.Grados = response.data;
+
+                                $scope.refreshSelect();
+                            });
+                    };
+
+                    $scope.BuscarLocalidades = function () {
+                        $http.post(baseUrl + 'Hijo/BuscarLocalidades/', $scope.Domicilio.MunicipioId)
+                            .then(function (response) {
+                                $scope.Localidades = response.data;
+
+                                $scope.refreshSelect();
+                            });
+                    };
+
+                    $scope.cambiarPrincipal = function (principal) {
+                        $scope.principal = principal;
+                    };
+
+                    $scope.BuscarAgebs = function () {
+                        $http.post(baseUrl + 'Hijo/BuscarAGEBs/', $scope.Domicilio.LocalidadId)
+                            .then(function (response) {
+                                $scope.Agebs = response.data;
+
+                                $scope.refreshSelect();
+                            });
+                    };
+
+                    $scope.guardar = function () {
+                        $scope.guardando = true;
+                        $http.post(baseUrl + 'Hijo/Guardar/', {
+                            Hijo: $scope.Hijo,
+                            Domicilio: $scope.Domicilio
+                        })
+                            .then(function (response) {
+                                if (response.data == "ok") {
+                                    window.location.href = baseUrl + 'Beneficiarios/Ver/' + $scope.Hijo.PadreId;
+                                } else {
+                                    $scope.cargarErrores(response.data);
+                                }
+                                $scope.guardando = false;
+                            });
+                    };
+
+                    $scope.guardarTutor = function () {
+                        $scope.guardando = true;
+                        $http.post(baseUrl + 'Hijo/GuardarTutor/', {
+                            Tutor: $scope.Tutor,
+                            DomicilioTutor: $scope.DomicilioTutor
+                        })
+                            .then(function (response) {
+                                if (response.data == "ok") {
+                                    window.location.href = baseUrl + 'Beneficiarios/Ver/' + $scope.Hijo.PadreId;
+                                } else {
+                                    $scope.cargarErrores(response.data);
+                                }
+                                $scope.guardando = false;
+                            });
+                    };
+
+                    $scope.cargarErrores = function (errors) {
+                        $scope.errors = {};
+                        for (var i = 0; i < errors.length; i++) {
+                            $scope.errors[errors[i].Key] = errors[i].Error;
+                        }
+                    };
+
+                    $scope.refreshSelect = _.debounce(function () {
+                        $('.selectpicker2').selectpicker('refresh');
+                    }, 200);
+                });
+        })();
+    </script>
+}
+
+@section Styles{
+    <style>
+        .campo {
+            margin: 5px 0;
+        }
+    </style>
+}

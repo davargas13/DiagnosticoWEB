@@ -1,0 +1,824 @@
+@using DiagnosticoWeb.Code
+@{
+    ViewData["Title"] = "Edición de diagnóstico";
+}
+
+
+<div id="app" ng-app="SedeshuApp" ng-controller="indexController" ng-init="init(@JsonSedeshu.SerializeObject(Model))">
+    <partial name="_Loading_Partial" />
+    <div ng-cloak>
+        <div class="card border-cards">
+            <div class="card-header bg-cards text-white">
+                <h5 class="float-left">Encuesta</h5>                
+                <a class="btn btn-sm btn-header float-right mr-1" href="@Url.Action(controller: "Beneficiarios", action: "Ver")/{{BeneficiarioId}}">
+                    <i class="fa fa-backward"></i> Regresar
+                </a>
+            </div>
+            <div class="card-body">
+                <button class="btn btn-sm btn-info" ng-click="mostrarPreguntas()">
+                    <i class="fa fa-list-ol"></i> Índice de preguntas
+                </button>
+                <div ng-if="numPregunta <= numPreguntas" class="mt-2" ng-click="cerrarPreguntas()">
+                    <div ng-repeat="pregunta in preguntas">                        
+                        <div ng-if="pregunta.Mostrar" style="min-height: 450px;">
+                            <div class="text-center">
+                                <h4>{{pregunta.CarenciaId==null ? 'General' : carencias[pregunta.CarenciaId].Nombre}}</h4>
+                                <label>{{numIteracion== 0 ? 'Todos': 'Integrante '+numIteracion}}</label>
+                                <hr style="border: 2px solid" ng-style="{'border-color': pregunta.CarenciaId==null ? '' : carencias[pregunta.CarenciaId].Color }"/>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <label>{{pregunta.Numero}} .- {{pregunta.Nombre.replace('NOMBRE', ' el habitante '+numIteracion)}}</label>
+                                <label class="small" ng-if="pregunta.Expresion != null">Ejemplo de {{pregunta.Nombre}} : {{pregunta.ExpresionEjemplo}}</label>
+                            </div>
+                            <div>
+                                <select class="form-control selectpicker2" ng-if="pregunta.TipoPregunta=='Listado' && !pregunta.Gradual" ng-model="respuestas[pregunta.Numero][numIteracion].Valores[0].Key">
+                                    <option ng-repeat="respuesta in pregunta.Respuestas" ng-value="respuesta.Id">{{respuesta.Nombre}}</option>
+                                </select>
+                                <div ng-if="pregunta.TipoPregunta=='Check'">
+                                    <div ng-repeat="(irespuesta, respuesta) in pregunta.Respuestas">
+                                        <input type="checkbox" id="{{irespuesta}}" ng-value="respuesta.Id" ng-model="respuestas[pregunta.Numero][numIteracion].Multiples[irespuesta].Key" 
+                                               ng-change="seleccionarNegativa(pregunta.Respuestas, respuestas[pregunta.Numero][numIteracion], irespuesta, pregunta.SeleccionarRespuestas)" 
+                                               ng-disabled="pregunta.SeleccionarRespuestas && !respuesta.Negativa">
+                                        <label for="{{irespuesta}}">{{(respuesta.Nombre)}}</label>
+                                        <div ng-if="respuesta.TipoComplemento=='Abierta'">
+                                            <input type="text" ng-model="respuestas[pregunta.Numero][numIteracion].Multiples[irespuesta].Value" class="form-control input-upper"
+                                                   ng-disabled="pregunta.SeleccionarRespuestas && !respuestas[pregunta.Numero][numIteracion].Multiples[irespuesta].Key">
+                                        </div>
+                                        <div ng-if="respuesta.TipoComplemento=='Numerica'">
+                                            <input type="text" ng-model="respuestas[pregunta.Numero][numIteracion].Multiples[irespuesta].Value" class="form-control" 
+                                                   ng-disabled="pregunta.SeleccionarRespuestas && !respuestas[pregunta.Numero][numIteracion].Multiples[irespuesta].Key"
+                                                   oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" />
+                                        </div>
+                                        <div ng-if="respuesta.TipoComplemento=='Listado'">
+                                            <select class="form-control" ng-model="respuestas[pregunta.Numero][numIteracion].Multiples[irespuesta].Value">
+                                                <option ng-repeat="opcion in respuesta.Complemento.split(',')" ng-value="opcion">{{opcion}}</option>
+                                            </select>
+                                        </div>
+                                        <div ng-if="respuesta.TipoComplemento=='Catalogo'">
+                                            <select class="form-control" ng-model="respuestas[pregunta.Numero][numIteracion].Multiples[irespuesta].Value">
+                                                <option ng-repeat="opcion in respuesta.Catalogo" ng-value="opcion.Nombre">{{opcion.Nombre}}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div ng-if="pregunta.TipoPregunta=='Radio'">
+                                    <div ng-repeat="(irespuesta, respuesta) in pregunta.Respuestas">
+                                        <input type="radio" id="{{irespuesta}}" name="{{pregunta.Id}}" ng-value="respuesta.Id" ng-model="respuestas[pregunta.Numero][numIteracion].Respuestas[0].Key"
+                                               ng-change="seleccionarRadio(pregunta, respuesta, respuestas[pregunta.Numero][numIteracion].Respuestas[0])">
+                                        <label for="{{irespuesta}}">{{respuesta.Nombre}}</label>
+                                        <div ng-if="respuesta.TipoComplemento=='Abierta'">
+                                            <input type="text" ng-model="respuestas[pregunta.Numero][numIteracion].Respuestas[irespuesta].Value" class="form-control input-upper" maxlength="100"/>
+                                        </div>
+                                        <div ng-if="respuesta.TipoComplemento=='Numerica'">
+                                            <input type="text" ng-model="respuestas[pregunta.Numero][numIteracion].Respuestas[irespuesta].Value" class="form-control" maxlength="20"
+                                                   oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" />
+                                        </div>
+                                        <div ng-if="respuesta.TipoComplemento=='Listado'">
+                                            <select class="form-control" ng-model="respuestas[pregunta.Numero][numIteracion].Respuestas[irespuesta].Value">
+                                                <option ng-repeat="opcion in respuesta.Complemento.split(',')" ng-value="opcion">{{opcion}}</option>
+                                            </select>
+                                        </div>
+                                        <div ng-if="respuesta.TipoComplemento=='Catalogo'">
+                                            <label>{respuesta.TipoComplemento}</label>
+                                            <select class="form-control" ng-model="respuestas[pregunta.Numero][numIteracion].Respuestas[irespuesta].Value">
+                                                <option ng-repeat="opcion in respuesta.Catalogo" ng-value="opcion.Nombre">{{opcion.Nombre}}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div ng-if="pregunta.Maximo > 0">
+                                    <span class="d-block small text-right">{{respuestas[pregunta.Numero][numIteracion].Valores[0].Key.length}}/{{pregunta.Maximo}}</span>
+                                </div>                                
+                                <input type="text" class="form-control" ng-if="pregunta.TipoPregunta == 'Numerica' && pregunta.Complemento==null" ng-model="respuestas[pregunta.Numero][numIteracion].Valores[0].Key"
+                                       oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" maxlength="{{pregunta.Maximo > 0 ? pregunta.Maximo : 20}}" />
+                                <select ng-if="pregunta.TipoPregunta == 'Numerica' && pregunta.Complemento != null" class="form-control" ng-model="respuestas[pregunta.Numero][numIteracion].Valores[0].Key">
+                                    <option ng-repeat="opcion in pregunta.Complemento.split(',')" ng-value="opcion">{{opcion}}</option>
+                                </select>
+                                <input class="form-control input-upper" ng-if="pregunta.TipoPregunta=='Abierta'" ng-model="respuestas[pregunta.Numero][numIteracion].Valores[0].Key"
+                                       maxlength="{{pregunta.Maximo >  0 ? pregunta.Maximo : 20}}"/>
+                                <input type="date" class="form-control" ng-if="pregunta.TipoPregunta=='Fecha'" ng-model="respuestas[pregunta.Numero][numIteracion].Valores[0].Key">
+                                <input type="date" class="form-control" max="@Model.Now" ng-if="pregunta.TipoPregunta=='FechaPasada'" ng-model="respuestas[pregunta.Numero][numIteracion].Valores[0].Key">
+                                <input type="date" class="form-control" min="@Model.Now" ng-if="pregunta.TipoPregunta=='FechaFutura'" ng-model="respuestas[pregunta.Numero][numIteracion].Valores[0].Key">
+                                <div ng-if="pregunta.Gradual" ng-repeat="(irespuesta, respuesta) in pregunta.Respuestas" class="mb-2 pb-2" style="border-bottom: 1px solid lightgray;">
+                                    <div ng-if="!respuesta.Negativa">{{respuesta.Nombre}}</div>
+                                    <select class="selectpicker2" ng-if="!respuesta.Negativa" ng-model="respuestas[pregunta.Numero][numIteracion].Grados[irespuesta]">
+                                        <option ng-repeat="grado in pregunta.PreguntaGrados" ng-value="respuesta.RespuestaGrados[grado.Id].Grado">{{grado.Grado}}</option>
+                                    </select>
+                                    <select class="selectpicker2" ng-model="respuestas[pregunta.Numero][numIteracion].Valores[irespuesta].Value" ng-if="respuesta.TipoComplemento=='Catalogo'">
+                                        <option ng-repeat="opcion in respuesta.Catalogo" value="{{opcion.Id}}">{{opcion.Nombre}}</option>
+                                    </select>
+                                    <select class="selectpicker2" ng-model="respuestas[pregunta.Numero][numIteracion].Respuestas[irespuesta].Value"
+                                            ng-if="respuesta.TipoComplemento=='Listado'">
+                                        <option value="0">No hay selección</option>
+                                        <option ng-repeat="(iopcion, opcion) in respuesta.Complemento.split(',')" value="{{iopcion+1}}">{{(opcion)}}</option>
+                                    </select>
+                                    <input type="checkbox" id="{{irespuesta}}" ng-if="respuesta.Negativa" ng-model="respuestas[pregunta.Numero][numIteracion].Grados[irespuesta]" 
+                                           ng-change="seleccionarNegativaGradual(pregunta.Respuestas, respuestas[pregunta.Numero][numIteracion], respuestas[pregunta.Numero][numIteracion].Grados[irespuesta])">
+                                    <label ng-if="respuesta.Negativa" for="{{irespuesta}}">{{respuesta.Nombre}}</label>
+                                </div>
+                                <div ng-if="pregunta.TipoPregunta=='Integrantes'">
+                                    <select class="form-control" ng-model="respuestas[pregunta.Numero][numIteracion].Valores[0].Key">
+                                        <option ng-repeat="(iintegrante, integrante) in Integrantes" ng-value="integrante.Id">{{(iintegrante)+" - "+integrante.Nombre}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <br>
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <button class="btn btn-info" ng-click="regresar()" ng-disabled="numPregunta == primerPregunta">
+                                <i class="fa fa-arrow-left"></i> Anterior
+                            </button>
+                        </div>
+                        <div>
+                            <button class="btn btn-info mt-2" ng-click="enviar()" ng-if="!enviando">
+                                <i class="fa fa-save"></i> Enviar resultados
+                            </button>
+                            <button class="btn btn-info mt-2" ng-if="enviando" ng-click="enviar()">
+                                <i class="fa fa-spinner fa-spin"></i> Enviar resultados
+                            </button>
+                            <span class="text-danger">{{error}}</span>
+                        </div>
+                        <div>
+                            <button class="btn btn-info" ng-click="avanzar()" ng-if="numPregunta < numPreguntas">
+                                <i class="fa fa-arrow-right"></i> Siguiente
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div ng-if="MostrarMenu" class="menu">
+            <div class="d-flex justify-content-between">
+                <span class="font-weight-bold">Preguntas</span>
+                <button class="btn btn-sm btn-light float-right" ng-click="cerrarPreguntas()">
+                    <i class="fa fa-times"></i>
+                </button>
+            </div>
+            <div class="d-flex flex-column">
+                <div ng-repeat="pregunta in preguntas">
+                    <div class="pregunta" ng-if="!pregunta.Iterable != null && respuestas[pregunta.Numero][0] != null" ng-click="seleccionarPregunta(pregunta.Numero, 0)">
+                        {{pregunta.Numero + ".-" + pregunta.Nombre}}
+                    </div>
+                    <div ng-if="pregunta.Iterable">
+                        <div class="pregunta" ng-if="respuestas[pregunta.Numero] != null" ng-click="seleccionarPregunta(pregunta.Numero, 1)">
+                            {{pregunta.Numero + '.-' + pregunta.Nombre}}
+                        </div>
+                        <div class="pregunta" ng-repeat="(index, respuesta) in respuestas[pregunta.Numero]" ng-click="seleccionarPregunta(pregunta.Numero, index)">
+                            <label>{{pregunta.Numero + ".-" + index}} Integrante {{index}} </label>
+                        </div>
+                    </div>
+                </div>
+                <div ng-if="preguntas.length==0">
+                    <span>No hay preguntas que mostrar</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script>
+        (function () {
+            var app = angular.module('SedeshuApp', ['ui.bootstrap']);
+            var baseUrl = document.baseURI;
+
+            app.controller('indexController',
+                function ($scope, $http) {
+                    $scope.primerPregunta = 1;
+                    $scope.id = '';                   
+                    $scope.BeneficiarioId = '';
+                    $scope.preguntas = {};
+                    $scope.respuestas = {};
+                    $scope.carencias = {};
+                    $scope.numIteracion = 0;
+                    $scope.numPregunta = 1;
+                    $scope.numPreguntas = 0;
+                    $scope.grupos = {};
+                    $scope.error = '';
+                    $scope.MostrarMenu = false;
+                    $scope.enviando = false;
+                    $scope.totalIntegrantes = 0;
+                    $scope.Integrantes = [];
+                    
+                    $scope.mostrarPreguntas = function () {                        
+                        $scope.MostrarMenu = true;                        
+                    };
+
+                    $scope.cerrarPreguntas = function () {
+                        $scope.MostrarMenu = false;
+                    };
+
+                    $scope.init = function (model) {
+                        console.log(model.Respuestas[17]);
+                        $scope.id = model.Id;
+                        $scope.BeneficiarioId = model.BeneficiarioId;
+                        $scope.preguntas = model.Preguntas;
+                        $scope.respuestas = model.Respuestas;
+                        $scope.Integrantes = model.Integrantes;
+                        $scope.totalIntegrantes = model.TotalIntegrantes;
+                        _.each($scope.respuestas, function (respuesta, index) {
+                            if ($scope.preguntas[index] != null) {
+                                let tipoPregunta = $scope.preguntas[index].TipoPregunta;
+                                if (tipoPregunta == "Fecha" || tipoPregunta == "FechaPasada" || tipoPregunta == "FechaFutura") {
+                                    _.each(respuesta, function (r) {
+                                        r.Valores[0].Key = new Date(r.Valores[0].Key.substring(0, 4), parseInt(r.Valores[0].Key.substring(5, 7)) - 1, r.Valores[0].Key.substring(8, 10));                                         
+                                    });
+                                }
+                            }                          
+                        });
+                        
+                        $scope.carencias = model.Carencias;
+                        $scope.numPreguntas = model.NumPreguntas;
+                        $scope.primerPregunta = model.MismoDomicilio ? 11: 1;
+                        $scope.numPregunta = $scope.primerPregunta; 
+                        $scope.mostrarPregunta();                        
+                        $scope.refreshSelect();                        
+                    };
+
+                    $scope.regresar = function () {
+                        if ($scope.numPregunta > $scope.primerPregunta) {
+                            $scope.mover('izquierda')
+                        }
+                    };
+                    
+                    $scope.avanzar = function () {
+                        if ($scope.numPregunta < $scope.numPreguntas) {
+                            $scope.mover('derecha')
+                        }
+                    };                    
+
+                    //Funcion que valida si la respuesta fue contestada correctamente
+                    $scope.validar = function (sentido) {
+                        let valido = true;
+                        let pregunta = $scope.preguntas[$scope.numPregunta];
+                        if ((pregunta.TipoPregunta=='Check'||pregunta.TipoPregunta=='Radio' || pregunta.Gradual) && $scope.respuestas[$scope.numPregunta] != null){   
+                            if (pregunta.Gradual){
+                                _.each($scope.respuestas[$scope.numPregunta][$scope.numIteracion].Grados, function(r, ir) {
+                                    let res = pregunta.Respuestas[ir];
+                                    if ($scope.respuestas[$scope.numPregunta][$scope.numIteracion].Respuestas[ir] == null){
+                                        $scope.respuestas[$scope.numPregunta][$scope.numIteracion].Respuestas[ir] = {Key : res.Id, Value:null};
+                                    }else{
+                                        $scope.respuestas[$scope.numPregunta][$scope.numIteracion].Respuestas[ir].Key = res.Id;
+                                    }
+                                });
+                            }
+                            if ($scope.respuestas[$scope.numPregunta]!=null && $scope.respuestas[$scope.numPregunta][$scope.numIteracion]!=null){
+                                _.each($scope.respuestas[$scope.numPregunta][$scope.numIteracion].Respuestas, function(r, ir) {
+                                    if ($scope.respuestas[$scope.numPregunta][$scope.numIteracion].Valores[ir] == null){
+                                        $scope.respuestas[$scope.numPregunta][$scope.numIteracion].Valores[ir] = {Key : r.Key, Value:null};
+                                    }else{
+                                        $scope.respuestas[$scope.numPregunta][$scope.numIteracion].Valores[ir].Key = r.Key;
+                                    }
+                                });
+                                if (pregunta.TipoPregunta=='Check'){
+                                    if ($scope.respuestas[$scope.numPregunta][$scope.numIteracion].Valores[0]!=null && $scope.respuestas[$scope.numPregunta][$scope.numIteracion].Valores[0].Key==null){
+                                        delete $scope.respuestas[$scope.numPregunta][$scope.numIteracion].Valores[0];
+                                    }
+                                }
+                            }
+                        }
+                        if (sentido == 'derecha' && $scope.preguntas[$scope.numPregunta].Mostrar) { //Validamos cuando se avanza en las preguntas, si se retrocede no se valida porque no se guarda el valor
+                            if (($scope.respuestas[$scope.numPregunta] != null && $scope.respuestas[$scope.numPregunta][$scope.numIteracion] != null)) {
+                                let resp = $scope.respuestas[$scope.numPregunta][$scope.numIteracion];
+                                if (pregunta.Gradual) {
+                                    _.each($scope.respuestas[$scope.numPregunta][$scope.numIteracion].Grados, function (grado, i) {
+                                        valido &= ($scope.respuestas[$scope.numPregunta][$scope.numIteracion].Grados[i] !== null 
+                                        && $scope.respuestas[$scope.numPregunta][$scope.numIteracion].Grados[i] !== 0);
+                                    });    
+                                    let negativaSeleccionada = false;
+                                    _.each($scope.respuestas[$scope.numPregunta][$scope.numIteracion].Grados, function (grado, i) {
+                                        negativaSeleccionada |= $scope.respuestas[$scope.numPregunta][$scope.numIteracion].Grados[i] === true;
+                                    });
+                                    valido |= negativaSeleccionada;
+                                    if (!valido) {
+                                        $scope.error = 'Debe seleccionar una respuesta';
+                                    }
+                                } else {
+                                    if (pregunta.Expresion == null) {
+                                        if (pregunta.TipoPregunta == 'Check'){//Si la pregunta es de opcion multiple, validamos que por lo menos una opcion esté seleccionada
+                                            let algunoSeleccionado = false;
+                                            _.each(resp.Multiples, function(m, im) {
+                                                if (pregunta.Respuestas[im].Complemento == null){
+                                                    algunoSeleccionado |= m.Key;                                                   
+                                                }else{
+                                                    algunoSeleccionado |= m.Key && (m.Value != null && m.Value != '');                                                   
+                                                }
+                                            });
+                                            valido &= algunoSeleccionado;                                           
+                                        }else{//Si es de cualquier otro tipo validamos que haya sido respondida                                            
+                                            valido = (resp.Valores != null && resp.Valores[0] !=null && resp.Valores[0].Key != null) 
+                                            || (resp.Respuestas != null && resp.Respuestas[0] != null && resp.Respuestas[0].Key != null);
+                                        }
+                                        if (!valido) {
+                                            $scope.error = 'Debe seleccionar una respuesta';
+                                        }
+                                    } else {//Validamos que la respuesta cumpla con el formato de expresion regular, si es que este dato esta configurado en la pregunta
+                                        let regex = new RegExp(pregunta.Expresion.replace("$", ""));
+                                        valido = resp.Valores[0].Key.match(regex) != null;
+                                        if (!valido) {
+                                            $scope.error = 'La respuesta no tiene un formato válido';
+                                        }
+                                    }
+                                }
+                            } else {
+                                valido = false;
+                                $scope.error = 'Debe seleccionar una respuesta';
+                            }
+                        }
+                        return valido;
+                    };
+                    
+                    // Funcion que calcula la siguiente pregunta a mostrar de acuerdo a las condiciones de las preguntas
+                    $scope.mover = function (sentido) {
+                        $scope.error = '';
+                        if ($scope.validar(sentido) && $scope.numPregunta <= $scope.numPreguntas) { //Validamos que no se haya llegado al limite de preguntas
+                            let actual = $scope.preguntas[$scope.numPregunta];
+                            let siguiente = $scope.preguntas[sentido == 'derecha' ? $scope.numPregunta + 1 : $scope.numPregunta - 1];
+                            actual.Mostrar = false;
+                            if (actual.Id == '991'){
+                                $scope.crearFamilia();
+                            }
+                            if (actual.Id=="987") {//Actualizamos el numero de integrantes al contestar la pregunta 987                                
+                                let preg = _.find($scope.preguntas, function (pregunta) {
+                                    return pregunta.Id == "987";
+                                });
+                                $scope.totalIntegrantes = parseInt($scope.respuestas[preg.Numero][$scope.numIteracion].Valores[0].Key);
+                            }
+                            if (siguiente.Iterable) {//Vamos a revisar si la siguiente pregunta es iterable
+                                if (siguiente.CondicionIterable != actual.CondicionIterable) {//Vamos a validar si la siguiente pregunta es iterable y la actual no, para regresar a numIteraciones a 0 y mostrar la siguiente pregunta no iterable
+                                    if (sentido == 'derecha') {
+                                        $scope.numIteracion = $scope.numIteracion + 1;
+                                    } else {//Calculamos el ultimo integrante y mostramos su ultima pregunta ya que se está retrocediendo
+                                        let condicion = siguiente.CondicionIterable.split(',');
+                                        let preguntaId = condicion[0].replace('?', '');
+                                        let preguntaIteracion = _.find($scope.preguntas, function (pregunta) {
+                                            return pregunta.Id == preguntaId;
+                                        });
+                                        let numIteraciones = 0;
+                                        if(preguntaIteracion.TipoPregunta == 'Numerica'){
+                                            numIteraciones = $scope.respuestas[preguntaIteracion.Numero][0].Valores[0].Key;                                               
+                                        }else{
+                                            if (preguntaIteracion.TipoPregunta == 'Radio'){
+                                                console.log($scope.respuestas[pregunta.Numero]);
+                                                numIteraciones = $scope.respuestas[preguntaIteracion.Numero][0].Respuestas[0].Value;
+                                            }else{
+                                                for (let j = 0; j< $scope.totalIntegrantes; j++){
+                                                    if ($scope.respuestas[preguntaIteracion.Numero][0].Valores[j]!=null){
+                                                        numIteraciones = $scope.respuestas[preguntaIteracion.Numero][0].Valores[j].Value;
+                                                        if(numIteraciones != null){
+                                                            break;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            
+                                        }
+                                        if (numIteraciones == null){
+                                            numIteraciones = 0;
+                                        }
+                                        $scope.numIteracion = numIteraciones;
+                                    }
+                                }
+                                let condicionIterable = siguiente.CondicionIterable.split(",");
+                                let preguntaCondicion = _.find($scope.preguntas, function (pregunta) {
+                                    return pregunta.Id == condicionIterable[0].replace('?', '');
+                                });
+                                let terminarRecorrido = false;
+                                _.each($scope.preguntas, function (pregunta) {
+                                    if (pregunta.CondicionIterable != null) {//Vamos a buscar las preguntas del mismo ciclo iterativo y vamos a ver si las vamos a mostrar
+                                        let condicion = pregunta.CondicionIterable.split(',');
+                                        if (condicion[0].replace('?', '') == preguntaCondicion.Id) {
+                                            let numIteraciones = 0;
+                                            if (preguntaCondicion.TipoPregunta == 'Numerica'){
+                                                numIteraciones = $scope.respuestas[preguntaCondicion.Numero][0].Valores[0].Key;                                               
+                                            }else{
+                                                if (preguntaCondicion.TipoPregunta=='Radio'){
+                                                    numIteraciones = $scope.respuestas[preguntaCondicion.Numero][0].Respuestas[0].Value;                                                         
+                                                }else{
+                                                    for (let j = 0; j< $scope.totalIntegrantes; j++){
+                                                        if ($scope.respuestas[preguntaCondicion.Numero][0].Valores[j]!=null){
+                                                            numIteraciones = $scope.respuestas[preguntaCondicion.Numero][0].Valores[j].Value;
+                                                            if(numIteraciones != null){
+                                                                break;
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            
+                                            if (numIteraciones == null){
+                                                numIteraciones = 0;
+                                            }
+                                            if (numIteraciones == 0){//Esto quiere decir que este bloque de preguntas no se debe mostrar ya que ningun integrante cumple con estas caracteristicas
+                                                $scope.numPregunta = pregunta.Numero;
+                                                $scope.numIteracion = 0;
+                                                if (sentido == 'derecha'){
+                                                    siguiente = $scope.preguntas[$scope.numPregunta+1];
+                                                }else{
+                                                    siguiente = $scope.preguntas[$scope.numPregunta-1];
+                                                    terminarRecorrido = true;
+                                                }
+                                            }
+                                            let indices = [];
+                                            _.each($scope.respuestas[pregunta.Numero], function (iteracion, index) {
+                                                if (index > parseInt(numIteraciones)) {
+                                                    indices.push(index);
+                                                }
+                                            });
+                                            _.each(indices, function (indice) {
+                                                delete $scope.respuestas[pregunta.Numero][indice];
+                                            });
+                                            if (terminarRecorrido){
+                                                return false;
+                                            }
+                                        }
+                                    }
+                                });
+                            } else {//La siguiente pregunta no es iterable
+                                if (actual.Iterable) {//Pero la actual si es iterable, por lo cual debemos cerar el ciclo de preguntas y dejar el num de integrante en 0
+                                    let condicion = actual.CondicionIterable.split(',');
+                                    let preguntaId = condicion[0].replace('?', '');
+                                    let preguntaIteracion = _.find($scope.preguntas, function (pregunta) {
+                                        return pregunta.Id == preguntaId;
+                                    });
+                                    let numIteraciones = 0;
+                                    if (preguntaIteracion.TipoPregunta == 'Numerica'){
+                                        numIteraciones = $scope.respuestas[preguntaIteracion.Numero][0].Valores[0].Key;                                               
+                                    }else{
+                                        if (preguntaIteracion.TipoPregunta=='Radio'){
+                                            numIteraciones = $scope.respuestas[preguntaIteracion.Numero][0].Respuestas[0].Value;
+                                        }else{
+                                            for (let j = 0; j< $scope.totalIntegrantes; j++){
+                                                if ($scope.respuestas[preguntaIteracion.Numero][0].Valores[j]!=null){
+                                                    numIteraciones = $scope.respuestas[preguntaIteracion.Numero][0].Valores[j].Value;
+                                                    if(numIteraciones != null){
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                    let numPregunta = $scope.numPregunta;                                    
+                                    while($scope.preguntas[numPregunta-1].Iterable){
+                                        numPregunta--;                                        
+                                    }                                                                        
+                                    if (numIteraciones == $scope.numIteracion && sentido == 'derecha') {
+                                        $scope.numIteracion = 0;
+                                    } else {
+                                        siguiente.Mostrar = false;
+                                        if (sentido == 'derecha') {
+                                            $scope.numIteracion++;
+                                            $scope.numPregunta = numPregunta - 1;
+                                            siguiente = $scope.preguntas[$scope.numPregunta + 1];
+                                        } else {
+                                            $scope.numIteracion--;
+                                            if ($scope.numIteracion > 0) {
+                                                let ultimaPregunta = _.findLast($scope.preguntas, function (pregunta) {
+                                                    return pregunta.CondicionIterable == condicion;
+                                                });
+                                                $scope.numPregunta = ultimaPregunta.Numero + 1;
+                                            }
+                                            siguiente = $scope.preguntas[$scope.numPregunta - 1];
+                                        }
+                                    }                                    
+                                }
+                            }
+                            if (siguiente.Condicion != null) {//Vamos a ver si la siguiente pregunta se debe mostrar o no de acuerdo a su condicion
+                                let continuar = true;                               
+                                _.each(siguiente.Condicion.substr(1).split("|"), function(c) {//Vamos a descomponer la condicion en subcondiciones                                   
+                                    if (continuar){
+                                        let condicion = c.split(',');
+                                        let preguntaId = condicion[0];                                        
+                                        let preguntaCondicion = _.find($scope.preguntas, function (pregunta) {
+                                            return pregunta.Id == preguntaId;
+                                        });
+                                        let rangoCondiciones = condicion[1].split("&");//vamos a buscar si una condicion es de tipo intervalo 
+                                        _.each(rangoCondiciones, function(rango) {
+                                            if (continuar){
+                                                if (siguiente.CondicionLista) {//Vamos a validar si la pregunta es de tipo condicion lista buscando en los integrantes si se contesto lo que tiene esta pregunta confiurado como condicion
+                                                    let encontrado = false;
+                                                    _.each($scope.respuestas[preguntaCondicion.Numero], function (it){
+                                                        encontrado |= _.find(it.Valores, function (respuesta) {
+                                                            return $scope.evaluar(respuesta, rango);
+                                                        });
+                                                    });
+                                                    if (encontrado) {
+                                                        continuar = true;
+                                                    } else {                                                
+                                                        continuar = false;
+                                                    }
+                                                } else {//No tiene condicion lista asi que vamos a evaluar las respuestas contestadas
+                                                    let respuesta = $scope.obtenerRespuesta(preguntaCondicion);
+                                                    continuar = respuesta == '' ? true: $scope.evaluar(respuesta, rango);
+                                                }
+                                            }
+                                        });
+                                    }
+                                });
+                                if (continuar) {//Si la pregunta se debe mostrar
+                                    siguiente.Mostrar = true;
+                                    $scope.numPregunta = $scope.numPregunta + (sentido == 'derecha' ? 1 : -1);
+                                    $scope.refreshSelect();
+                                } else {//Si la pregunta no se debe mostrar se debe validar la siguiente pregunta
+                                    siguiente.Mostrar = false;
+                                    $scope.numPregunta = $scope.numPregunta + (sentido == 'derecha' ? 1 : -1);
+                                    $scope.mover(sentido);
+                                }                                
+                                _.each($scope.preguntas, function (pregunta) {//Vamos a ver si el resto de preguntas se deben eliminar de acuerdo a lo que se contesto en la pregunta
+                                    if (pregunta.Numero > $scope.numPregunta && pregunta.Condicion != null) {
+                                        continuar = true;
+                                        _.each(pregunta.Condicion.substr(1).split("|"), function(c) {
+                                            if (continuar){
+                                                let condicion = c.split(',');
+                                                let preguntaId = condicion[0];                                                
+                                                let preguntaCondicion = _.find($scope.preguntas, function (pregunta) {
+                                                    return pregunta.Id == preguntaId;
+                                                });
+                                                if (condicion == preguntaCondicion.Id) {
+                                                    let rangoCondiciones = condicion[1].split("&");//vamos a buscar si una condicion es de tipo intervalo 
+                                                    _.each(rangoCondiciones, function(rango) {
+                                                        if (continuar){                                                            
+                                                            let respuesta = $scope.obtenerRespuesta(preguntaCondicion);
+                                                            continuar = $scope.evaluar(respuesta, rango);
+                                                        }
+                                                    });
+                                                }                                               
+                                            }                                        
+                                        });
+                                        if (!continuar) {
+                                            _.each($scope.respuestas[pregunta.Numero], function (iteracion) {
+                                                iteracion = null;
+                                            })
+                                        }
+                                    }
+                                });
+                            } else {//La siguiente pregunta no tiene condicion asi que se puede mostrar
+                                siguiente.Mostrar = true;
+                                $scope.numPregunta = $scope.numPregunta + (sentido == 'derecha' ? 1 : -1);
+                                $scope.refreshSelect();
+                            }                            
+                            $scope.mostrarPregunta();//Mostramos la siguiente pregunta
+                        }
+                    };
+
+                    $scope.obtenerRespuesta = function(pregunta){
+                        let respuesta = '';
+                        //console.log($scope.respuestas[pregunta.Numero]);
+                        if ($scope.respuestas[pregunta.Numero] != null && 
+                            $scope.respuestas[pregunta.Numero][pregunta.Iterable ? $scope.numIteracion : 0] != null) {
+                            if (pregunta.TipoPregunta == 'Abierta' || pregunta.TipoPregunta == 'Numerica' || pregunta.TipoPregunta == 'Fecha') {//Si la pregunta es de tipo abierta, numerica y fecha buscamos en el arreglo Valores
+                                respuesta = $scope.respuestas[pregunta.Numero][pregunta.Iterable ? $scope.numIteracion : 0].Valores[0].Key;
+                            } else {
+                                if(pregunta.TipoPregunta == 'Check'){
+                                    let respuestas = [];
+                                    _.each($scope.respuestas[pregunta.Numero][pregunta.Iterable ? $scope.numIteracion : 0].Respuestas, function(key) {
+                                        respuestas.push(key.Key);
+                                    });
+                                    respuesta = respuestas.join("|");
+                                }else{
+                                    respuesta = $scope.respuestas[pregunta.Numero][pregunta.Iterable ? $scope.numIteracion : 0].Respuestas[0].Key;
+                                }
+                            }
+                        }
+                        return respuesta;
+                    };
+                    
+                    $scope.mostrarPregunta = function (){                        
+                        let pregunta = $scope.preguntas[$scope.numPregunta];                        
+                        if ($scope.respuestas[$scope.numPregunta] == null){                                                   
+                            $scope.respuestas[$scope.numPregunta] = {};                            
+                            $scope.respuestas[$scope.numPregunta][$scope.numIteracion] = {Respuestas : {}, Multiples:{}, Valores:{}, Grados:{}, Id:pregunta.Id};                            
+                            $scope.respuestas[$scope.numPregunta][$scope.numIteracion].Valores[0] = {Key:null, Value:null};
+                        }else{
+                            if ($scope.respuestas[$scope.numPregunta][$scope.numIteracion]==null){
+                                $scope.respuestas[$scope.numPregunta][$scope.numIteracion] = {Respuestas : {}, Multiples:{}, Valores:{}, Grados:{}, Id:pregunta.Id};
+                                $scope.respuestas[$scope.numPregunta][$scope.numIteracion].Valores[0] = {Key:null, Value:null};
+                            }
+                        }
+                        if (pregunta.TipoPregunta == 'Check'){
+                             _.each(pregunta.Respuestas, function (r, ir){
+                                 if ($scope.respuestas[pregunta.Numero][$scope.numIteracion].Multiples[ir]==null){
+                                    $scope.respuestas[pregunta.Numero][$scope.numIteracion].Multiples[ir] = {Key:false,Value:null};
+                                 }
+                            });
+                        }                        
+                        if (pregunta.SeleccionarRespuestas){//Vamos a revisar si esa pregunta tiene seleccionada una respuesta negativa
+                            if (_.some(pregunta.Respuestas,  function (r){
+                                return r.Negativa;
+                            })){
+                                let negativaSeleccionada = -1;
+                                _.each($scope.respuestas[$scope.numPregunta][$scope.numIteracion].Multiples, function (m, im){//Vamos a encontrar esa respuesta negativa para deseleccionar las otras opciones
+                                    if (m.Key && pregunta.Respuestas[im].Negativa){
+                                        negativaSeleccionada = im;
+                                    }
+                                });
+                                if (negativaSeleccionada>-1){
+                                    _.each($scope.respuestas[$scope.numPregunta][$scope.numIteracion].Multiples, function (m, im){
+                                        if (im != negativaSeleccionada){
+                                            m.Key = false;
+                                        }
+                                    });
+                                }else{
+                                    _.each(pregunta.Respuestas, function (r, ir){
+                                        if(!pregunta.Respuestas[ir].Negativa){
+                                            $scope.respuestas[$scope.numPregunta][$scope.numIteracion].Multiples[ir].Key = true;
+                                            $scope.respuestas[$scope.numPregunta][$scope.numIteracion].Respuestas[ir] = {Key: r.Id, Value: null};
+                                        }
+                                    });
+                                }
+                            }
+                            else{                                
+                                _.each(pregunta.Respuestas, function (r, ir){
+                                    $scope.respuestas[$scope.numPregunta][$scope.numIteracion].Multiples[ir].Key = true;
+                                    $scope.respuestas[$scope.numPregunta][$scope.numIteracion].Respuestas[ir] = {Key: r.Id, Value: null};
+                                });
+                            }
+                        }
+                    };
+                    
+                    $scope.crearFamilia = function(){
+                        let preguntaNombre = _.find($scope.preguntas, function(p) {
+                          return p.Id == "989";
+                        });
+                        let preguntaApellidoP = _.find($scope.preguntas, function(p) {
+                          return p.Id == "990";
+                        });
+                        let preguntaApellidoM = _.find($scope.preguntas, function(p) {
+                          return p.Id == "991";
+                        });
+                        for (let i = 0; i < $scope.totalIntegrantes; i++) {
+                            if ($scope.respuestas[preguntaNombre.Numero][i+1] != null) {
+                                $scope.Integrantes[i] = {Id:i, Nombre:$scope.respuestas[preguntaNombre.Numero][i+1].Valores[0].Key+" "+
+                                $scope.respuestas[preguntaApellidoP.Numero][i+1].Valores[0].Key+" "+$scope.respuestas[preguntaApellidoM.Numero][i+1].Valores[0].Key};                                
+                            }
+                        }
+                    };
+                    
+                    //Funcion que evalua si la condicion de la pregunta se cumple con el valor de la misma
+                    $scope.evaluar = function (valor, condicion) {
+                        if (condicion.startsWith('>')) {
+                            return parseFloat(valor) > parseFloat(condicion.replace('>', ''));
+                        } else {
+                            if (condicion.startsWith('<')) {
+                                return parseFloat(valor) < parseFloat(condicion.replace('<', ''));
+                            } else {
+                                if (condicion.startsWith('!=')) {
+                                    return valor != condicion.replace('!=', '');
+                                } else {
+                                    let respuestas = condicion.split('/');
+                                    let valores = valor.split('|');
+                                    let contiene = false;
+                                    _.each(valores, function(v) {
+                                        contiene |= respuestas.includes(v);
+                                        if (contiene){
+                                            return false;
+                                        }
+                                    });
+                                    return contiene;
+                                }
+                            }
+                        }
+                    };
+
+                    //Funcion que envia la encuesta al servidor para guardarla en la base de datos
+                    $scope.enviar = function () {
+                        let confirmar = true;
+                        if ($scope.numPregunta < $scope.numPreguntas){
+                            confirmar = confirm("No te encuentras en la última pregunta del diagnostico, aún asi ¿deseas enviar estos resultados?")
+                        }
+                        if (confirmar){
+                            $scope.enviando = true;
+                            $http.post(baseUrl + 'Aplicacion/Guardar', { Id: $scope.id, Respuestas: $scope.respuestas }).then(function (response) {
+                                $scope.enviando = false;
+                                if (response.data == 'ok') {
+                                    window.location.href = baseUrl + 'Beneficiarios/Ver/' + $scope.BeneficiarioId;
+                                }
+                            }).catch(function() {
+                                $scope.enviando = false;
+                            });
+                        }
+                    };
+
+                    $scope.refreshSelect = _.debounce(function () {
+                        $('.selectpicker2').selectpicker('refresh');
+                    }, 200);
+
+                    $scope.seleccionarPregunta = function (numero, iteracion) {
+                        let pregunta = _.find($scope.preguntas, function (pregunta) {
+                            return pregunta.Mostrar;
+                        });
+                        if (pregunta != null) {
+                            pregunta.Mostrar = false;
+                        }
+                        $scope.numPregunta = numero;
+                        $scope.numIteracion = iteracion;
+                        $scope.preguntas[numero].Mostrar = true;
+                        $scope.cerrarPreguntas();
+                        $scope.refreshSelect();
+                        $scope.mostrarPregunta();
+                    };
+
+                    $scope.seleccionarNegativaGradual = function (respuestas, pregunta, negativa) {                        
+                        _.each(respuestas, function (respuesta, i) {
+                            if (i < respuestas.length - 1) {
+                                if (negativa) {
+                                    pregunta.Grados[i] = 0;
+                                    pregunta.Respuestas[i].Value = 0;
+                                }
+                            }
+                        });
+                        $scope.refreshSelect();
+                    };
+                    
+                    //Funcion que se ejecuta al seleccionar una respuesta de tipo negativa
+                    $scope.seleccionarNegativa = function (respuestas, pregunta, irespuesta, seleccionarRespuestas) {
+                        let respuesta = respuestas[irespuesta];
+                        let seleccionada = pregunta.Multiples[irespuesta].Key;
+                        if (respuesta.Negativa){//Analizamos si la respuesta es de seleccion unica
+                            if (seleccionada) {//Si la opcion de seleccion unica fue seleccionada vamos a deseleccionar las que son de opcion multiple                                
+                                pregunta.Respuestas[irespuesta] = {Key: respuesta.Id, Value: null};
+                                _.each(respuestas, function(r, ir) {
+                                    if (r.Numero != irespuesta+1){                                        
+                                        pregunta.Multiples[ir].Key = false;
+                                        delete pregunta.Respuestas[ir];
+                                    }
+                                });                               
+                            } else {
+                                if (seleccionarRespuestas){ //Vamos a seleccionar las respuestas que no son negativas
+                                    _.each(respuestas, function(r, ir) {
+                                        if (r.Numero != irespuesta + 1 && !r.Negativa){
+                                            pregunta.Multiples[ir].Key = true;
+                                            pregunta.Respuestas[ir] = {Key: respuesta.Id, Value: null};
+                                        }
+                                    });
+                                }
+                                delete pregunta.Respuestas[irespuesta];
+                            }                           
+                        }else{//Se selecciono una respuesta no negativa                            
+                            if (seleccionada) {//Si la pregunta tiene configurada la bandera SeleccionaRespuestas entonces deseleccionamos las negativas y seleccionamos todas las no negativas
+                                _.each(respuestas, function(r, ir) {
+                                    if (r.Numero != irespuesta+1 && r.Negativa){                                         
+                                        pregunta.Multiples[ir].Key = false;
+                                        delete pregunta.Respuestas[ir];                                        
+                                    }
+                                });                                
+                                pregunta.Respuestas[irespuesta] = {Key: respuesta.Id, Value: null};
+                            }else{
+                                delete pregunta.Respuestas[irespuesta];                                
+                            }
+                        }
+                    };
+                    
+                    $scope.seleccionarRadio = function(pregunta, respuesta, opcion) {
+                        if ($scope.numPregunta < $scope.numPreguntas) {
+                            if(respuesta.TipoComplemento != null){
+                                if (opcion.Value != null && opcion.Value != ''){
+                                    $scope.mover('derecha');
+                                }
+                            }else{
+                                $scope.mover('derecha');
+                            }
+                        }
+                    };
+                });
+        })();
+    </script>
+}
+@section Styles
+    {
+    <style>
+        .menu {
+            position: absolute;
+            right: 2px;
+            top: 70px;
+            width: 300px;
+            border: 1px solid grey;
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+            min-height: 85vh;
+            max-height: 85vh;
+            overflow-y: auto;
+            z-index: 1;
+            font-size: 12px;
+        }
+
+        .pregunta {
+            border-bottom: 1px solid #5a6268;
+            padding: 5px;
+            margin: 5px;
+            cursor: pointer;
+        }
+
+        .pregunta:hover {
+            background-color: #fafafa;
+        }
+        
+        .input-upper{
+            text-transform: uppercase;
+        }
+    </style>
+}

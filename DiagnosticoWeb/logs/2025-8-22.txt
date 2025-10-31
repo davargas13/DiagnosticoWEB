@@ -1,0 +1,119 @@
+22-08-2025 12:39:34 Timeout expired.  The timeout period elapsed prior to completion of the operation or the server is not responding.    at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlDataReader.TryCloseInternal(Boolean closeReader)
+   at System.Data.SqlClient.SqlDataReader.Close()
+   at System.Data.SqlClient.SqlDataReader.Dispose(Boolean disposing)
+   at System.Data.Common.DbDataReader.Dispose()
+   at DiagnosticoWeb.Code.BeneficiarioCode.BuildDetalles(BeneficiariosRequest request, String inicio, String fin, Dictionary`2 preguntas, Pregunta preguntaIterable) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Code\BeneficiarioCode.cs:line 612
+   at DiagnosticoWeb.Code.BeneficiarioCode.BuildSabana(BeneficiariosRequest request, String inicio, String fin) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Code\BeneficiarioCode.cs:line 373
+   at DiagnosticoWeb.Controllers.DiagnosticosController.exportarSabana(BeneficiariosRequest request, String inicio, String fin) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Controllers\DiagnosticosController.cs:line 634
+   at DiagnosticoWeb.Controllers.DiagnosticosController.exportarExcel(BeneficiariosRequest request) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Controllers\DiagnosticosController.cs:line 807Tiempo de espera de la operación de espera agotado
+22-08-2025 12:39:35 Timeout expired.  The timeout period elapsed prior to completion of the operation or the server is not responding.    at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlDataReader.TryCloseInternal(Boolean closeReader)
+   at System.Data.SqlClient.SqlDataReader.Close()
+   at System.Data.SqlClient.SqlDataReader.Dispose(Boolean disposing)
+   at System.Data.Common.DbDataReader.Dispose()
+   at DiagnosticoWeb.Code.BeneficiarioCode.BuildDetalles(BeneficiariosRequest request, String inicio, String fin, Dictionary`2 preguntas, Pregunta preguntaIterable) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Code\BeneficiarioCode.cs:line 612
+   at DiagnosticoWeb.Code.BeneficiarioCode.BuildSabana(BeneficiariosRequest request, String inicio, String fin) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Code\BeneficiarioCode.cs:line 373
+   at DiagnosticoWeb.Controllers.DiagnosticosController.exportarSabana(BeneficiariosRequest request, String inicio, String fin) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Controllers\DiagnosticosController.cs:line 634
+   at DiagnosticoWeb.Controllers.DiagnosticosController.exportarExcel(BeneficiariosRequest request) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Controllers\DiagnosticosController.cs:line 807
+   at lambda_method(Closure , Object , Object[] )
+   at Microsoft.Extensions.Internal.ObjectMethodExecutor.Execute(Object target, Object[] parameters)
+   at Microsoft.AspNetCore.Mvc.Internal.ActionMethodExecutor.SyncActionResultExecutor.Execute(IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.InvokeActionMethodAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.InvokeNextActionFilterAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.Rethrow(ActionExecutedContext context)
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.InvokeInnerFilterAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.InvokeNextResourceFilter()
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.Rethrow(ResourceExecutedContext context)
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.InvokeFilterPipelineAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.InvokeAsync()
+   at Microsoft.AspNetCore.Builder.RouterMiddleware.Invoke(HttpContext httpContext)
+   at DiagnosticoWeb.Startup.<>c__DisplayClass5_0.<<Configure>b__0>d.MoveNext() in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Startup.cs:line 110
+--- End of stack trace from previous location where exception was thrown ---
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware.Invoke(HttpContext context)Tiempo de espera de la operación de espera agotado
+22-08-2025 13:17:56 Timeout expired.  The timeout period elapsed prior to completion of the operation or the server is not responding.    at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlDataReader.TryCloseInternal(Boolean closeReader)
+   at System.Data.SqlClient.SqlDataReader.Close()
+   at System.Data.SqlClient.SqlDataReader.Dispose(Boolean disposing)
+   at System.Data.Common.DbDataReader.Dispose()
+   at DiagnosticoWeb.Code.BeneficiarioCode.BuildDetalles(BeneficiariosRequest request, String inicio, String fin, Dictionary`2 preguntas, Pregunta preguntaIterable) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Code\BeneficiarioCode.cs:line 612
+   at DiagnosticoWeb.Code.BeneficiarioCode.BuildSabana(BeneficiariosRequest request, String inicio, String fin) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Code\BeneficiarioCode.cs:line 373
+   at DiagnosticoWeb.Controllers.DiagnosticosController.exportarSabana(BeneficiariosRequest request, String inicio, String fin) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Controllers\DiagnosticosController.cs:line 634
+   at DiagnosticoWeb.Controllers.DiagnosticosController.exportarExcel(BeneficiariosRequest request) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Controllers\DiagnosticosController.cs:line 807Tiempo de espera de la operación de espera agotado
+22-08-2025 13:17:57 Timeout expired.  The timeout period elapsed prior to completion of the operation or the server is not responding.    at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlDataReader.TryCloseInternal(Boolean closeReader)
+   at System.Data.SqlClient.SqlDataReader.Close()
+   at System.Data.SqlClient.SqlDataReader.Dispose(Boolean disposing)
+   at System.Data.Common.DbDataReader.Dispose()
+   at DiagnosticoWeb.Code.BeneficiarioCode.BuildDetalles(BeneficiariosRequest request, String inicio, String fin, Dictionary`2 preguntas, Pregunta preguntaIterable) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Code\BeneficiarioCode.cs:line 612
+   at DiagnosticoWeb.Code.BeneficiarioCode.BuildSabana(BeneficiariosRequest request, String inicio, String fin) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Code\BeneficiarioCode.cs:line 373
+   at DiagnosticoWeb.Controllers.DiagnosticosController.exportarSabana(BeneficiariosRequest request, String inicio, String fin) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Controllers\DiagnosticosController.cs:line 634
+   at DiagnosticoWeb.Controllers.DiagnosticosController.exportarExcel(BeneficiariosRequest request) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Controllers\DiagnosticosController.cs:line 807
+   at lambda_method(Closure , Object , Object[] )
+   at Microsoft.Extensions.Internal.ObjectMethodExecutor.Execute(Object target, Object[] parameters)
+   at Microsoft.AspNetCore.Mvc.Internal.ActionMethodExecutor.SyncActionResultExecutor.Execute(IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.InvokeActionMethodAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.InvokeNextActionFilterAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.Rethrow(ActionExecutedContext context)
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.InvokeInnerFilterAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.InvokeNextResourceFilter()
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.Rethrow(ResourceExecutedContext context)
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.InvokeFilterPipelineAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.InvokeAsync()
+   at Microsoft.AspNetCore.Builder.RouterMiddleware.Invoke(HttpContext httpContext)
+   at DiagnosticoWeb.Startup.<>c__DisplayClass5_0.<<Configure>b__0>d.MoveNext() in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Startup.cs:line 110
+--- End of stack trace from previous location where exception was thrown ---
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware.Invoke(HttpContext context)Tiempo de espera de la operación de espera agotado
+22-08-2025 16:05:57 One or more compilation failures occurred:
+C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Views\Diagnosticos\Estadisticas.cshtml(374,10): error CS0103: The name 'media' does not exist in the current context
+C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Views\Diagnosticos\Estadisticas.cshtml(383,10): error CS0103: The name 'media' does not exist in the current context
+C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Views\Diagnosticos\Estadisticas.cshtml(407,10): error CS0103: The name 'media' does not exist in the current context
+C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Views\Diagnosticos\Estadisticas.cshtml(428,10): error CS0103: The name 'media' does not exist in the current context    at Microsoft.AspNetCore.Mvc.Razor.Internal.RazorViewCompiler.CompileAndEmit(RazorCodeDocument codeDocument, String generatedCode)
+   at Microsoft.AspNetCore.Mvc.Razor.Internal.RazorViewCompiler.CompileAndEmit(String relativePath)
+   at Microsoft.AspNetCore.Mvc.Razor.Internal.RazorViewCompiler.OnCacheMiss(String normalizedPath)
+--- End of stack trace from previous location where exception was thrown ---
+   at Microsoft.AspNetCore.Mvc.Razor.Internal.DefaultRazorPageFactoryProvider.CreateFactory(String relativePath)
+   at Microsoft.AspNetCore.Mvc.Razor.RazorViewEngine.CreateCacheResult(HashSet`1 expirationTokens, String relativePath, Boolean isMainPage)
+   at Microsoft.AspNetCore.Mvc.Razor.RazorViewEngine.OnCacheMiss(ViewLocationExpanderContext expanderContext, ViewLocationCacheKey cacheKey)
+   at Microsoft.AspNetCore.Mvc.Razor.RazorViewEngine.LocatePageFromViewLocations(ActionContext actionContext, String pageName, Boolean isMainPage)
+   at Microsoft.AspNetCore.Mvc.Razor.RazorViewEngine.FindView(ActionContext context, String viewName, Boolean isMainPage)
+   at Microsoft.AspNetCore.Mvc.ViewEngines.CompositeViewEngine.FindView(ActionContext context, String viewName, Boolean isMainPage)
+   at Microsoft.AspNetCore.Mvc.ViewFeatures.ViewResultExecutor.FindView(ActionContext actionContext, ViewResult viewResult)
+   at Microsoft.AspNetCore.Mvc.ViewFeatures.ViewResultExecutor.ExecuteAsync(ActionContext context, ViewResult result)
+   at Microsoft.AspNetCore.Mvc.ViewResult.ExecuteResultAsync(ActionContext context)
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.InvokeResultAsync(IActionResult result)
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.InvokeNextResultFilterAsync[TFilter,TFilterAsync]()
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.Rethrow(ResultExecutedContext context)
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.ResultNext[TFilter,TFilterAsync](State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.InvokeResultFilters()
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.InvokeNextResourceFilter()
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.Rethrow(ResourceExecutedContext context)
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.InvokeFilterPipelineAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.InvokeAsync()
+   at Microsoft.AspNetCore.Builder.RouterMiddleware.Invoke(HttpContext httpContext)
+   at DiagnosticoWeb.Startup.<>c__DisplayClass5_0.<<Configure>b__0>d.MoveNext() in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Startup.cs:line 110
+--- End of stack trace from previous location where exception was thrown ---
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware.Invoke(HttpContext context)

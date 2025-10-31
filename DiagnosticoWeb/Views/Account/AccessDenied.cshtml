@@ -1,0 +1,29 @@
+@{
+    ViewData["Title"] = "AGEB";
+}
+@using DiagnosticoWeb.Code
+@using System.Security.Claims;
+<div ng-app="SedeshuApp" ng-controller="indexController">
+    <partial name="_Loading_Partial" />
+    <div ng-cloak>
+        <header>
+            <h2 class="text-danger">ACCESO DENEGADO</h2>
+            <p class="text-danger">No tienes permiso para acceder a esta pantalla.</p>
+        </header>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        (function () {
+            var app = angular.module('SedeshuApp', ['ui.bootstrap']);
+            var baseUrl = document.baseURI;
+
+            app.controller('indexController',
+                function ($scope, $http, $uibModal) {
+                    
+                }
+            );
+        })();
+    </script>
+}

@@ -1,0 +1,333 @@
+﻿@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+@using DiagnosticoWeb.Code
+@using System.Security.Claims
+@{
+    ViewData["Title"] = "Ver solicitud";
+}
+<div ng-app="SedeshuApp" ng-controller="verController" ng-init="init(@JsonSedeshu.SerializeObject(Model))">
+    <partial name="_Loading_Partial" />
+    <slot ng-cloak>
+        <div class="card border-cards">
+            <div class="card-header bg-cards text-white d-flex justify-content-between">
+                <h5>Ver solicitud</h5>
+                <a class="btn btn-sm btn-header" href="@Url.Action(controller: "Solicitudes", action: "Index")">
+                    <i class="fa fa-backward"></i> Regresar
+                </a>
+            </div>
+            <div class="card-body">
+                <div class="d-flex flex-wrap">
+                    <div class="col-sm-6">
+                        <div class="card">
+                            <div class="card-header bg-question">
+                                Solicitud
+                                @if (((ClaimsIdentity)User.Identity).HasClaim("Permiso", "solicitudes.editar"))
+                                {
+                                    <slot ng-if="solicitud.Estatus == 'Pendiente'" ng-cloak>
+                                        <button class="btn btn-sm btn-success float-right ml-1" ng-click="confirmacionSolicitud()">
+                                            <i class="fa fa-check"></i> Aceptar
+                                        </button>
+                                        <button class="btn btn-sm btn-danger float-right" ng-click="rechazarSolicitud()">
+                                            <i class="fa fa-times"></i> Rechazar
+                                        </button>
+                                    </slot>
+                                }
+                            </div>
+                            <div class="card-body">
+                                <div class="d-flex flex-column">
+                                    <strong>Estatus</strong>
+                                    <label>{{ solicitud.Estatus }}</label>
+                                    <strong>Beneficiario</strong>
+                                    <label>{{ solicitud.Beneficiario }}</label>
+                                    <strong>Programa social</strong>
+                                    <label>{{ solicitud.ProgramaSocial }}</label>
+                                    <strong>Vertiente</strong>
+                                    <label>{{ solicitud.Vertiente }} </label>
+                                    <strong>Cantidad</strong>
+                                    <label>{{ solicitud.Cantidad }} - {{ solicitud.Unidad }} </label>
+                                    <strong>Costo</strong>
+                                    <label>$ {{ solicitud.Costo }}</label>
+                                    <strong>Económico</strong>
+                                    <label>$ {{ solicitud.Costo }}</label>
+                                    <strong>Fecha de creación</strong>
+                                    <label>{{ solicitud.CreatedAt | date: 'dd/MM/yyyy hh:mm a' }}</label>
+                                    <div class="card card-body">
+                                        <span class="badge badge-info mb-3">Documentos</span>
+                                        <div class="row">
+                                            <slot ng-repeat="(index, imagen) in documentos">
+                                                <div class="col-sm-6">
+                                                    <div class="card card-body bg-question" style="padding-top: 5px; padding-bottom: 10px;">
+                                                        <small style="padding: 0px;" class="float-left text-capitalize" ng-bind="imagen.Nombre"></small>
+                                                        <button class="btn btn-xsm btn-light float-right" ng-click="CambiarImagen(imagen)">
+                                                            <i class="fa fa-image"></i> Ver
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </slot>
+                                        </div>
+                                        <span class="badge badge-info mt-3">Vertientes</span>
+                                        <div class="row">
+                                            <slot ng-repeat="(index, imagen) in imagenes">
+                                                <div class="col-sm-6 mt-3">
+                                                    <div class="card card-body bg-question" style="padding-top: 5px; padding-bottom: 10px;">
+                                                        <small style="padding: 0px;" class="float-left" ng-bind="imagen.Nombre"></small>
+                                                        <button class="btn btn-xsm btn-light float-right" ng-click="CambiarImagen(imagen)">
+                                                            <i class="fa fa-image"></i> Ver
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </slot>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-header">Domicilio</div>
+                            <div class="card-body">
+                                <div class="d-flex flex-wrap">
+                                    <div class="domicilio">
+                                        <strong>Calle</strong><br />
+                                        <label>{{solicitud.Domicilio.Domicilio}}</label>
+                                    </div>
+                                    <div class="domicilio">
+                                        <strong>Telefono</strong><br />
+                                        <label>{{solicitud.Domicilio.Telefono}}</label>
+                                    </div>
+                                    <div class="domicilio">
+                                        <strong>Email</strong><br />
+                                        <label>{{solicitud.Domicilio.Email}}</label>
+                                    </div>
+                                    <div class="domicilio">
+                                        <strong>Localidad</strong><br />
+                                        <label>{{solicitud.Domicilio.Localidad}}</label>
+                                    </div>
+                                    <div class="domicilio">
+                                        <strong>Municipio</strong><br />
+                                        <label>{{solicitud.Domicilio.Municipio}}</label>
+                                    </div>
+                                    <div class="domicilio">
+                                        <strong>AGEB</strong><br />
+                                        <label>{{solicitud.Domicilio.Ageb}}</label>
+                                    </div>
+                                </div>
+                                <div id="map">
+                                </div>
+                            </div>
+                            <div class="card-header">Carencias</div>
+                            <div class="card-body">
+                                <table class="table">
+                                    <tr ng-repeat="carencia in Carencias" ng-if="carencia.Carente">
+                                        <td style="text-transform: capitalize">{{carencia.Nombre}}</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="card">
+                            <div class="card-header bg-question">
+                                Encuesta
+                            </div>
+                            <div class="card-body card-questions">
+                                <slot ng-repeat="Pregunta in encuesta">
+                                    <strong style="color: #545556;">{{ Pregunta.Pregunta }}</strong><br />
+                                    <label style="color: #2ebaff;">{{ Pregunta.Respuesta }}</label><br />
+                                    <hr />
+                                </slot>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="myModal" class="modal-img" ng-click="Close()" title="Clic para cerrar">
+            <img class="modal-content-img" ng-src="data:image/png;base64,{{ imagenBase64 }}" ng-if="imagenBase64 != ''" />
+
+            <div id="caption-img">{{ DocName }}</div>
+        </div>
+    </slot>
+    <script type="text/ng-template" id="aceptarSolicitud.html">
+        <div class="modal-header" style="padding-top: 10px; padding-bottom: 10px;">
+            <h5 class="modal-title">Aceptar solicitud</h5>
+        </div>
+        <div class="modal-body">
+            <label>¿Estas seguro de aceptar está solicitud?</label>
+        </div>
+        <div class="modal-footer" style="padding-top: 5px; padding-bottom: 5px;">
+            <button class="btn btn-sm btn-light" ng-click="$conf.dismiss()">Cancelar</button>
+            <button class="btn btn-sm btn-success" ng-if="$conf.cargando" disabled>
+                <i class="fa fa-spinner fa-spin"></i> Aceptar
+            </button>
+            <button class="btn btn-sm btn-success" ng-click="$conf.Aceptar()" ng-if="!$conf.cargando">
+                <i class="fa fa-check"></i> Aceptar
+            </button>
+        </div>
+    </script>
+
+    <script type="text/ng-template" id="rechazarSolicitud.html">
+        <div class="modal-header" style="padding-top: 10px; padding-bottom: 10px;">
+            <h5 class="modal-title">Rechazar solicitud</h5>
+        </div>
+        <div class="modal-body">
+            <label>¿Estas seguro de rechazar esta solicitud?</label>
+        </div>
+        <div class="modal-footer" style="padding-top: 5px; padding-bottom: 5px;">
+            <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" ng-click="$rec.dismiss()">Cancelar</button>
+            <button class="btn btn-sm btn-danger" ng-if="$rec.cargando" disabled>
+                <i class="fa fa-spinner fa-spin"></i> Rechazar
+            </button>
+            <button class="btn btn-sm btn-danger" ng-click="$rec.Rechazar()" ng-if="!$rec.cargando">
+                <i class="fa fa-times"></i> Rechazar
+            </button>
+        </div>
+    </script>
+</div>
+
+@section Scripts{
+    <script src="https://maps.googleapis.com/maps/api/js?key=@Configuration["GoogleApi:ApiKey2"]"></script>
+    <script>
+        (function () {
+            var app = angular.module('SedeshuApp', ['ui.bootstrap']);
+            var baseUrl = document.baseURI;
+
+            app.controller('verController',
+                function ($scope, $http, $uibModal) {
+                    $scope.solicitud = [];
+                    $scope.encuesta = [];
+                    $scope.imagenes = [];
+                    $scope.documentos = [];
+                    $scope.imagenBase64 = "";
+                    $scope.DocName = "";
+                    $scope.Carencias = [];
+
+                    $scope.init = function (solicitud) {
+                        $scope.encuesta = solicitud.Preguntas;
+                        $scope.solicitud = solicitud.Solicitud;
+                        $scope.imagenes = solicitud.Imagenes;
+                        $scope.documentos = solicitud.Documentos;
+                        $scope.Carencias = solicitud.Carencias;
+                        if ($scope.solicitud.Domicilio.Latitud != null) {
+                            var uluru = { lat: $scope.solicitud.Domicilio.Latitud, lng: $scope.solicitud.Domicilio.Longitud };
+                            var map = new google.maps.Map(
+                                document.getElementById('map'), { zoom: 12, center: uluru });
+                            var marker = new google.maps.Marker({ position: uluru, map: map });
+                        }
+                    };
+
+                    $scope.CambiarImagen = function (imagen) {
+                        axios.get(baseUrl + 'Solicitudes/GetImagen/' + imagen.Id).then(function (response) {
+                            $scope.imagenBase64 = response.data;
+                            $scope.DocName = imagen.Nombre;
+                            setTimeout(function () {
+                                $scope.$apply(function () {
+                                    $('#myModal').css("display", "block");
+                                });
+
+                            })
+                        });
+                    };
+
+                    $scope.Close = function () {
+                        $('#myModal').css("display", "none");
+                    };
+
+                    $scope.confirmacionSolicitud = function () {
+                        var modalInstance = $uibModal.open({
+                            ariaLabelledBy: 'modal-title',
+                            ariaDescribedBy: 'modal-body',
+                            templateUrl: 'aceptarSolicitud.html',
+                            controller: 'confirmacionController',
+                            controllerAs: '$conf',
+                            size: 'md',
+                            resolve: {
+                                Id: function () { return $scope.solicitud.SolicitudId; }
+                            }
+                        });
+
+                        modalInstance.result.then(function () { }, function () { });
+                    };
+
+                    $scope.rechazarSolicitud = function () {
+                        var modalInstance = $uibModal.open({
+                            ariaLabelledBy: 'modal-title',
+                            ariaDescribedBy: 'modal-body',
+                            templateUrl: 'rechazarSolicitud.html',
+                            controller: 'rechazarController',
+                            controllerAs: '$rec',
+                            size: 'md',
+                            resolve: {
+                                Id: function () { return $scope.solicitud.SolicitudId; }
+                            }
+                        });
+
+                        modalInstance.result.then(function () { }, function () { });
+                    };
+                }
+            );
+
+            app.controller('confirmacionController',
+                function ($scope, $http, $uibModalInstance, Id) {
+                    $conf = this;
+                    $conf.nombre = "";
+                    $conf.errors = [];
+                    $conf.cargando = false;
+                    $conf.Id = Id;
+
+                    $conf.Aceptar = function () {
+                        $conf.cargando = true;
+
+                        $http.post(baseUrl + 'Solicitudes/Aceptar', {
+                            Id: $conf.Id
+                        }).then(function (response) {
+                            if (response.data === "ok") {
+                                window.location.href = baseUrl + 'Solicitudes';
+                            }
+                        });
+                    };
+
+                    $conf.dismiss = function () {
+                        $uibModalInstance.dismiss('cancel');
+                    };
+                }
+            );
+
+            app.controller('rechazarController',
+                function ($scope, $http, $uibModalInstance, Id) {
+                    $rec = this;
+                    $rec.nombre = "";
+                    $rec.errors = [];
+                    $rec.cargando = false;
+                    $rec.Id = Id;
+
+                    $rec.Rechazar = function () {
+                        $rec.cargando = true;
+
+                        $http.post(baseUrl + 'Solicitudes/Rechazar', { Id: $rec.Id }).then(function (response) {
+                            if (response.data === "ok") {
+                                window.location.href = baseUrl + 'Solicitudes';
+                            }
+                        });
+                    };
+
+                    $rec.dismiss = function () {
+                        $uibModalInstance.dismiss('cancel');
+                    };
+                }
+            );
+        })();
+    </script>
+}
+
+@section Styles
+    {
+    <style>
+        #map {
+            height: 400px; /* The height is 400 pixels */
+            width: 100%; /* The width is the width of the web page */
+        }
+
+        .domicilio {
+            margin: 5px;
+        }
+    </style>
+}

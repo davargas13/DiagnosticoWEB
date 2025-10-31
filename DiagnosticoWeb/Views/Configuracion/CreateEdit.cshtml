@@ -1,0 +1,87 @@
+@{
+    ViewData["Title"] = "Editar configuración";
+}
+@using Newtonsoft.Json
+<div ng-app="SedeshuApp" ng-controller="createController" ng-init="init(@JsonConvert.SerializeObject(Model))">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-sm-10">
+            <div class="card">
+                <div class="card-header bg-cards text-white">
+                    <h5 class="float-left">Editar configuración</h5>
+                    <a class="btn btn-sm btn-light float-right" asp-controller="Configuracion" asp-action="Index">
+                        <i class="fa fa-backward"></i> Regresar
+                    </a>
+                </div>
+                 <div class="card-body">
+                     <div class="row">
+                         <div class="col-sm-8">
+                             <label>Radio de búsqueda</label>
+                             <div class="input-group mb-3">
+                                 <input type="number" class="form-control" ng-model="configuracion.MetrosRadio">
+                                 <div class="input-group-append">
+                                     <span class="input-group-text bg-primary text-white">Metros (m)</span>
+                                 </div>
+                             </div>
+                             <strong class="small text-danger">{{ errors["MetrosRadio"] }}</strong>
+                         </div>
+                     </div>
+                 </div>
+                 <div class="card-footer">
+                     <button class="btn btn-sm btn-success" ng-click="Guardar()" ng-disabled="guardando">
+                         <i class="fa fa-save" ng-if="!guardando"></i> 
+                         <i class="fa fa-spinner fa-spin" ng-if="guardando"></i> 
+                         Guardar
+                     </button>                     
+                 </div>
+            </div>                
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (function() {
+            var app = angular.module('SedeshuApp', ['ui.bootstrap']);
+            var baseUrl = document.baseURI;
+            
+            app.controller('createController',
+                function($scope, $http, $uibModal) {
+                    $scope.configuracion = {
+                        Id: 0,
+                        MetrosRadio: 0
+                    };
+                    $scope.guardando = false;
+
+                    $scope.init = function(model) {
+                        $scope.configuracion.Id = model.Id;
+                        $scope.configuracion.MetrosRadio = model.MetrosRadio;
+                    };
+                    
+                    $scope.Guardar = function () {
+                        $scope.guardando = true;
+                        
+                        $http.post(baseUrl+'Configuracion/Guardar', {
+                                    Id: $scope.configuracion.Id,
+                                    MetrosRadio: $scope.configuracion.MetrosRadio
+                                })
+                            .then(function (response) {
+                                if (response.data === 'ok') {
+                                    window.location.href = baseUrl +'Configuracion';
+                                } else {
+                                    $scope.cargarErrores(response.data);
+                                }
+                                $scope.guardando = false;
+                            });
+                    }
+                    
+                    $scope.cargarErrores = function(errors) {
+                        $scope.errors = [];
+                        for (var i = 0; i < errors.length; i++) {
+                            $scope.errors[errors[i].Key] = errors[i].Error;
+                        }
+                    }
+                }
+            );
+        })();
+    </script>
+}

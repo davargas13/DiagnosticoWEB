@@ -1,0 +1,153 @@
+@using System.Security.Claims;
+@{
+    ViewData["Title"] = "Programas sociales";
+}
+
+<div ng-app="SedeshuApp" ng-controller="indexController">
+    <partial name="_Loading_Partial" />
+    <div ng-cloak>
+        <div class="card border-cards">
+            <div class="card-header bg-cards text-white">
+                <h5 class="float-left">Programas sociales</h5>
+                @if (((ClaimsIdentity)User.Identity).HasClaim("Permiso", "programasocial.crear"))
+                {
+                    <a class="btn btn-sm btn-header float-right" asp-controller="ProgramasSociales" asp-action="CreateEdit">
+                        <i class="fa fa-plus"></i> Crear
+                    </a>
+                }
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-sm-4">
+                        <label>Dependencia</label>
+                        <select class="form-control selectpicker" ng-model="dependencia" ng-change="getProgramasSociales()" data-live-search="true">
+                            <option value="">Sin selección</option>
+                            <option ng-repeat="dependencia in dependencias" ng-value="dependencia.Id">
+                                {{ (dependencia.Nombre | limitTo: 50) + (dependencia.Nombre.length > 50 ? '...' : '') }}
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-sm-4">
+                        <label>Programa social</label>
+                        <input class="form-control" ng-model="nombre" ng-keyup="$event.keyCode == 13 ? getProgramasSociales() : null" />
+                    </div>
+                    <div class="col-sm-2">
+                        <label class="col-sm-12">&nbsp;</label>
+                        <button class="btn btn-info" ng-click="getProgramasSociales()" ng-cloak ng-if="!cargando">
+                            <i class="fa fa-search"></i> Buscar
+                        </button>
+                        <button class="btn btn-info" disabled ng-if="cargando">
+                            <i class="fa fa-spinner fa-spin"></i> Buscar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card border-cards">
+            <div class="card-body">
+                <table class="table table-responsive-sm" ng-if="!cargando">
+                    <thead>
+                        <tr>
+                            <th>Dependencia</th>
+                            <th>Programa social</th>
+                            <th>Vertientes</th>
+                            <th class="no-stretch"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="programa in programas" ng-cloak>
+                            <td>{{ programa.Dependencia.Nombre }}</td>
+                            <td>{{ programa.Nombre }}</td>
+                            <td>{{ programa.Vertientes }}</td>
+                            <td class="no-stretch">
+                                @if (((ClaimsIdentity)User.Identity).HasClaim("Permiso", "programasocial.editar"))
+                                {
+                                    <a class="btn btn-sm btn-info" href="@Url.Action(controller: "ProgramasSociales", action: "CreateEdit")/{{ programa.Id }}">
+                                        <i class="fa fa-edit"></i> Editar
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a class="btn btn-sm btn-info" href="@Url.Action(controller: "ProgramasSociales", action: "CreateEdit")/{{ programa.Id }}">
+                                        <i class="fa fa-eye"></i> Ver
+                                    </a>
+                                }
+                            </td>
+                        </tr>
+                        <tr ng-if="programas.length == 0">
+                            <td colspan="4">No hay datos para mostrar.</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="float-right">
+                    <ul uib-pagination total-items="totalcount" ng-change="pagechanged()"
+                        items-per-page="pageSize" direction-links="false" ng-model="pageIndex" role="menu"
+                        max-size="maxsize" class="pagination-sm" boundary-links="true" rotate="true"
+                        num-pages="numPages" style="margin-bottom: 0px !important"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        (function () {
+            var app = angular.module('SedeshuApp', ['ui.bootstrap']);
+            var baseUrl = document.baseURI;
+
+            app.controller('indexController',
+                function ($scope, $http, $uibModal) {
+                    $scope.programas = [];
+                    $scope.dependencias = [];
+                    $scope.dependencia = "";
+                    $scope.nombre = "";
+                    $scope.cargando = false;
+                    //Paginacion
+                    $scope.maxsize = 5;
+                    $scope.totalcount = 0;
+                    $scope.pageIndex = 1;
+                    $scope.pageSize = 10;
+                    $scope.numPages = 0;
+
+                    $scope.getProgramasSociales = function () {
+                        $scope.cargando = true;
+                        $http.post(baseUrl + 'ProgramasSociales/GetProgramasSociales/',
+                            {
+                                Nombre: $scope.nombre,
+                                DependenciaId: $scope.dependencia,
+                                PageIndex: $scope.pageIndex,
+                                PageSize: $scope.pageSize
+                            }
+                        ).then(
+                            function (response) {
+                                $scope.programas = response.data.ProgramasSociales;
+                                $scope.totalcount = response.data.Total;
+                                $scope.cargando = false;
+                            });
+                    }
+
+                    $scope.getDependencias = function () {
+                        $http.post(baseUrl + 'ProgramasSociales/GetDependencias/')
+                            .then(function (response) {
+                                $scope.dependencias = response.data.Dependencias;
+
+                                $scope.refreshSelect();
+                            });
+                    }
+
+                    $scope.refreshSelect = _.debounce(function () {
+                        $('.selectpicker').selectpicker('refresh');
+                    }, 500);
+
+                    $scope.pagechanged = function () {
+                        $scope.getProgramasSociales();
+                    };
+
+                    $scope.getProgramasSociales();
+                    $scope.getDependencias();
+                }
+            );
+        })();
+    </script>
+}

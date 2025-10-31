@@ -1,0 +1,85 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Http;
+using DiagnosticoWeb.Validaciones;
+
+namespace DiagnosticoWeb.Models
+{
+    /// <summary>
+    /// Clases que mapean la tabla de localidades a objetos de persistencia, tabla que guarda las localidades del estado
+    /// </summary>
+    [Table("Localidades")]
+    public class Localidad
+    {
+        public string Id { get; set; }
+        public string Nombre { get; set; }
+        public string Clave { get; set; }
+        public string MunicipioId { get; set; }
+        public string EstadoId { get; set; }
+        public string ZonaIndigenaId { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
+        public DateTime? DeletedAt { get; set; }
+
+        public virtual Municipio Municipio { get; set; }
+
+        public virtual List<Ageb> Agebs { get; set; }
+    }
+
+    public class LocalidadApiModel
+    {
+        public string Id { get; set; }
+        public string Nombre { get; set; }
+        public string MunicipioId { get; set; }
+        public string CreatedAt { get; set; }
+        public string UpdatedAt { get; set; }
+        public string DeletedAt { get; set; } 
+    }
+
+    public class LocalidadCreateEditModel
+    {
+        [Required(ErrorMessage = "El Id de la localidad es obligatorio.")]
+        [RegularExpression("([0-9]*)", ErrorMessage = "El Id debe ser numérico")]
+        [MaxLength(10, ErrorMessage = "El Id del estado debe tener como máximo 10 caracteres.")]
+        public string Id { get; set; }
+        public string IdAnterior { get; set; }
+
+        [Required(ErrorMessage = "El nombre de la localidad es obligatorio.")]
+        [MaxLength(255, ErrorMessage = "El nombre de la localidad debe tener como máximo 255 caracteres.")]
+        public string Nombre { get; set; }
+        
+        [Required(ErrorMessage = "La clave de la localidad es obligatorio.")]
+        [RegularExpression("([0-9]*)", ErrorMessage = "La clave debe ser numérica")]
+        [MaxLength(255, ErrorMessage = "La clave de la localidad debe tener como máximo 255 caracteres.")]
+        public string Clave { get; set; }
+        [Required(ErrorMessage = "El municipio de la localidad es obligatorio.")]
+        public string MunicipioId { get; set; }
+        [Required(ErrorMessage = "El estado de la localidad es obligatorio.")]
+        public string EstadoId { get; set; }
+    }
+    
+    public class LocalidadRequest
+    {
+        public string Clave { get; set; }
+        public string Nombre { get; set; }
+        public string MunicipioId { get; set; }
+        public string Usuario { get; set; }
+        public string ImportedAt { get; set; }
+        public int PageIndex { get; set; }
+        public int PageSize { get; set; }
+    }
+    
+    public class ImportarLocalidadRequest
+    {
+        [FileExtension(ErrorMessage = "El archivo a importar debe tener la extensión .xlsx")]
+        public IFormFile Localidades { get; set; }
+    }
+    
+    public class LocalidadResponse
+    {
+        public int Total{ get; set; }
+        public List<Localidad> Localidades { get; set; }
+    }
+}

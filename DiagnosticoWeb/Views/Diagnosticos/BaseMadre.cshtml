@@ -1,0 +1,430 @@
+@using DiagnosticoWeb.Code
+@{
+    ViewData["Title"] = "Exportación de base madre";
+}
+@using System.Security.Claims;
+<div ng-app="SedeshuApp" ng-controller="indexController" ng-init="init(@JsonSedeshu.SerializeObject(Model))">
+    <partial name="_Loading_Partial" />
+    <div ng-cloak>
+        <div class="card border-cards">
+            <div class="card-header bg-cards text-white">
+                <h5>Exportación de base madre</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex flex-wrap">
+                    <div class="col-12">
+                        <label>Período</label>
+                        <br>
+                        <div class="d-flex">
+                            <input type="date" ng-model="Filtros.Inicio" placeholder="yyyy-MM-dd" class="form-control filtro" />
+                            <span class="al filtro">Al</span>
+                            <input type="date" ng-model="Filtros.Fin" placeholder="yyyy-MM-dd" class="form-control filtro" />
+                        </div>
+                    </div>
+                    @* <div class="col-4">
+                        <label>Encuestador</label>
+                        <select class="selectpicker2 form-control" ng-model="Filtros.Encuestador"
+                                data-live-search="true" data-title="Seleccione">
+                            <option value="">[Todos]</option>
+                            <option ng-repeat="encuestador in Encuestadores" ng-value="encuestador.Id">{{encuestador.Nombre}}</option>
+                        </select>
+                    </div>
+                    <div class="col-3">
+                        <label>Municipio</label>
+                        <select class="selectpicker2 form-control" ng-model="Filtros.Municipio" ng-change="seleccionarMunicipio()"
+                                data-live-search="true" data-title="Seleccione">
+                            <option value="">[Todos]</option>
+                            <option ng-repeat="municipio in Municipios" ng-value="municipio.Id">{{municipio.Nombre}}</option>
+                        </select>
+                    </div>
+                    <div class="col-4">
+                        <label>Localidad</label>
+                        <select class="selectpicker2 form-control" ng-model="Filtros.Localidad" ng-change="seleccionarLocalidad()"
+                                data-live-search="true" data-title="Seleccione">
+                            <option value="">[Todas]</option>
+                            <option ng-repeat="localidad in Localidades" ng-value="localidad.Id">{{localidad.Nombre}}</option>
+                        </select>
+                    </div>
+                    <div class="col-4">
+                        <label>Ageb</label>
+                        <select class="selectpicker2 form-control" ng-model="Filtros.Ageb" ng-change="seleccionarAgeb()"
+                                data-live-search="true" data-title="Seleccione">
+                            <option value="">[Todas]</option>
+                            <option ng-repeat="ageb in Agebs" ng-value="ageb.Id">{{ageb.Nombre}}</option>
+                        </select>
+                    </div>
+                    <div class="col-4">
+                        <label>Manzana</label>
+                        <select class="selectpicker2 form-control" ng-model="Filtros.Manzana" ng-change="seleccionarManzana()"
+                                data-live-search="true" data-title="Seleccione">
+                            <option value="">[Todas]</option>
+                            <option ng-repeat="manzana in Manzanas" ng-value="manzana.Id">{{manzana.Nombre}}</option>
+                        </select>
+                    </div>
+                    <div class="col-4">
+                        <label>Folio</label>
+                        <input class="form-control" ng-model="Filtros.Folio" />
+                    </div>
+                    <div class="col-2">
+                        <label>Código postal</label>
+                        <input class="form-control" ng-model="Filtros.CodigoPostal" />
+                    </div> *@
+                    <div class="col-12">
+                        <br>
+                        <button class="btn btn-export col-12" ng-click="exportar()">
+                            <i class="fa fa-file-excel"></i> Exportar
+                        </button>
+                        <form id="exportar" asp-controller="Diagnosticos" asp-action="ExportarBaseMadre" method="post" target="_blank">
+                            <input id="Inicio" name="Inicio" type="hidden">
+                            <input id="Fin" name="Fin" type="hidden">
+                            <input id="Municipio" name="Municipio" type="hidden">
+                            <input id="Localidad" name="Localidad" type="hidden">
+                            <input id="Ageb" name="Ageb" type="hidden">
+                            <input id="Manzana" name="Manzana" type="hidden">
+                            <input id="CodigoPostal" name="CodigoPostal" type="hidden">
+                            <input id="Familia" name="Familia" type="hidden">
+                            <input id="Encuestador" name="Encuestador" type="hidden">
+                        </form>                       
+                    </div>
+                </div>
+            </div>            
+        </div>
+        @* <div class="card border-cards">
+            <div class="card-body">
+                <div class="d-flex flex-wrap">
+                    <div class="col-5">
+                        <label>Ingresar registros desde</label>
+                        <br>
+                        <div class="d-flex">
+                            <input type="date" ng-model="FiltrosGenerar.Inicio" placeholder="yyyy-MM-dd" class="form-control filtro" />
+                            <span class="al filtro">Al</span>
+                            <input type="date" ng-model="FiltrosGenerar.Fin" placeholder="yyyy-MM-dd" class="form-control filtro" />
+                        </div>
+                    </div>
+                    <div class="col-7">
+                        <br>
+                        <button class="mt-2 btn btn-info" ng-click="ingresar()" ng-if="!importando">
+                            <i class="fa fa-upload"></i> Ingresar
+                        </button>
+                        <button class="mt-4 btn btn-info" ng-if="importando" disabled="disabled">
+                            <i class="fa fa-spinner fa-spin"></i> Ingresar
+                        </button>
+                    </div>
+                    <div class="col-8">
+                        <span class="badge badge-info">{{resultadoImportacion}}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> *@
+
+
+
+@section Scripts{
+    <script>
+        (function () {
+            var app = angular.module('SedeshuApp', ['ui.bootstrap']);
+            var baseUrl = document.baseURI;
+
+            app.controller('indexController',
+                function ($scope, $http) {
+
+                    $scope.loading = false;
+                    $scope.loadingCompletar = false;
+                    $scope.importando = false;
+                    $scope.resultadoImportacion = "";
+                    $scope.Filtros = {
+                        Inicio: '',
+                        Fin: '',
+                        Municipio: '',
+                        Localidad: '',
+                        Ageb: '',
+                        Manzana: '',
+                        CodigoPostal: '',
+                        Familia: '',
+                        Encuestador: '',
+                    };
+                    $scope.FiltrosGenerar = {
+                        Inicio: '',
+                        Fin: '',                                    
+                    };
+                    $scope.Encuestadores = [];
+                    $scope.Municipios = [];
+                    $scope.Localidades = [];
+                    $scope.Agebs = [];
+
+                    $scope.init = function (model) {
+                        $scope.Filtros.Inicio = new Date(model.Inicio.substring(0, 4), parseInt(model.Inicio.substring(5, 7)) - 1, model.Inicio.substring(8, 10));
+                        $scope.Filtros.Fin = new Date(model.Fin.substring(0, 4), parseInt(model.Fin.substring(5, 7)) - 1, model.Fin.substring(8, 10));
+                        $scope.FiltrosGenerar.Inicio = new Date(model.Hoy.substring(0, 4), parseInt(model.Hoy.substring(5, 7)) - 1, model.Hoy.substring(8, 10));
+                        $scope.FiltrosGenerar.Fin = new Date(model.Hoy.substring(0, 4), parseInt(model.Hoy.substring(5, 7)) - 1, model.Hoy.substring(8, 10));
+                        $scope.Encuestadores = model.Encuestadores;
+                        $scope.Municipios = model.Municipios;
+                        $scope.refreshSelect();
+                    };
+
+                    $scope.seleccionarMunicipio = function () {
+                        $http.get(baseUrl + 'Localidad/ByMunicipio/' + $scope.Filtros.Municipio).then(function (response) {
+                            $scope.Localidades = response.data;
+                            $scope.refreshSelect();
+                        });
+                    };
+
+                    $scope.seleccionarLocalidad = function () {
+                        $http.get(baseUrl + 'Ageb/ByLocalidad/' + $scope.Filtros.Localidad).then(function (response) {
+                            $scope.Agebs = response.data;
+                            $scope.refreshSelect();
+                        });
+                    };
+
+                    $scope.seleccionarAgeb = function () {
+                        $http.get(baseUrl + 'Manzana/ByAgeb/' + $scope.Filtros.Ageb).then(function (response) {
+                            $scope.Manzanas = response.data;
+                            $scope.refreshSelect();
+                        });
+                    };
+
+                    $scope.refreshSelect = _.debounce(function () {
+                        $('.selectpicker2').selectpicker('refresh');
+                    }, 200);
+
+                    $scope.exportar = function () {
+                        document.getElementById("Inicio").value = $scope.Filtros.Inicio == null ? null : $scope.Filtros.Inicio.toISOString().substring(0, 10);
+                        document.getElementById("Fin").value = $scope.Filtros.Fin == null ? null : $scope.Filtros.Fin.toISOString().substring(0, 10);
+                        document.getElementById("Municipio").value = $scope.Filtros.Municipio;
+                        document.getElementById("Localidad").value = $scope.Filtros.Localidad;
+                        document.getElementById("Ageb").value = $scope.Filtros.Ageb;
+                        document.getElementById("Manzana").value = $scope.Filtros.Manzana;
+                        document.getElementById("CodigoPostal").value = $scope.Filtros.CodigoPostal;
+                        document.getElementById("Familia").value = $scope.Filtros.Familia;
+                        document.getElementById("Encuestador").value = $scope.Filtros.Encuestador;
+                        document.getElementById("exportar").submit();
+                    };
+
+                    $scope.ingresar = function () {
+                        $scope.importando = true;
+                        $scope.resultadoImportacion = "";
+                        $http.post(baseUrl + 'Diagnosticos/IngresarBaseMadre/', $scope.FiltrosGenerar).then(function (response) {                           
+                            $scope.importando = false;
+                            $scope.resultadoImportacion = response.data;
+                        }).catch(function(response) {
+                            $scope.importando = false;
+                            $scope.resultadoImportacion = response.data;
+                        });                        
+                    };
+                }
+            );
+        })();
+    </script>
+}
+
+@section Styles
+{
+    <style>
+        body {
+            background-color: #f5f7fb;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+        }
+        
+        .card {
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 12px 30px rgba(0, 85, 164, 0.15);
+            margin-bottom: 2rem;
+            overflow: hidden;
+            background: #FFFFFF;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 85, 164, 0.2);
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #0055A4, #0072BC);
+            color: white;
+            font-weight: 600;
+            padding: 1.5rem 2rem;
+            border-bottom: none;
+            border-radius: 20px 20px 0 0 !important;
+            text-align: center;
+            font-size: 1.25rem;
+        }
+
+        .card-body {
+            padding: 2.5rem;
+        }
+
+        .date-range-container {
+            background: #F8FAFC;
+            border-radius: 18px;
+            padding: 2rem;
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.03);
+        }
+
+        .filter-label {
+            font-weight: 600;
+            color: #2D3748;
+            font-size: 1.1rem;
+            letter-spacing: 0.5px;
+        }
+
+        .date-range-picker {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+
+        .date-input-wrapper {
+            display: flex;
+            flex-direction: column;
+            min-width: 220px;
+        }
+
+        .date-label {
+            font-weight: 500;
+            margin-bottom: 0.75rem;
+            color: #4A5568;
+            font-size: 0.95rem;
+            text-align: center;
+        }
+
+        .input-with-icon {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #0072BC;
+            z-index: 5;
+        }
+
+        .date-input {
+            border-radius: 14px;
+            padding: 1.1rem 1rem 1.1rem 2.75rem;
+            border: 2px solid #E2E8F0;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            font-size: 1.05rem;
+            height: auto;
+            min-width: 220px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04);
+        }
+
+        .date-input:focus {
+            border-color: #0072BC;
+            box-shadow: 0 0 0 3px rgba(0, 114, 188, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .date-separator {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0 0.5rem;
+        }
+
+        .separator-line {
+            height: 2px;
+            width: 40px;
+            background: linear-gradient(to right, transparent, #CBD5E0, transparent);
+            margin: 0.5rem 0;
+        }
+
+        .separator-text {
+            color: #718096;
+            font-weight: 500;
+            font-size: 0.9rem;
+            padding: 0.25rem 0.75rem;
+            background: #EDF2F7;
+            border-radius: 12px;
+        }
+
+        .btn-export {
+            border-radius: 14px;
+            padding: 1.25rem 2.5rem;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            border: none;
+            background: linear-gradient(135deg, #0055A4, #0072BC);
+            box-shadow: 0 6px 15px rgba(0, 114, 188, 0.3);
+            color: white;
+            font-size: 1.1rem;
+            position: relative;
+            overflow: hidden;
+            min-width: 220px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-export:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 114, 188, 0.4);
+            background: linear-gradient(135deg, #0072BC, #0055A4);
+        }
+
+        .btn-export:active {
+            transform: translateY(1px);
+        }
+
+        .btn-hover-effect {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(-100%);
+            transition: transform 0.4s ease;
+            z-index: 1;
+        }
+
+        .btn-export:hover .btn-hover-effect {
+            transform: translateX(100%);
+        }
+
+        /* Responsive adjustments */
+        @@media (max-width: 768px) {
+            .card-body {
+                padding: 1.5rem;
+            }
+            
+            .date-range-picker {
+                flex-direction: column;
+            }
+            
+            .date-separator {
+                flex-direction: row;
+                margin: 1rem 0;
+            }
+            
+            .separator-line {
+                width: 30px;
+                height: 1px;
+                margin: 0 0.5rem;
+            }
+        }
+        
+        .loading {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+            z-index: 9999;
+        }
+    </style>
+}

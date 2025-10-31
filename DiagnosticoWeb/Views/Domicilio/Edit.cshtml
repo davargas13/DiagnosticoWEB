@@ -1,0 +1,366 @@
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+@using DiagnosticoWeb.Code
+@{
+    ViewData["Title"] = "Edición del domicilio de la familia";
+}
+<div ng-app="SedeshuApp" ng-controller="indexController" ng-init="init(@JsonSedeshu.SerializeObject(Model))">
+    <partial name="_Loading_Partial" />
+    <div ng-cloak>
+        <div class="card border-cards">
+            <div class="card-header bg-cards text-white d-flex justify-content-between">
+                <span>Edición del domicilio de la familia {{NumDato}}</span>
+                <a class="btn btn-sm btn-header" href="@Url.Action(controller: "Beneficiarios", action: "Ver")/{{FamiliaId}}">
+                    <i class="fa fa-backward"></i> Regresar
+                </a>
+            </div>
+            <div class="card-body">
+                <div ng-if="NumDatos > 0" class="d-flex justify-content-between">
+                    <span>Histórico de datos</span>
+                    <div>
+                        <button class="btn btn-sm btn-default" ng-if="NumDato > 1" ng-click="verDatoHistorico('anterior')">
+                            <i class="fa fa-arrow-left"></i>
+                        </button>
+                        <button class="btn btn-sm btn-default" ng-if="NumDato <= NumDatos" ng-click="verDatoHistorico('siguiente')">
+                            <i class="fa fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="d-flex flex-wrap">
+                    <div class="col-sm-4 campo">
+                        <label class="required">Municipio</label>
+                        <select class="selectpicker2 form-control" data-live-search="true" ng-model="Domicilio.MunicipioId" ng-change="GetLocalidades()">
+                            <option ng-repeat="municipio in Municipios" ng-value="municipio.Id">{{municipio.Nombre}}</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-4 campo">
+                        <label class="required">Localidad</label>
+                        <select class="selectpicker2 form-control" data-live-search="true" ng-model="Domicilio.LocalidadId" ng-change="GetAgebs()">
+                            <option ng-repeat="localidad in Localidades" ng-value="localidad.Id">{{localidad.Nombre}}</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-4 campo">
+                        <label>AGEB</label>
+                        <select class="selectpicker2 form-control" data-live-search="true" ng-model="Domicilio.AgebId" ng-change="GetManzanas()">
+                            <option ng-repeat="ageb in Agebs" ng-value="ageb.Id">{{ageb.Nombre}}</option>
+                        </select>
+                    </div>  
+                    <div class="col-sm-4 campo">
+                        <label>Zona de impulso</label>
+                        <select class="selectpicker2 form-control" data-live-search="true" ng-model="Domicilio.ZonaImpulsoId">
+                            <option ng-repeat="zona in Zonas" ng-value="zona.Id">{{zona.Nombre}}</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-4 campo">
+                        <label class="required">Código postal <span class="small">({{Domicilio.CodigoPostal.length}} / 5)</span></label>
+                        <input type="text" class="form-control" ng-model="Domicilio.CodigoPostal" ng-blur="GetColonias()">
+                        <span class="text-danger small">{{ errors["CodigoPostal"] }}</span>
+                    </div>                    
+                    <div class="col-sm-4 campo">
+                        <label>Manzana</label>
+                        <select class="selectpicker2 form-control" data-live-search="true" ng-model="Domicilio.ManzanaId">
+                            <option ng-repeat="manzana in Manzanas" ng-value="manzana.Id">{{manzana.Nombre}}</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-4 campo">
+                        <label>Colonia</label>
+                        <select class="selectpicker2 form-control" data-live-search="true" ng-model="Domicilio.ColoniaId" ng-change="seleccionarColonia()">
+                            <option ng-repeat="colonia in Colonias" ng-value="colonia.Id">{{colonia.Nombre}}</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-4 campo">
+                        <label class="required">Nombre de la colonia <span class="small">({{Domicilio.NombreAsentamiento .length}} / 100)</span></label>
+                        <input type="text" class="form-control" ng-model="Domicilio.NombreAsentamiento ">
+                        <span class="text-danger small">{{ errors["NombreAsentamiento "] }}</span>
+                    </div>
+                    <div class="col-sm-4 campo">
+                        <label>Calle</label>
+                        <select class="selectpicker2 form-control" data-live-search="true" ng-model="Domicilio.CalleId" ng-change="seleccionarCalle()">
+                            <option ng-repeat="calle in Calles" ng-value="calle.Id">{{calle.Nombre}}</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-4 campo">
+                        <label class="required">Nombre de la calle <span class="small">({{Domicilio.DomicilioN.length}} / 100)</span></label>
+                        <input type="text" class="form-control" ng-model="Domicilio.DomicilioN">
+                        <span class="text-danger small">{{ errors["DomicilioN"] }}</span>
+                    </div>
+                    <div class="col-sm-4 campo">
+                        <label class="required">Número exterior <span class="small">({{Domicilio.NumExterior.length}} / 20)</span></label>
+                        <input type="text" class="form-control" ng-model="Domicilio.NumExterior">
+                        <span class="text-danger small">{{ errors["NumExterior"] }}</span>
+                    </div>
+                    <div class="col-sm-4 campo">
+                        <label>Número interior <span class="small">({{Domicilio.NumInterior.length}} / 20)</span></label>
+                        <input type="text" class="form-control" ng-model="Domicilio.NumInterior">
+                        <span class="text-danger small">{{ errors["NumInterior"] }}</span>
+                    </div>
+                    <div class="col-sm-4 campo">
+                        <label class="required">Entre calle <span class="small">({{Domicilio.EntreCalle1.length}} / 100)</span></label>
+                        <input type="text" class="form-control" ng-model="Domicilio.EntreCalle1">
+                        <span class="text-danger small">{{ errors["Calle1"] }}</span>
+                    </div>
+                    <div class="col-sm-4 campo">
+                        <label class="required">Entre calle <span class="small">({{Domicilio.EntreCalle2.length}} / 100)</span></label>
+                        <input type="text" class="form-control" ng-model="Domicilio.EntreCalle2">
+                        <span class="text-danger small">{{ errors["Calle2"] }}</span>
+                    </div>
+                    <div class="col-sm-4 campo">
+                        <label>Calle posterior<span class="small">({{Domicilio.CallePosterior.length}} / 100)</span></label>
+                        <input type="text" class="form-control" ng-model="Domicilio.CallePosterior">
+                        <span class="text-danger small">{{ errors["CallePosterior"] }}</span>
+                    </div>
+                    <div class="col-sm-3 campo">
+                        <label>Correo electrónico<span class="small">({{Domicilio.Email.length}} / 100)</span></label>
+                        <input type="text" class="form-control" ng-model="Domicilio.Email">
+                        <span class="text-danger small">{{ errors["Email"] }}</span>
+                    </div>
+                    <div class="col-sm-3 campo">
+                        <label class="required">Teléfono <span class="small">({{Domicilio.Telefono.length}} / 10)</span></label>
+                        <input type="text" class="form-control" ng-model="Domicilio.Telefono">
+                        <span class="text-danger small">{{ errors["Telefono"] }}</span>
+                    </div>
+                    <div class="col-sm-3 campo">
+                        <label class="required">Teléfono de casa <span class="small">({{Domicilio.TelefonoCasa.length}} / 10)</span></label>
+                        <input type="text" class="form-control" ng-model="Domicilio.TelefonoCasa">
+                        <span class="text-danger small">{{ errors["TelefonoCasa"] }}</span>
+                    </div>
+                    <div class="col-sm-3 campo">
+                        <label>Tipo de asentamiento</label>
+                        <select class="selectpicker2 form-control" data-live-search="true" ng-model="Domicilio.TipoAsentamientoId">
+                            <option ng-repeat="tipo in TiposAsentamiento" ng-value="tipo.Id">{{tipo.Nombre}}</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-3 campo">
+                        <label>Tipo de camino</label>
+                        <select class="selectpicker2 form-control" data-live-search="true" ng-model="Domicilio.CaminoId">
+                            <option ng-repeat="camino in Caminos" ng-value="camino.Id">{{camino.Nombre}}</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-3 campo">
+                        <label>Carretera</label>
+                        <select class="selectpicker2 form-control" data-live-search="true" ng-model="Domicilio.CarreteraId">
+                            <option ng-repeat="carretera in Carreteras" ng-value="carretera.Id">{{carretera.Nombre}}</option>
+                        </select>
+                    </div>
+                </div>
+                <hr />
+                <div class="col-sm-12">
+                    <label>Capturar ubicación en el mapa <input type="checkbox" style="vertical-align: middle;" ng-model="Domicilio.CapturarUbicacion" ng-change="SetMarker()" /></label>
+                    <div id="map" style="height: 300px;"></div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <button class="btn btn-sm btn-success" ng-click="guardar()" ng-disabled="guardando" ng-if="!guardando">
+                    <i class="fa fa-save"></i> Guardar
+                </button>
+                <button class="btn btn-sm btn-success" ng-if="guardando">
+                    <i class="fa fa-spinner fa-spin" ng-if="guardando"></i> Guardar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=@Configuration["GoogleApi:ApiKey"]"></script>
+
+    <script>
+        (function () {
+            var app = angular.module('SedeshuApp', ['ui.bootstrap']);
+            var baseUrl = document.baseURI;
+
+            app.controller('indexController',
+                function ($scope, $http) {
+                    $scope.errors = {};
+                    $scope.Domicilio = {};
+                    $scope.Municipios = [];
+                    $scope.Localidades = [];
+                    $scope.TiposAsentamiento = [];
+                    $scope.Colonias = [];
+                    $scope.Calles = [];
+                    $scope.Zonas = [];
+                    $scope.Agebs = [];
+                    $scope.guardando = false;
+                    $scope.map = null;
+                    $scope.marker = null;
+                    $scope.ubication = { lat: 21.0676524, lng: -101.2601372 };
+                    $scope.center = null;
+                    $scope.NumDato = 1;
+                    $scope.NumDatos = 0;
+                    $scope.FamiliaId = '';
+                    $scope.DomicilioId = '';
+                    
+                    $scope.init = function (model) {                   
+                        $scope.Domicilio = model.Domicilio;
+                        $scope.FamiliaId = model.Domicilio.BeneficiarioId;
+                        $scope.DomicilioId = model.Domicilio.Id;
+                        $scope.NumDatos = model.Domicilio.NumDatos;
+                        
+                        $scope.Municipios = model.Municipios;
+                        $scope.Caminos = model.Caminos;
+                        $scope.Carreteras = model.Carreteras;
+                        $scope.TiposAsentamiento = model.TiposAsentamiento;
+
+                        $scope.GetLocalidades();                        
+                        $scope.GetAgebs();
+                        $scope.GetManzanas();                        
+
+                        $scope.map = new google.maps.Map(document.getElementById('map'), { zoom: 10, center: $scope.ubication, streetViewControl: false });
+
+                        $scope.map.addListener('center_changed', function () {
+                            $scope.Domicilio.Latitud = parseFloat($scope.map.getCenter().lat());
+                            $scope.Domicilio.Longitud = parseFloat($scope.map.getCenter().lng());
+                            $scope.center = { lat: $scope.Domicilio.Latitud, lng: $scope.Domicilio.Longitud };
+
+                            if ($scope.Domicilio.CapturarUbicacion) {
+                                $scope.marker.setPosition($scope.center);
+                            }
+                        });
+
+                        if ($scope.Domicilio.CapturarUbicacion) {
+                            let latlon = { lat: parseFloat($scope.Domicilio.Latitud), lng: parseFloat($scope.Domicilio.Longitud) };
+                            $scope.marker = new google.maps.Marker({
+                                position: latlon,
+                                map: $scope.map
+                            });
+                            $scope.map.setZoom(10);
+                            $scope.map.panTo(latlon);
+                        }
+                    };
+
+                    $scope.guardar = function () {
+                        $scope.guardando = true;
+
+                        $http.post(baseUrl + 'Domicilio/Guardar/', $scope.Domicilio).then(function (response) {
+                            if (response.data == "ok") {
+                                window.location.href = baseUrl + 'Beneficiarios/Ver/' + $scope.FamiliaId;
+                            } else {
+                                $scope.cargarErrores(response.data);
+                            }
+                            $scope.guardando = false;
+                        });
+                    };
+
+                    $scope.SetMarker = function () {
+                        if ($scope.Domicilio.CapturarUbicacion) {
+                            $scope.marker = new google.maps.Marker({
+                                position: $scope.map.getCenter(),
+                                map: $scope.map
+                            });
+
+                            $scope.map.setZoom(10);
+                            $scope.map.panTo($scope.marker);
+                        } else {
+                            $scope.marker.setMap(null);
+                            $scope.marker = null;
+                        }
+                    };
+
+                    $scope.GetLocalidades = function () {
+                        $http.get(baseUrl + 'Domicilio/GetLocalidades/' + $scope.Domicilio.MunicipioId).then(function (response) {
+                            $scope.Localidades = response.data;
+                            $scope.guardando = false;
+                            $scope.GetAgebs();
+                            $scope.GetZonas();                       
+                            $scope.GetCalles();
+                        });
+                    };
+
+                    $scope.GetAgebs = function () {
+                        $http.get(baseUrl + 'Domicilio/GetAgebs/' + $scope.Domicilio.LocalidadId).then(function (response) {
+                            $scope.Agebs = response.data;
+                            $scope.guardando = false;
+                            $scope.refreshSelect();
+                            $scope.GetColonias();
+                        });
+                    };
+                    
+                    $scope.GetManzanas = function () {
+                        $http.get(baseUrl + 'Domicilio/GetManzanas/' + $scope.Domicilio.AgebId).then(function (response) {
+                            $scope.Manzanas = response.data;
+                            $scope.guardando = false;
+                            $scope.refreshSelect();
+                        });
+                    };
+                    
+                    $scope.GetZonas = function () {
+                        $http.get(baseUrl + 'Domicilio/GetZonas/' + $scope.Domicilio.MunicipioId).then(function (response) {
+                            $scope.Zonas = response.data;
+                            $scope.guardando = false;
+                            $scope.refreshSelect();
+                        });
+                    };                    
+                    
+                    $scope.GetColonias = function () {
+                        $http.get(baseUrl + 'Domicilio/GetColonias?id='+$scope.Domicilio.MunicipioId+"&codigopostal="+$scope.Domicilio.CodigoPostal).then(function (response) {
+                            $scope.Colonias = response.data;
+                            $scope.guardando = false;
+                            $scope.refreshSelect();
+                        });
+                    };
+                    
+                    $scope.GetCalles = function () {
+                        $http.get(baseUrl + 'Domicilio/GetCalles/'+$scope.Domicilio.LocalidadId).then(function (response) {
+                            $scope.Calles = response.data;
+                            $scope.guardando = false;
+                            $scope.refreshSelect();
+                        });
+                    };
+
+                    $scope.cargarErrores = function (errors) {
+                        $scope.errors = {};
+                        for (var i = 0; i < errors.length; i++) {
+                            $scope.errors[errors[i].Key] = errors[i].Error;
+                        }
+                    };
+
+                    $scope.refreshSelect = _.debounce(function () {
+                        $('.selectpicker2').selectpicker('refresh');
+                    }, 200);
+                    
+                    $scope.seleccionarColonia = function() {
+                        let colonia = _.find($scope.Colonias, function(c) {
+                          return c.Id == $scope.Domicilio.ColoniaId;
+                        });                        
+                        if(colonia != null){
+                            $scope.Domicilio.NombreAsentamiento = colonia.Nombre;
+                        }
+                    };
+                    
+                    $scope.seleccionarCalle = function() {
+                        let colonia = _.find($scope.Calles, function(c) {
+                          return c.Id == $scope.Domicilio.CalleId;
+                        });
+                        if(colonia != null){
+                            $scope.Domicilio.DomicilioN = colonia.Nombre;
+                        }
+                    };
+
+                    $scope.verDatoHistorico = function (direccion) {
+                        if (direccion == 'siguiente') {
+                            $scope.NumDato++;
+                        } else {
+                            $scope.NumDato--;
+                        }
+                       
+                        $http.post(baseUrl + 'Domicilio/'+($scope.NumDato == 1 ? 'VerDatos' : 'VerDatosHistoricos'), {
+                            Numero: $scope.NumDato,
+                            DomicilioId: $scope.DomicilioId
+                        }).then(function (response) {                            
+                            $scope.Domicilio = response.data;
+                            $('.selectpicker2').selectpicker('refresh');
+                        });
+                    };                        
+                });
+        })();
+    </script>
+}
+
+@section Styles{
+    <style>
+        .campo {
+            margin: 5px 0;
+        }
+    </style>
+}

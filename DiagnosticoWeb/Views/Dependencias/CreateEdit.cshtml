@@ -1,0 +1,238 @@
+@using System.Security.Claims;
+@using DiagnosticoWeb.Code
+<div ng-app="SedeshuApp" ng-controller="createController" ng-init="init(@JsonSedeshu.SerializeObject(Model))">
+    <partial name="_Loading_Partial" />
+    <slot ng-cloak>
+        <div>
+            <div class="card border-cards">
+                <div class="card-header bg-cards text-white">
+                    @if (string.IsNullOrEmpty(Model.Id))
+                    {
+                        <h5 class="float-left">Crear dependencia</h5>
+                    }
+                    else
+                    {
+                        <h5 class="float-left">Editar dependencia</h5>
+                    }
+                    <a class="btn btn-sm btn-header float-right" asp-controller="Dependencias" asp-action="Index">
+                        <i class="fa fa-backward"></i> Regresar
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-10 col-sm-12">
+                            <div>
+                                <label class="required">Nombre <small>{{ dependencia.Nombre.length }} / 250</small></label>
+                            </div>
+                            <div class="input-group">
+                                <input class="form-control" ng-model="dependencia.Nombre" style="border-radius: 0.25rem" />
+                                <div class="input-group-append" style="margin-left: 5px;">
+                                    <button class="btn btn-sm btn-info float-right" ng-click="agregarZona()"
+                                            style="border-radius: 0.2rem">
+                                        <i class="fa fa-plus"></i> Agregar región
+                                    </button>
+                                </div>
+                            </div>
+                            <span class="text-danger small">
+                                {{ errors["Nombre"] }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card border-cards">
+                <div class="card-body">
+                    <label class="badge badge-info">Regiones</label>
+                    <hr style="margin-top: 0px" />
+                    <div style="display: flex; flex-wrap: wrap" ng-if="dependencia.Zonas.length > 0">
+                        <div ng-repeat="(index, zona) in dependencia.Zonas" class="vertiente">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <input type="text" ng-model="zona.Clave" class="form-control">
+                                </div>
+                                <button class="btn btn-sm btn-light" ng-click="mostrarMunicipios(index)" title="Botón para asociar municipios a esta región">
+                                    <i class="fa fa-city"></i> Municipios
+                                </button>
+                                <button class="btn btn-sm btn-danger" ng-click="quitarZona(zona)" title="Botón para quitar esta región de la dependencia">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <span class="text-danger small">{{ errors["Zonas[" + index + "].Municipios"] }}</span>
+                                    <span class="text-danger small">{{ errors["Zonas[" + index + "].Clave"] }}</span>
+                                </div>
+                            </div>
+                            <div ng-if="zona.Municipios.length > 0">
+                                <table class="table table-sm small mt-3" style="margin-bottom: 5px;">
+                                    <tr ng-repeat="municipio in zona.Municipios">
+                                        <td>{{ municipio.Nombre }}</td>
+                                        <td class="no-stretch">
+                                            <button class="btn btn-sm btn-danger" ng-click="quitarMunicipio(zona, municipio)">
+                                                <i class="fa fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @if (((ClaimsIdentity)User.Identity).HasClaim("Permiso", "dependencias.editar"))
+                {
+                    <div class="card-footer">
+                        <button class="btn btn-sm btn-success" ng-click="Guardar()" ng-if="!guardando">
+                            <i class="fa fa-save"></i> Guardar
+                        </button>
+                        <button class="btn btn-sm btn-success" disabled ng-if="guardando">
+                            <i class="fa fa-spinner fa-spin"></i> Guardar
+                        </button>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div ng-if="MostrarMunicipios" style="position: fixed; right: 2px; top: 75px; width: 250px; border:1px solid grey; padding: 5px;
+            background: white; border-radius: 5px; max-height: 85vh; overflow-y: auto; z-index: 1;">
+            <div class="d-flex justify-content-between">
+                <button class="btn btn-sm btn-light" ng-click="agregarMunicipios()">
+                    <i class="fa fa-arrow-left"></i>
+                </button>
+                <span class="font-weight-bold">Municipios</span>
+                <button class="btn btn-sm btn-light float-right" ng-click="cerrarMunicipios()">
+                    <i class="fa fa-ban"></i>
+                </button>
+            </div>
+            <table class="table table-sm small mt-1">
+                <tr ng-repeat="municipio in Municipios">
+                    <td><input type="checkbox" ng-model="municipio.Selected" id="{{municipio.Id}}"></td>
+                    <td><label for="{{ municipio.Id }}" style="width: 100%">{{ municipio.Nombre }}</label></td>
+                </tr>
+                <tr ng-if="empty">
+                    <td>Debe registrar municipios para configurar la región.</td>
+                </tr>
+                <tr ng-if="!empty && Municipios.length == 0">
+                    <td>No hay municipios que falten de ubicar</td>
+                </tr>
+            </table>
+        </div>
+    </slot>
+</div>
+
+@section Scripts {
+    <script>
+        (function () {
+            var app = angular.module('SedeshuApp', ['ui.bootstrap']);
+            var baseUrl = document.baseURI;
+
+            app.controller('createController',
+                function ($scope, $http, $uibModal) {
+                    $scope.dependencia = {
+                        Id: 0,
+                        Nombre: "",
+                        Zonas: [],
+                        Municipios: [],
+                    };
+                    $scope.Zona = "";
+                    $scope.Municipios = [];
+                    $scope.errors = [];
+                    $scope.MostrarMunicipios = false;
+                    $scope.guardando = false;
+                    $scope.empty = false;
+
+                    $scope.init = function (dependencia) {
+
+                        $scope.dependencia.Id = dependencia.Id;
+                        $scope.dependencia.Nombre = dependencia.Nombre;
+                        $scope.dependencia.Zonas = dependencia.Zonas;
+                        $scope.Municipios = dependencia.Municipios;
+                        $scope.empty = dependencia.Municipios.length == 0;
+                    }
+
+                    $scope.Guardar = function () {
+                        $scope.guardando = true;
+                        $http.post(baseUrl + 'Dependencias/Guardar', $scope.dependencia)
+                            .then(function (response) {
+                                if (response.data == "ok") {
+                                    window.location.href = baseUrl + 'Dependencias';
+                                } else {
+                                    $scope.cargarErrores(response.data);
+                                }
+                                $scope.guardando = false;
+                            });
+                    }
+
+                    $scope.agregarZona = function () {
+                        $scope.dependencia.Zonas.push({ Id: 0, Clave: 'Región', Municipios: [], DependenciaId: $scope.dependencia.Id });
+                        $scope.refreshSelect();
+                    }
+
+                    $scope.mostrarMunicipios = function (index) {
+                        $scope.Zona = index;
+                        $scope.MostrarMunicipios = true;
+                    }
+
+                    $scope.cerrarMunicipios = function (zona) {
+                        $scope.Zona = "";
+                        $scope.MostrarMunicipios = false;
+                    }
+
+                    $scope.agregarMunicipios = function () {
+                        let zona = $scope.dependencia.Zonas[$scope.Zona];
+
+                        if (zona != null) {
+                            _.each($scope.Municipios, function (mun) {
+                                if (mun.Selected) {
+                                    zona.Municipios.push({ Id: mun.Id, Nombre: mun.Nombre });
+                                }
+                            });
+                            _.remove($scope.Municipios, function (mun) {
+                                return _.some(zona.Municipios, function (m) {
+                                    return m.Id == mun.Id;
+                                });
+                            });
+                        }
+                        $scope.MostrarMunicipios = false;
+                    }
+
+                    $scope.quitarMunicipio = function (zona, municipio) {
+                        $scope.Municipios.push({ Id: municipio.Id, Nombre: municipio.Nombre });
+                        let index = zona.Municipios.indexOf(municipio);
+                        zona.Municipios.splice(index, 1);
+                    }
+
+                    $scope.quitarZona = function (zona) {
+                        _.each(zona.Municipios, function (municipio) {
+                            $scope.Municipios.push({ Id: municipio.Id, Nombre: municipio.Nombre });
+                        });
+                        let index = $scope.dependencia.Zonas.indexOf(zona);
+                        $scope.dependencia.Zonas.splice(index, 1);
+                    }
+
+                    $scope.cargarErrores = function (errors) {
+                        $scope.errors = [];
+                        for (var i = 0; i < errors.length; i++) {
+                            $scope.errors[errors[i].Key] = errors[i].Error;
+                        }
+                    }
+
+                    $scope.refreshSelect = _.debounce(function () {
+                        $('.selectpicker2').selectpicker('refresh');
+                    }, 200);
+                }
+            );
+        })();
+    </script>
+}
+
+@section Styles
+{
+    <style>
+        .vertiente {           
+            padding: 10px;           
+            border: 1px solid #eaecee;
+            width: 380px; 
+            margin: 5px;                                       
+        }     
+    </style>
+}

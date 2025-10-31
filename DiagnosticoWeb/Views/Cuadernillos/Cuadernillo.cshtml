@@ -1,0 +1,770 @@
+﻿@model Cuadernillo
+@{
+    ViewData["Title"] = "Estadisticos basicos";
+}
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Cuadernillo</title>
+    <meta charset="utf-8"/>
+    @Html.Raw("<script type='text/javascript' src='" + Model.Ruta + "/js/Chart.min.js'></script>")
+    @Html.Raw("<script type='text/javascript' src='" + Model.Ruta + "/js/chartjs-plugin-labels.min.js'></script>")
+
+    <style>
+        html {
+            font-family: Arial, Helvetica, sans-serif
+        }
+
+        .grafica {
+            display: inline-block;
+            width: 45%;
+            vertical-align: top;
+            margin: 10px 0;            
+        }
+        
+        .alonegrafica {
+            display: block;
+            width: 45%;            
+            margin: 20px auto;            
+        }
+
+        .title {
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            margin: 20px 0;
+        }
+
+        table td {
+            border-bottom: 1px solid #e2e6ea;
+            margin: 0;
+            padding: 5px;
+        }
+
+        table .subtitle {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        table .valor {
+            font-size: 1.4rem;
+        }
+        
+        .edades{
+            width: 300px;
+            margin: auto;
+        }
+        .edades label {
+            display: block;
+            padding: 5px;
+            font-size: 1rem;
+        }
+
+            .edades label:nth-child(odd) {
+                background-color: #3498db;
+                color: #ffffff;
+            }
+
+        h1 {
+            color: #3498db;
+            text-align: center;
+        }
+
+        h3 {
+            text-align: center;
+        }
+
+        #guanajuato {
+            display: block;
+            margin: auto;
+            margin-bottom: 40px;
+        }
+
+        #sedeshu {
+            display: block;
+            margin: auto;
+            margin-top: 40px;
+            margin-bottom: 40px;
+        }
+
+        #impulso {
+            display: block;
+            margin: auto;
+            margin-top: 40px;
+            margin-bottom: 40px;
+        }
+
+        #intro {
+            font-size: 1.2rem;
+        }
+
+        .reportGraph {
+            width: 400px;
+            display: block;
+            vertical-align: top;
+            margin: auto;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+    </style>
+</head>
+<body onload="init()">
+    @Html.Raw("<img src='" + Model.Ruta + "/images/gobierno.jpg' id='guanajuato' alt='Guanajuato' width='980' />")
+    @Html.Raw("<img src='" + Model.Ruta + "/images/SEDESHU_LOGO.png' id='sedeshu' alt='sedeshu' width='300' />")
+    @Html.Raw("<img src='" + Model.Ruta + "/images/impulso.png' id='impulso' alt='impulso' width='400' />")
+    <h1 id="diagnostico">Diagnóstico Social</h1>
+    <h3>Estadísticos básicos</h3>
+    <h3>@Model.Inicio al @Model.Fin</h3>
+    <div id="intro">
+        <h1>Introducción</h1>
+        <p>El objetivo del Diagnóstico Social es identificar las condiciones socioeconómicas y las principales carencias sociales con base en la metodología para la medición multidimensional de la pobreza en México definida por el Consejo Nacional de Evaluación de la Política de Desarrollo Social (coneval).</p>
+        <p>Los datos presentados sólo explican las características de las personas que respondieron completamente el cuestionario en la zona de levantamiento, y que cuentan con información para el cálculo de todas las carencias.</p>
+    </div>
+    <table>
+        <tr>
+            <td class="subtitle text-center">Personas encuestadas</td>
+            <td class="subtitle text-center">Viviendas</td>
+        </tr>
+        <tr>
+            <td class="valor text-center">@Model.Personas</td>
+            <td class="valor text-center">@Model.Viviendas</td>
+        </tr>
+    </table>
+    <table>
+        <tr>
+            <td class="subtitle text-center">Pobreza moderada</td>
+            <td class="subtitle text-center">Pobreza extrema</td>
+            <td class="subtitle text-center">Pobreza</td>
+        </tr>
+        <tr>
+            <td class="valor text-center">@Model.Pobreza["pobreza_moderada"]</td>
+            <td class="valor text-center">@Model.Pobreza["pobreza_extrema"]</td>
+            <td class="valor text-center">@(Model.Pobreza["pobreza_moderada"] + Model.Pobreza["pobreza_extrema"])</td>
+        </tr>
+    </table>
+    <div class="graficas">
+        <div class="grafica title">Indicador de carencia por acceso a la alimentación</div>
+        <div class="grafica title">Indicador de carencia por rezago educativo</div>
+        <div class="grafica"><div class="reportGraph"><canvas id="alimentariaChart"></canvas></div></div>
+        <div class="grafica"><div class="reportGraph"><canvas id="educativaChart"></canvas></div></div>
+    </div>
+    <div class="graficas">
+        <div class="grafica title">Indicador de carencia por acceso servicios de salud</div>
+        <div class="grafica title">Indicador de carencia por acceso a la seguridad social</div>
+        <div class="grafica"><div class="reportGraph"><canvas id="saludChart"></canvas></div></div>
+        <div class="grafica"><div class="reportGraph"><canvas id="seguroChart"></canvas></div></div>
+    </div>
+    <div class="graficas">
+        <div class="grafica title">Indicador de carencia por calidad y espacios de la vivienda</div>
+        <div class="grafica title">Indicador de carencia de acceso a servicios básicos de la vivienda</div>
+        <div class="grafica"><div class="reportGraph"><canvas id="viviendaChart"></canvas></div></div>
+        <div class="grafica"><div class="reportGraph"><canvas id="serviciosChart"></canvas></div></div>
+    </div>
+    <div class="graficas">
+        <div class="title">Grado de tejido social</div>
+        <div class="aloneGrafica"><div class="reportGraph"><canvas id="tejidoChart"></canvas></div></div>        
+    </div>
+    <table class="table" style="margin-bottom: 20px; margin-top: 60px;">
+        <tr>
+            <th>Carencias</th>
+            <th>Personas</th>
+            <th class="text-center">%</th>
+            <th>Viviendas</th>
+            <th class="text-center">%</th>
+        </tr>
+        <tr class="text-center">
+            <td class="text-left">Personas con carencia por acceso a la seguridad social</td>
+            <td>@(Model.SeguroSocial["Con carencia"])</td>
+            <td>@(Model.SeguroSocial["Con carencia"] * 100 / (Model.Personas == 0 ? 1 : Model.Personas)) </td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr class="text-center">
+            <td class="text-left">Personas con carencia por acceso a la alimentación</td>
+            <td>@(Model.AlimentariaPersonas)</td>
+            <td>@(Model.AlimentariaPersonas * 100 / (Model.Personas == 0 ? 1 : Model.Personas))</td>
+            <td>@(Model.Alimentarias["Con carencia"])</td>
+            <td>@(Model.Alimentarias["Con carencia"] * 100 / (Model.Personas == 0 ? 1 : Model.Personas))</td>
+        </tr>
+        <tr class="text-center">
+            <td class="text-left">Personas con carencia por acceso a los servicios de salud</td>
+            <td>@(Model.Salud["Con carencia"])</td>
+            <td>@(Model.Salud["Con carencia"] * 100 / (Model.Personas == 0 ? 1 : Model.Personas)) </td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr class="text-center">
+            <td class="text-left">Personas con carencia de rezago educativo</td>
+            <td>@(Model.Educativas["Con carencia"])</td>
+            <td>@(Model.Educativas["Con carencia"] * 100 / (Model.Personas == 0 ? 1 : Model.Personas)) </td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr class="text-center">
+            <td class="text-left">Personas con carencia por índice de hacinamiento de la vivienda</td>
+            <td>@(Model.HacinamientoPersonas)</td>
+            <td>@(Model.HacinamientoPersonas * 100 / (Model.Personas == 0 ? 1 : Model.Personas))</td>
+            <td>@(Model.Hacinamiento["Con carencia"])</td>
+            <td>@(Model.Hacinamiento["Con carencia"] * 100 / (Model.Personas == 0 ? 1 : Model.Personas)) </td>
+        </tr>
+    </table>
+    <div class="title">Población</div>
+    <div>
+        <div class="grafica" style="width: 25%">
+            <div class="edades">
+                <label class="text-left">65 años y más</label>
+                <label>@(Model.Edades["65 años y mas"]["1"] + Model.Edades["65 años y mas"]["2"])</label>
+                <label>45 a 64 años</label>
+                <label>@(Model.Edades["45 a 64 años"]["1"] + Model.Edades["45 a 64 años"]["2"])</label>
+                <label>30 a 44 años</label>
+                <label>@(Model.Edades["30 a 44 años"]["1"] + Model.Edades["30 a 44 años"]["2"])</label>
+                <label>15 a 29 años</label>
+                <label>@(Model.Edades["15 a 29 años"]["1"] + Model.Edades["15 a 29 años"]["2"])</label>
+                <label>0 a 14 años de edad</label>
+                <label>@(Model.Edades["0 a 14 años de edad"]["1"] + Model.Edades["0 a 14 años de edad"]["2"])</label>
+            </div>
+        </div>
+        <div class="grafica" style="width: 70%">
+            <div class="alonegrafica" style="width:550px"><canvas id="edadesChart"></canvas></div>
+        </div>
+    </div>
+    <div class="graficas">
+        <div class="grafica title">Indicador de carencia por rezago educativo</div>
+        <div class="grafica title">Analfabetismo personas de 15 años o más</div>
+        <div class="grafica"><div class="reportGraph"><canvas id="educativa2Chart"></canvas></div></div>
+        <div class="grafica"><div class="reportGraph"><canvas id="analfabetismoChart"></canvas></div></div>
+    </div>
+    <div class="graficas">
+        <div class="grafica title">Rezago educativo por grupo de edad</div>
+        <div class="grafica title">Rezago educativo por nivel</div>
+        <div class="grafica"><div class="reportGraph"><canvas id="gradoEducativaChart"></canvas></div></div>
+        <div class="grafica"><div class="reportGraph"><canvas id="nivelEducativaChart"></canvas></div></div>
+    </div>
+    <div class="graficas">
+        <div class="grafica title">Indicador de carencia por acceso a la alimentación</div>
+        <div class="grafica title">Tipo de inseguridad alimentaria</div>
+        <div class="grafica"><div class="reportGraph"><canvas id="alimentaria2Chart"></canvas></div></div>
+        <div class="grafica"><div class="reportGraph"><canvas id="gradoAlimentariaChart"></canvas></div></div>
+    </div>
+    <div class="graficas">
+        <div class="grafica title">Indicador de carencia por acceso a servicios de salud</div>
+        <div class="grafica title">Personas con discapacidad permanente</div>
+        <div class="grafica"><div class="reportGraph"><canvas id="salud2Chart"></canvas></div></div>
+        <div class="grafica"><div class="reportGraph"><canvas id="discapacidadChart"></canvas></div></div>
+    </div>
+    <div class="graficas">
+        <div class="grafica title">Indicador de carencia por calidad y espacios de la vivienda</div>
+        <div class="grafica title">Indicador de carencia del material de piso de la vivienda</div>
+        <div class="grafica"><div class="reportGraph"><canvas id="vivienda2Chart"></canvas></div></div>
+        <div class="grafica"><div class="reportGraph"><canvas id="pisoChart"></canvas></div></div>
+    </div>
+    <div class="graficas">
+        <div class="grafica title">Indicador de carencia por material de techos de la vivienda</div>
+        <div class="grafica title">Indicador de carencia por material de muros de la vivienda</div>
+        <div class="grafica"><div class="reportGraph"><canvas id="techoChart"></canvas></div></div>
+        <div class="grafica"><div class="reportGraph"><canvas id="muroChart"></canvas></div></div>
+    </div>
+    <div class="graficas">
+        <div class="title">Indicador de carencia por índice de hacinamiento de la vivienda</div>
+        <div class="alonegrafica"><div class="reportGraph"><canvas id="hacinamientoChart"></canvas></div></div>
+    </div>
+    <div class="graficas">
+        <div class="grafica title">Indicador de carencia de acceso a servicios básicos de la vivienda</div>
+        <div class="grafica title">Indicador de carencia de acceso al agua</div>
+        <div class="grafica"><div class="reportGraph"><canvas id="servicios2Chart"></canvas></div></div>
+        <div class="grafica"><div class="reportGraph"><canvas id="aguaChart"></canvas></div></div>
+    </div>
+    <div class="graficas">
+        <div class="title">Indicador de carencia de servicio de drenaje</div>
+        <div class="alonegrafica"><div class="reportGraph"><canvas id="drenajeChart"></canvas></div></div>        
+    </div>
+    <div class="graficas">
+        <div class="grafica title">Indicador de carencia de servicios de electricidad</div>
+        <div class="grafica title">Indicador de carencia de servicios de combustible</div>
+        <div class="grafica"><div class="reportGraph"><canvas id="electricidadChart"></canvas></div></div>
+        <div class="grafica"><div class="reportGraph"><canvas id="combustibleChart"></canvas></div></div>
+    </div>
+    <div>
+        <div class="grafica title" style="margin: 10px 0;">Propiedad</div>
+        <div class="grafica title" style="margin: 10px 0;">Propiedad</div>
+    </div>
+    <div>
+        <div class="grafica" style="width: 45%">
+            <div class="edades">
+                <label>No presenta carencia</label>
+                <label>@(Model.Propiedad["Sin carencia"])</label>
+                <label>Presenta carencia</label>
+                <label>@(Model.Propiedad["Con carencia"])</label>
+            </div>
+        </div>
+        <div class="grafica" style="width: 45%">
+            <div class="reportGraph" style="width: 450px;"><canvas id="propiedadChart"></canvas></div>
+        </div>
+    </div>
+    <div class="graficas">
+        <div class="grafica title">Indicador de carencia por acceso a la seguridad social</div>
+        <div class="grafica title">Tiene acta de nacimiento</div>
+        <div class="grafica"><div class="reportGraph"><canvas id="seguro2Chart"></canvas></div></div>
+        <div class="grafica"><div class="reportGraph"><canvas id="actaChart"></canvas></div></div>
+    </div>
+    <div class="graficas">
+        <div class="grafica title">Grado de tejido social</div>
+        <div class="grafica title">Grado de satisfacción en áreas de vida</div>
+        <div class="grafica"><div class="reportGraph"><canvas id="tejido2Chart"></canvas></div></div>
+        <div class="grafica"><div class="reportGraph"><canvas id="satisfaccionChart"></canvas></div></div>
+    </div>
+    <div class="graficas">
+        <div class="grafica title">Grado de percepción de movilidad</div>
+        <div class="grafica title">Grado de perfección de redes sociales</div>
+        <div class="grafica"><div class="reportGraph"><canvas id="movilidadChart"></canvas></div></div>
+        <div class="grafica"><div class="reportGraph"><canvas id="redesChart"></canvas></div></div>
+    </div>
+    <div class="graficas">
+        <div class="grafica title">Grado de confianza en instituciones</div>
+        <div class="grafica title">Grado de confianza en líderes o representantes de colonia</div>
+        <div class="grafica"><div class="reportGraph"><canvas id="institucionesChart"></canvas></div></div>
+        <div class="grafica"><div class="reportGraph"><canvas id="lideresChart"></canvas></div></div>
+    </div>
+    <div class="graficas">
+        <div class="grafica title">Grado de percepción de interacción en espacios públicos</div>
+        <div class="grafica title">Percepción de seguridad en el parque</div>
+        <div class="grafica"><div class="reportGraph"><canvas id="publicosChart"></canvas></div></div>
+        <div class="grafica"><div class="reportGraph"><canvas id="parqueChart"></canvas></div></div>
+    </div>
+    <script type="text/javascript">
+
+        'use strict';
+        var colores = [
+            'rgb(255, 99, 132)',
+            'rgb(54, 162, 235)',
+            'rgb(255, 206, 86)',
+            'rgb(75, 192, 192)',
+            'rgb(153, 102, 255)',
+            'rgb(255, 159, 64)'
+        ];
+        (function (setLineDash) {
+            CanvasRenderingContext2D.prototype.setLineDash = function () {
+                if (!arguments[0].length) {
+                    arguments[0] = [1, 0];
+                }
+                // Now, call the original method
+                return setLineDash.apply(this, arguments);
+            };
+        })(CanvasRenderingContext2D.prototype.setLineDash);
+        Function.prototype.bind = Function.prototype.bind || function (thisp) {
+            var fn = this;
+            return function () {
+                return fn.apply(thisp, arguments);
+            };
+        };
+
+        function graficar(data, canvas) {
+            new Chart(document.getElementById(canvas), {
+                responsive: false,
+                type: 'pie',
+                data: {
+                    labels: data.labels,
+                    datasets: [
+                        {
+                            data: data.datos,
+                            backgroundColor: data.colors
+                        }
+                    ],
+                },
+                options: {
+                    animation: {
+                        duration: 0
+                    },
+                    plugins: {
+                        labels: {
+                            render: 'percentage'
+                        }
+                    }
+                }
+            }).toBase64Image();
+        };
+
+        function graficarEdades(data, canvas) {
+            new Chart(document.getElementById(canvas), {
+                responsive: false,
+                type: 'horizontalBar',
+                data: {
+                    labels: data.labels,
+                    datasets: [
+                        {
+                            label: "Hombres",
+                            data: data.hombres,
+                            backgroundColor: colores[0],
+                        },
+                        {
+                            label: "Mujeres",
+                            data: data.mujeres,
+                            backgroundColor: colores[1],
+                        }
+                    ]
+                },
+                options: {
+                    animation: {
+                        duration: 0
+                    },
+                    scales: {
+                        xAxes: [{
+                            stacked: true
+                        }],
+                        yAxes: [{
+                            stacked: true
+                        }]
+                    }
+                },
+            });
+        };
+
+        function init() {
+            var data = { datos: [], labels: [], colors: [] };
+            @{
+                var i = 0;
+                @Html.Raw("data = {datos:[], labels:[],colors:[]};\n")
+                foreach (var value in Model.Alimentarias)
+                {
+                    @Html.Raw("data.labels.push('"+value.Key+"')\n")
+                    @Html.Raw("data.datos.push(" + value.Value+")\n")
+                    @Html.Raw("data.colors.push(colores[" + i+++"])\n")
+                }
+                @Html.Raw("graficar(data, 'alimentariaChart');\n")
+
+                i = 0;
+                @Html.Raw("data = {datos:[], labels:[],colors:[]};\n")
+                foreach (var value in Model.Educativas) {
+                    @Html.Raw("data.labels.push('"+value.Key+"')\n")
+                    @Html.Raw("data.datos.push(" + value.Value+")\n")
+                    @Html.Raw("data.colors.push(colores[" + i+++"])\n")
+                }
+                @Html.Raw("graficar(data, 'educativaChart');\n")
+
+                i = 0;
+                @Html.Raw("data = {datos:[], labels:[],colors:[]};\n")
+                foreach (var value in Model.Salud) {
+                    @Html.Raw("data.labels.push('"+value.Key+"')\n")
+                    @Html.Raw("data.datos.push(" + value.Value+")\n")
+                    @Html.Raw("data.colors.push(colores[" + i+++"])\n")
+                }
+                @Html.Raw("graficar(data, 'saludChart');\n")
+
+                i = 0;
+                @Html.Raw("data = {datos:[], labels:[],colors:[]};\n")
+                foreach (var value in Model.SeguroSocial) {
+                    @Html.Raw("data.labels.push('"+value.Key+"')\n")
+                    @Html.Raw("data.datos.push(" + value.Value+")\n")
+                    @Html.Raw("data.colors.push(colores[" + i+++"])\n")
+                }
+                @Html.Raw("graficar(data, 'seguroChart');\n")
+
+                i = 0;
+                @Html.Raw("data = {datos:[], labels:[],colors:[]};\n")
+                foreach (var value in Model.Vivienda) {
+                    @Html.Raw("data.labels.push('"+value.Key+"')\n")
+                    @Html.Raw("data.datos.push(" + value.Value+")\n")
+                    @Html.Raw("data.colors.push(colores[" + i+++"])\n")
+                }
+                @Html.Raw("graficar(data, 'viviendaChart');\n")
+
+                i = 0;
+                @Html.Raw("data = {datos:[], labels:[],colors:[]};\n")
+                foreach (var value in Model.Servicios) {
+                    @Html.Raw("data.labels.push('"+value.Key+"')\n")
+                    @Html.Raw("data.datos.push(" + value.Value+")\n")
+                    @Html.Raw("data.colors.push(colores[" + i+++"])\n")
+                }
+                @Html.Raw("graficar(data, 'serviciosChart');\n")
+
+                i = 0;
+                @Html.Raw("data = {datos:[], labels:[],colors:[]};\n")
+                foreach (var value in Model.Tejido) {
+                    @Html.Raw("data.labels.push('"+value.Key+"')\n")
+                    @Html.Raw("data.datos.push(" + value.Value+")\n")
+                    @Html.Raw("data.colors.push(colores[" + i+++"])\n")
+                }
+                @Html.Raw("graficar(data, 'tejidoChart');\n")
+
+                @Html.Raw("var dataPersonas = {hombres:[], mujeres:[], labels:[]};\n")
+                foreach (var value in Model.Edades) {
+                    @Html.Raw("dataPersonas.hombres.push("+value.Value["1"]*-1+")\n")
+                    @Html.Raw("dataPersonas.mujeres.push(" + value.Value["2"]+")\n")
+                    @Html.Raw("dataPersonas.labels.push('"+value.Key+"')\n")
+                }
+                @Html.Raw("graficarEdades(dataPersonas, 'edadesChart');\n")
+
+                i = 0;
+                @Html.Raw("data = {datos:[], labels:[],colors:[]};\n")
+                foreach (var value in Model.Educativas) {
+                    @Html.Raw("data.labels.push('"+value.Key+"')\n")
+                    @Html.Raw("data.datos.push(" + value.Value+")\n")
+                    @Html.Raw("data.colors.push(colores[" + i+++"])\n")
+                }
+                @Html.Raw("graficar(data, 'educativa2Chart');\n")
+                
+                i = 0;
+                @Html.Raw("data = {datos:[], labels:[],colors:[]};\n")
+                foreach (var value in Model.Analfabetismo) {
+                    @Html.Raw("data.labels.push('"+value.Key+"')\n")
+                    @Html.Raw("data.datos.push(" + value.Value+")\n")
+                    @Html.Raw("data.colors.push(colores[" + i+++"])\n")
+                }
+                @Html.Raw("graficar(data, 'analfabetismoChart');\n") 
+                
+                i = 0;
+                @Html.Raw("data = {datos:[], labels:[],colors:[]};\n")
+                foreach (var value in Model.GradoEducativa) {
+                    @Html.Raw("data.labels.push('"+value.Key+"')\n")
+                    @Html.Raw("data.datos.push(" + value.Value+")\n")
+                    @Html.Raw("data.colors.push(colores[" + i+++"])\n")
+                }
+                @Html.Raw("graficar(data, 'gradoEducativaChart');\n") 
+                
+                i = 0;
+                @Html.Raw("data = {datos:[], labels:[],colors:[]};\n")
+                foreach (var value in Model.NivelEducativa) {
+                    @Html.Raw("data.labels.push('"+value.Key+"')\n")
+                    @Html.Raw("data.datos.push(" + value.Value+")\n")
+                    @Html.Raw("data.colors.push(colores[" + i+++"])\n")
+                }
+                @Html.Raw("graficar(data, 'nivelEducativaChart');\n")  
+                
+                i = 0;
+                @Html.Raw("data = {datos:[], labels:[],colors:[]};\n")
+                foreach (var value in Model.Alimentarias) {
+                    @Html.Raw("data.labels.push('"+value.Key+"')\n")
+                    @Html.Raw("data.datos.push(" + value.Value+")\n")
+                    @Html.Raw("data.colors.push(colores[" + i+++"])\n")
+                }
+                @Html.Raw("graficar(data, 'alimentaria2Chart');\n")    
+                  
+                i = 0;
+                @Html.Raw("data = {datos:[], labels:[],colors:[]};\n")
+                foreach (var value in Model.GradoAlimentarias) {
+                    @Html.Raw("data.labels.push('"+value.Key+"')\n")
+                    @Html.Raw("data.datos.push(" + value.Value+")\n")
+                    @Html.Raw("data.colors.push(colores[" + i+++"])\n")
+                }
+
+                @Html.Raw("graficar(data, 'gradoAlimentariaChart');\n")    
+                
+                i = 0;
+                @Html.Raw("data = {datos:[], labels:[],colors:[]};\n")
+                foreach (var value in Model.Salud) {
+                    @Html.Raw("data.labels.push('"+value.Key+"')\n")
+                    @Html.Raw("data.datos.push(" + value.Value+")\n")
+                    @Html.Raw("data.colors.push(colores[" + i+++"])\n")
+                }
+                @Html.Raw("graficar(data, 'salud2Chart');\n")     
+               
+                i = 0;
+                @Html.Raw("data = {datos:[], labels:[],colors:[]};\n")
+                foreach (var value in Model.Discapacidad) {
+                    @Html.Raw("data.labels.push('"+value.Key+"')\n")
+                    @Html.Raw("data.datos.push(" + value.Value+")\n")
+                    @Html.Raw("data.colors.push(colores[" + i+++"])\n")
+                }
+                @Html.Raw("graficar(data, 'discapacidadChart');\n")        
+                
+                i = 0;
+                @Html.Raw("data = {datos:[], labels:[],colors:[]};\n")
+                foreach (var value in Model.Vivienda) {
+                    @Html.Raw("data.labels.push('"+value.Key+"')\n")
+                    @Html.Raw("data.datos.push(" + value.Value+")\n")
+                    @Html.Raw("data.colors.push(colores[" + i+++"])\n")
+                }
+                @Html.Raw("graficar(data, 'vivienda2Chart');\n")       
+                
+                i = 0;
+                @Html.Raw("data = {datos:[], labels:[],colors:[]};\n")
+                foreach (var value in Model.Piso) {
+                    @Html.Raw("data.labels.push('"+value.Key+"')\n")
+                    @Html.Raw("data.datos.push(" + value.Value+")\n")
+                    @Html.Raw("data.colors.push(colores[" + i+++"])\n")
+                }
+                @Html.Raw("graficar(data, 'pisoChart');\n")                
+                
+                i = 0;
+                @Html.Raw("data = {datos:[], labels:[],colors:[]};\n")
+                foreach (var value in Model.Techo) {
+                    @Html.Raw("data.labels.push('"+value.Key+"')\n")
+                    @Html.Raw("data.datos.push(" + value.Value+")\n")
+                    @Html.Raw("data.colors.push(colores[" + i+++"])\n")
+                }
+                @Html.Raw("graficar(data, 'techoChart');\n")        
+                
+                i = 0;
+                @Html.Raw("data = {datos:[], labels:[],colors:[]};\n")
+                foreach (var value in Model.Muro) {
+                    @Html.Raw("data.labels.push('"+value.Key+"')\n")
+                    @Html.Raw("data.datos.push(" + value.Value+")\n")
+                    @Html.Raw("data.colors.push(colores[" + i+++"])\n")
+                }
+                @Html.Raw("graficar(data, 'muroChart');\n")               
+                
+                i = 0;
+                @Html.Raw("data = {datos:[], labels:[],colors:[]};\n")
+                foreach (var value in Model.Hacinamiento) {
+                    @Html.Raw("data.labels.push('"+value.Key+"')\n")
+                    @Html.Raw("data.datos.push(" + value.Value+")\n")
+                    @Html.Raw("data.colors.push(colores[" + i+++"])\n")
+                }
+                @Html.Raw("graficar(data, 'hacinamientoChart');\n")                
+                
+                i = 0;
+                @Html.Raw("data = {datos:[], labels:[],colors:[]};\n")
+                foreach (var value in Model.Servicios) {
+                    @Html.Raw("data.labels.push('"+value.Key+"')\n")
+                    @Html.Raw("data.datos.push(" + value.Value+")\n")
+                    @Html.Raw("data.colors.push(colores[" + i+++"])\n")
+                }
+                @Html.Raw("graficar(data, 'servicios2Chart');\n")           
+               
+                i = 0;
+                @Html.Raw("data = {datos:[], labels:[],colors:[]};\n")
+                foreach (var value in Model.Agua) {
+                    @Html.Raw("data.labels.push('"+value.Key+"')\n")
+                    @Html.Raw("data.datos.push(" + value.Value+")\n")
+                    @Html.Raw("data.colors.push(colores[" + i+++"])\n")
+                }
+                @Html.Raw("graficar(data, 'aguaChart');\n")         
+                
+                i = 0;
+                @Html.Raw("data = {datos:[], labels:[],colors:[]};\n")
+                foreach (var value in Model.Drenaje) {
+                    @Html.Raw("data.labels.push('"+value.Key+"')\n")
+                    @Html.Raw("data.datos.push(" + value.Value+")\n")
+                    @Html.Raw("data.colors.push(colores[" + i+++"])\n")
+                }
+                @Html.Raw("graficar(data, 'drenajeChart');\n")             
+                
+                i = 0;
+                @Html.Raw("data = {datos:[], labels:[],colors:[]};\n")
+                foreach (var value in Model.Electricidad) {
+                    @Html.Raw("data.labels.push('"+value.Key+"')\n")
+                    @Html.Raw("data.datos.push(" + value.Value+")\n")
+                    @Html.Raw("data.colors.push(colores[" + i+++"])\n")
+                }
+                @Html.Raw("graficar(data, 'electricidadChart');\n")                
+                
+                i = 0;
+                @Html.Raw("data = {datos:[], labels:[],colors:[]};\n")
+                foreach (var value in Model.Combustible) {
+                    @Html.Raw("data.labels.push('"+value.Key+"')\n")
+                    @Html.Raw("data.datos.push(" + value.Value+")\n")
+                    @Html.Raw("data.colors.push(colores[" + i+++"])\n")
+                }
+                @Html.Raw("graficar(data, 'combustibleChart');\n")             
+                
+                i = 0;
+                @Html.Raw("data = {datos:[], labels:[],colors:[]};\n")
+                foreach (var value in Model.Propiedad) {
+                    @Html.Raw("data.labels.push('"+value.Key+"')\n")
+                    @Html.Raw("data.datos.push(" + value.Value+")\n")
+                    @Html.Raw("data.colors.push(colores[" + i+++"])\n")
+                }
+                @Html.Raw("graficar(data, 'propiedadChart');\n")              
+                
+                i = 0;
+                @Html.Raw("data = {datos:[], labels:[],colors:[]};\n")
+                foreach (var value in Model.SeguroSocial) {
+                    @Html.Raw("data.labels.push('"+value.Key+"')\n")
+                    @Html.Raw("data.datos.push(" + value.Value+")\n")
+                    @Html.Raw("data.colors.push(colores[" + i+++"])\n")
+                }
+                @Html.Raw("graficar(data, 'seguro2Chart');\n")                
+               
+                i = 0;
+                @Html.Raw("data = {datos:[], labels:[],colors:[]};\n")
+                foreach (var value in Model.Acta) {
+                    @Html.Raw("data.labels.push('"+value.Key+"')\n")
+                    @Html.Raw("data.datos.push(" + value.Value+")\n")
+                    @Html.Raw("data.colors.push(colores[" + i+++"])\n")
+                }
+                @Html.Raw("graficar(data, 'actaChart');\n")          
+                
+                i = 0;
+                @Html.Raw("data = {datos:[], labels:[],colors:[]};\n")
+                foreach (var value in Model.Tejido) {
+                    @Html.Raw("data.labels.push('"+value.Key+"')\n")
+                    @Html.Raw("data.datos.push(" + value.Value+")\n")
+                    @Html.Raw("data.colors.push(colores[" + i+++"])\n")
+                }
+                @Html.Raw("graficar(data, 'tejido2Chart');\n")               
+                
+                i = 0;
+                @Html.Raw("data = {datos:[], labels:[],colors:[]};\n")
+                foreach (var value in Model.Satisfaccion) {
+                    @Html.Raw("data.labels.push('"+value.Key+"')\n")
+                    @Html.Raw("data.datos.push(" + value.Value+")\n")
+                    @Html.Raw("data.colors.push(colores[" + i+++"])\n")
+                }
+                @Html.Raw("graficar(data, 'satisfaccionChart');\n")         
+                
+                i = 0;
+                @Html.Raw("data = {datos:[], labels:[],colors:[]};\n")
+                foreach (var value in Model.Movilidad) {
+                    @Html.Raw("data.labels.push('"+value.Key+"')\n")
+                    @Html.Raw("data.datos.push(" + value.Value+")\n")
+                    @Html.Raw("data.colors.push(colores[" + i+++"])\n")
+                }
+                @Html.Raw("graficar(data, 'movilidadChart');\n")     
+                
+                i = 0;
+                @Html.Raw("data = {datos:[], labels:[],colors:[]};\n")
+                foreach (var value in Model.Redes) {
+                    @Html.Raw("data.labels.push('"+value.Key+"')\n")
+                    @Html.Raw("data.datos.push(" + value.Value+")\n")
+                    @Html.Raw("data.colors.push(colores[" + i+++"])\n")
+                }
+                @Html.Raw("graficar(data, 'redesChart');\n")
+                
+                i = 0;
+                @Html.Raw("data = {datos:[], labels:[],colors:[]};\n")
+                foreach (var value in Model.Instituciones) {
+                    @Html.Raw("data.labels.push('"+value.Key+"')\n")
+                    @Html.Raw("data.datos.push(" + value.Value+")\n")
+                    @Html.Raw("data.colors.push(colores[" + i+++"])\n")
+                }
+                @Html.Raw("graficar(data, 'institucionesChart');\n")                
+                
+                i = 0;
+                @Html.Raw("data = {datos:[], labels:[],colors:[]};\n")
+                foreach (var value in Model.Lideres) {
+                    @Html.Raw("data.labels.push('"+value.Key+"')\n")
+                    @Html.Raw("data.datos.push(" + value.Value+")\n")
+                    @Html.Raw("data.colors.push(colores[" + i+++"])\n")
+                }
+                @Html.Raw("graficar(data, 'lideresChart');\n")              
+                
+                i = 0;
+                @Html.Raw("data = {datos:[], labels:[],colors:[]};\n")
+                foreach (var value in Model.Publicos) {
+                    @Html.Raw("data.labels.push('"+value.Key+"')\n")
+                    @Html.Raw("data.datos.push(" + value.Value+")\n")
+                    @Html.Raw("data.colors.push(colores[" + i+++"])\n")
+                }
+                @Html.Raw("graficar(data, 'publicosChart');\n")       
+                
+                i = 0;
+                @Html.Raw("data = {datos:[], labels:[],colors:[]};\n")
+                foreach (var value in Model.Parque) {
+                    @Html.Raw("data.labels.push('"+value.Key+"')\n")
+                    @Html.Raw("data.datos.push(" + value.Value+")\n")
+                    @Html.Raw("data.colors.push(colores[" + i+++"])\n")
+                }
+                @Html.Raw("graficar(data, 'parqueChart');\n")
+            }
+        };
+    </script>
+</body>
+</html>

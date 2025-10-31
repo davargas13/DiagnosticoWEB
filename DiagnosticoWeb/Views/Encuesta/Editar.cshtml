@@ -1,0 +1,1211 @@
+﻿@{
+    ViewData["Title"] = "Editar";
+}
+@using DiagnosticoWeb.Code
+@using System.Security.Claims
+<div ng-app="SedeshuApp" ng-controller="editarController" ng-init="init(@JsonSedeshu.SerializeObject(Model))">
+    <partial name="_Loading_Partial"/>
+    <slot ng-cloak>
+        <div id="panel">
+            <button class="btn btn-info" ng-click="goToHeader()">
+                <i class="fa fa-arrow-up"></i>
+            </button>
+            <button class="btn btn-info" ng-click="goToFooter()">
+                <i class="fa fa-arrow-down"></i>
+            </button>
+            <button class="btn btn-sm btn-info" ng-click="AgregarPregunta()">
+                <i class="fa fa-plus"></i>
+            </button>
+            @if (((ClaimsIdentity) User.Identity).HasClaim("Permiso", "encuesta.editar"))
+            {
+                <button ng-attr-class="{{ 'btn btn-' + (modificaciones?'success':'info') }}"  ng-click="GuardarEncuesta()" ng-if="!guardando">
+                    <i class="fa fa-save"></i>
+                </button>
+            }
+            <button class="btn btn-info" disabled ng-if="guardando">
+                <i class="fa fa-spinner fa-spin"></i>
+            </button>
+        </div>
+        <div class="card border-cards" id="header">
+            <div class="card-header bg-cards text-white d-flex justify-content-between">
+                <h5>{{ Encuesta.Nombre }}</h5>
+                <a class="btn btn-sm btn-header" asp-controller="Encuesta" asp-action="Index">
+                    <i class="fa fa-backward"></i> Regresar
+                </a>
+            </div>
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div class="d-flex">
+                        @if (((ClaimsIdentity) User.Identity).HasClaim("Permiso", "encuesta.editar"))
+                        {
+                            <button class="btn btn-sm btn-info" ng-click="modalModificar()">
+                                <i class="fa fa-edit"></i>{{Encuesta.Vigencia +(Encuesta.Vigencia==1?' Mes':' Meses')+ ' de vigencia'}}
+                            </button>
+                        }
+                    </div>
+                </div>
+                <div>
+                    <span class="text-danger small" ng-bind="ErrorsPregunta['Preguntas']"></span>
+                </div>
+                <hr>
+                <div class="d-flex justify-content-between">
+                    <label>Preguntas inactivas</label>
+                    <button class="btn btn-sm btn-default" ng-click="cambiarVista(true)" ng-if="!mostrarInactivas">
+                        <i  class="fa fa-arrow-down"></i> Mostrar
+                    </button>
+                    <button class="btn btn-sm btn-default" ng-click="cambiarVista(false)" ng-if="mostrarInactivas">
+                        <i  class="fa fa-arrow-up"></i> Ocultar
+                    </button>
+                </div>
+                @* Preguntas inactivas *@
+                <div ng-if="mostrarInactivas">
+                    <div ng-repeat="(Index, Pregunta) in Encuesta.PreguntasInactivas" class="mt-2">
+                        <div class="pregunta d-flex flex-wrap" ng-style="{'background-color': Pregunta.CarenciaId==null ? '' : Pregunta.Color }">
+                            <div class="col col-9">
+                                <label class="label-question">
+                                    <strong>-</strong>
+                                    <span class="small"> ({{Pregunta.Id}}) </span> : <span> {{ Pregunta.Nombre }} </span>
+                                </label>
+                            </div>
+                            <div class="col-12 p-0">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <span class="small font-weight-bold">{{Pregunta.CarenciaId == null ? '' : Pregunta.Carencia}}</span>
+                                    </div>
+                                    <div class="d-flex">
+                                        <toggle-switch ng-model="Pregunta.Activa" ng-click="ActivarPregunta(Pregunta)"
+                                                       on-label="A" off-label="C"></toggle-switch>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                @* Preguntas activas *@
+                <label>Preguntas activas</label>
+                <div ng-class="ErrorsPregunta['Condicion'+Index]==null?'ok':'error'" class="mb-3" ng-repeat="(Index, Pregunta) in Encuesta.Preguntas">
+                    <div class="pregunta d-flex flex-wrap" ng-style="{'background-color': Pregunta.CarenciaId==null ? '' : Pregunta.Color }">
+                        <div class="col col-10">
+                            <div class="d-flex" ng-if="Pregunta.Editar">
+                                <div class="col col-2">
+                                    <input type="text" class="form-control" ng-model="Pregunta.Numero" ng-change="modificaciones = Pregunta.Editable;" min="1" max="999"
+                                           oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" />
+                                    <span class="text-danger small">{{ ErrorsPregunta["Numero" + Index] }}</span>
+                                </div>
+                                <div class="col col-2">
+                                    <input type="text" class="form-control" ng-model="Pregunta.Id" ng-change="AsignarId(Pregunta);" min="1" max="9999"
+                                           oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" />
+                                    <span class="text-danger small">{{ ErrorsPregunta["Id" + Index] }}</span>
+                                </div>
+                                <div class="col col-9">
+                                    <input type="text" class="form-control" ng-model="Pregunta.Nombre" ng-change="modificaciones = Pregunta.Editable;"
+                                           placeholder="Pregunta"/>
+                                    <span class="small float-right">({{Pregunta.Nombre.length}} / 255)</span>
+                                    <span class="text-danger small">{{ ErrorsPregunta["Nombre" + Index] }}</span>
+                                </div>
+                            </div>
+                            <label ng-if="!Pregunta.Editar" class="label-question">
+                                <strong ng-if="Pregunta.Activa">{{ Pregunta.Numero }}</strong>
+                                <strong ng-if="!Pregunta.Activa">-</strong>
+                                <span class="small"> ({{Pregunta.Id}}) </span> : <span> {{ Pregunta.Nombre }} </span>
+                                <div>
+                                    <span class="text-danger small">{{ ErrorsPregunta["Id" + Index] }}</span>
+                                </div>
+                                <div>
+                                    <span class="text-danger small">{{ ErrorsPregunta["Numero" + Index] }}</span>
+                                </div>
+                            </label>
+                        </div>
+                        <div class="col col-2 text-right">
+                            <i ng-if="Pregunta.Iterable" class="fa fa-user-friends"></i>
+                            <button ng-if="Pregunta.Activa" class="btn btn-sm btn-info" ng-click="EditarPregunta(Pregunta, Index)">
+                                <i class="fa fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-info" ng-click="EditarRespuestas(Index)">
+                                <i class="fa fa-cog"></i>
+                            </button>
+                            <button ng-class="Pregunta.CondicionIds.length==0?'btn btn-sm btn-info':'btn btn-sm btn-primary'"
+                                    ng-click="configurarPregunta(Pregunta)">
+                                <i class="fa fa-question-circle"></i>
+                            </button>
+                        </div>
+                        <div class="col-12 p-0">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <img ng-if="!Pregunta.Editable" src="images/guanajuato.png" alt="Pregunta del diagnóstico" width="30">
+                                </div>
+                                <div>
+                                    <span class="small font-weight-bold">{{Pregunta.CarenciaId == null ? '' : Pregunta.Carencia}}</span>
+                                </div>
+                                <div class="d-flex">
+                                    <toggle-switch ng-model="Pregunta.Activa" ng-click="ActivarPregunta(Pregunta)"
+                                                   on-label="A" off-label="C"></toggle-switch>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @* Se agrega esta seccion para que el boton de ir abajo llegue hasta aqui *@
+        <div id="footer"></div>
+    </slot>
+
+    <script type="text/ng-template" id="myModalContent.html">
+        <div class="modal-header p-10">            
+            <h6 class="modal-title">Datos de la pregunta {{$modal.PreguntaEditar.Nombre}} {{$modal.PreguntaEditar.Numero}}</h6>
+        </div>
+        <div class="modal-body">          
+            <div class="d-flex flex-wrap">             
+                <div class="col-sm-2 general">
+                    <label class="required">Tipo</label>
+                    <select class="form-control selectpicker2" ng-model="$modal.PreguntaEditar.TipoPregunta" ng-change="$modal.ChargeAnswers()">
+                        <option ng-repeat="tipo in $modal.TiposRespuestas" ng-value="tipo">{{ tipo }}</option>
+                    </select>
+                    <span class="text-danger small">{{ $modal.ErrorsPregunta['TipoPregunta'] }}</span>
+                </div>
+                <div class="col-sm-2 general">
+                    <label>Categoría</label>
+                    <select class="form-control selectpicker2" ng-model="$modal.PreguntaEditar.CarenciaId">
+                        <option ng-repeat="carencia in $modal.Carencias" ng-value="carencia.Id">{{ carencia.Nombre }}</option>
+                    </select>
+                    <span class="text-danger small">{{ $modal.ErrorsPregunta['CarenciaId'] }}</span>
+                </div>                                
+                <div class="col-sm-4 general" ng-if="$modal.PreguntaEditar.TipoPregunta == 'Listado'||$modal.PreguntaEditar.TipoPregunta == 'Radio' || $modal.PreguntaEditar.TipoPregunta == 'Check'">
+                    <label>Configuración</label>
+                    <br>
+                    <div class="d-flex">
+                        <div>
+                            <label for="isCatalogo">Es catálogo</label>
+                            <input type="checkbox" id="isCatalogo" ng-model="$modal.PreguntaEditar.IsCatalogo" ng-change="$modal.ChargeAnswers('catalogo')">
+                        </div>
+                        <div ng-if="$modal.PreguntaEditar.TipoPregunta == 'Listado'">
+                            <label for="isGradual">Es gradual</label>
+                            <input type="checkbox" id="isGradual" ng-model="$modal.PreguntaEditar.IsGradual" ng-change="$modal.ChargeAnswers('grado')" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4 general" ng-if="$modal.PreguntaEditar.IsCatalogo">
+                    <label>Catálogo</label>
+                    <select class="selectpicker2 form-control" ng-model="$modal.PreguntaEditar.Catalogo">
+                        <option ng-repeat="catalogo in $modal.Catalogos" ng-value="catalogo">{{catalogo}}</option>
+                    </select>
+                    <span class="text-danger small">{{ $modal.ErrorsPregunta['Catalogo'] }}</span>
+                </div>
+                <div class="col-sm-2 general" ng-if="$modal.PreguntaEditar.TipoPregunta=='Abierta'||$modal.PreguntaEditar.TipoPregunta=='Numerica'">
+                    <label>Máximo</label>
+                    <input type="number" min="1" max="255" class="form-control" ng-model="$modal.PreguntaEditar.Maximo">
+                </div>
+                <div class="col-sm-3 general" ng-if="$modal.PreguntaEditar.IsAbierta">
+                    <label>Expresión</label>
+                    <input class="form-control" ng-model="$modal.PreguntaEditar.Expresion">
+                    <span class="text-danger small">{{ $modal.ErrorsPregunta['Expresion'] }}</span>
+                </div>
+                <div class="col-sm-3 general" ng-if="$modal.PreguntaEditar.IsAbierta">
+                    <label>Ejemplo de la expresión</label>
+                    <input class="form-control" ng-model="$modal.PreguntaEditar.ExpresionEjemplo">
+                    <span class="text-danger small">{{ $modal.ErrorsPregunta['ExpresionEjemplo'] }}</span>
+                    <a target="_blank" class="btn btn-sm btn-header float-right" href="/Home/Expresion">
+                        <i class="fa fa-book"></i> Manual de expresiones
+                    </a>                    
+                </div>
+            </div>
+            <slot>
+                <hr />
+                <div class="d-flex">
+                    <div class="col-3">
+                        <div ng-if="$modal.PreguntaEditar.TipoPregunta == 'Check' && !$modal.PreguntaEditar.IsCatalogo">
+                            <input type="checkbox" ng-model="$modal.PreguntaEditar.SeleccionarRespuestas" 
+                                class="custom-control-input" id="SeleccionarRespuestas" ng-change="$modal.SeleccionarRespuestas()">
+                            <label class="custom-control-label small" for="SeleccionarRespuestas">Mantener seleccionada sus respuestas</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" ng-model="$modal.PreguntaEditar.Excluir" class="custom-control-input" id="Excluir">
+                            <label class="custom-control-label small" for="Excluir">Excluir integrante</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" ng-model="$modal.PreguntaEditar.Obligatoria" class="custom-control-input" id="obligatoria">
+                            <label class="custom-control-label small" for="obligatoria">Obligatoria</label>                    
+                        </div>
+                    </div>                    
+                    <div ng-if="$modal.PreguntaEditar.TipoPregunta == 'Abierta' || $modal.PreguntaEditar.TipoPregunta == 'Numerica'
+                                                           || $modal.PreguntaEditar.TipoPregunta == 'Fecha' || $modal.PreguntaEditar.TipoPregunta == 'FechaPasada'
+                                                           || $modal.PreguntaEditar.TipoPregunta == 'FechaFutura' || $modal.PreguntaEditar.TipoPregunta=='Integrantes'" class="col-3">
+                        <label>Tipo de complemento</label>
+                        <select class="form-control selectpicker2" ng-model="$modal.PreguntaEditar.TipoComplemento">
+                            <option value="" selected>Sin selección</option>
+                            <option ng-repeat="complemento in $modal.TiposComplementos" ng-value="complemento">{{complemento}}</option>
+                        </select>
+                    </div>
+                    <div ng-if="$modal.PreguntaEditar.TipoPregunta == 'Abierta' || $modal.PreguntaEditar.TipoPregunta == 'Numerica'
+                                                                               || $modal.PreguntaEditar.TipoPregunta == 'Fecha' || $modal.PreguntaEditar.TipoPregunta == 'FechaPasada'
+                                                                               || $modal.PreguntaEditar.TipoPregunta == 'FechaFutura' || $modal.PreguntaEditar.TipoPregunta=='Integrantes'" class="col-6">
+                        <label>Complemento</label>
+                        <select class="selectpicker2 form-control" ng-if="$modal.PreguntaEditar.TipoComplemento == 'Catalogo'"
+                                ng-model="$modal.PreguntaEditar.Complemento">
+                            <option ng-repeat="catalogo in $modal.Catalogos" ng-value="catalogo">{{catalogo}}</option>
+                        </select>
+                        <input class="form-control" placeholder="Separa por comas(,) los elementos del listado" 
+                                  ng-if="$modal.PreguntaEditar.TipoComplemento=='Listado'" ng-model="$modal.PreguntaEditar.Complemento"/>
+                        <span class="text-danger small">{{ $modal.ErrorsPregunta['Complemento'] }}</span>
+                        <span class="text-danger small">{{ $modal.ErrorsPregunta['Catalogo'] }}</span>
+                    </div>
+                </div>
+            </slot>
+            <slot ng-if="$modal.PreguntaEditar.TipoPregunta != 'Abierta' && $modal.PreguntaEditar.TipoPregunta != 'Numerica'
+              && $modal.PreguntaEditar.TipoPregunta != 'Fecha' && $modal.PreguntaEditar.TipoPregunta != 'FechaPasada'
+              && $modal.PreguntaEditar.TipoPregunta != 'FechaFutura' && !$modal.PreguntaEditar.IsCatalogo
+              && $modal.PreguntaEditar.TipoPregunta != 'Integrantes'">
+                <hr>
+                <div class="d-flex">                  
+                    <button class="btn btn-sm btn-light" ng-click="$modal.AgregarRespuesta()">
+                        <i class="fa fa-plus"></i> Agregar respuesta
+                    </button>
+                </div>
+                <br />
+                <div class="d-flex justify-content-between">        
+                    <div ng-if="$modal.PreguntaEditar.IsGradual">
+                        <span>Grados</span>
+                        <button class="btn btn-sm btn-light" ng-click="$modal.AgregarGrado()">
+                            <i class="fa fa-plus"></i> Grado
+                        </button>
+                    </div>
+                </div>            
+                <div ng-if="$modal.PreguntaEditar.IsGradual">
+                    <span class="badge badge-default">Grados</span>
+                    <div class="d-flex">
+                        <div ng-repeat="grado in $modal.PreguntaEditar.PreguntaGrados" class="d-flex">
+                            <input type="text" class="form-control" ng-model="grado.Grado" placeholder="Grado" style="width: 120px; margin: 5px 0px;">
+                            <label class="cerrar" ng-click="$modal.QuitarGrado(grado)"><i class="fa fa-times"></i></label>
+                        </div>
+                    </div>
+                </div>            
+                <div style="overflow-y: scroll; max-height: 400px;">
+                    <div ng-repeat="(Index, Respuesta) in $modal.PreguntaEditar.Respuestas">
+                        <div class="d-flex flex-wrap respuesta">
+                            <div class="col-sm-1" style="padding-left: 0">
+                                <input type="text" class="form-control" ng-model="Respuesta.Id" min="1" max="9999" 
+                                    oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" />
+                                <span class="text-danger small">{{ $modal.ErrorsPregunta['Respuestas['+Index+'].Id'] }}</span>
+                            </div>
+                            <div class="col-sm-6">
+                                <input class="form-control" ng-model="Respuesta.Nombre" placeholder="Nombre" />
+                                <span class="small float-right">({{Respuesta.Nombre.length}} / 255)</span>
+                                <span class="text-danger small">{{ $modal.ErrorsPregunta['Respuestas['+Index+'].Nombre'] }}</span>
+                            </div>
+                            <div class="col-sm-4 d-flex align-items-sm-start">
+                                <div ng-show="$modal.PreguntaEditar.TipoPregunta=='Check'">
+                                    <input ng-attr-id="{{'unica'+Index}}" type="checkbox" ng-model="Respuesta.Negativa"
+                                           ng-change="$modal.CambiarNegativa(Respuesta)" class="mt-1 ml-1">
+                                    <label ng-attr-for="{{'unica'+Index}}" class="small">¿Única?</label>
+                                </div>
+                                <div>
+                                    <input ng-attr-id="{{'complemento'+Index}}" type="checkbox" ng-model="Respuesta.IsComplemento" class="mt-1 ml-1">
+                                    <label ng-attr-for="{{'complemento'+Index}}" class="small">¿Tiene complemento?</label>
+                                </div>                               
+                            </div>
+                            <div class="col-sm-1">
+                                <button class="btn btn-sm btn-danger" ng-if="$modal.PreguntaEditar.Respuestas.length > 0" ng-click="$modal.EliminarRespuesta(Index)">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </div>
+                            <div class="col-12 p-0 d-flex" ng-if="Respuesta.IsComplemento">
+                                <div class="col-6 p-1">
+                                    <label>Tipo de complemento</label>
+                                    <select class="form-control selectpicker2" ng-model="Respuesta.TipoComplemento">
+                                        <option value="" selected>Sin selección</option>
+                                        <option ng-repeat="complemento in $modal.TiposComplementos" ng-value="complemento">{{complemento}}</option>
+                                    </select>
+                                </div>
+                                <div class="col-6 p-1">
+                                    <label>Complemento</label>
+                                    <select class="selectpicker2 form-control" ng-if="Respuesta.TipoComplemento == 'Catalogo'" 
+                                            ng-model="Respuesta.Complemento">
+                                        <option ng-repeat="catalogo in $modal.Catalogos" ng-value="catalogo">{{catalogo}}</option>
+                                    </select>
+                                    <textarea class="form-control" placeholder="Separa por comas(,) los elementos del listado" 
+                                              ng-if="Respuesta.TipoComplemento=='Listado'" ng-model="Respuesta.Complemento"></textarea>
+                                    <span class="text-danger small">{{ $modal.ErrorsPregunta['Respuestas['+Index+'].Complemento'] }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div ng-if="Respuesta.RespuestaGrados.length > 0">
+                            <span class="badge badge-info">Grados</span>
+                            <div class="d-flex">
+                                <div ng-repeat="grado in Respuesta.RespuestaGrados" class="d-flex">
+                                    <input class="form-control" ng-model="grado.Grado" placeholder="Grado" style="width: 120px; margin: 5px 3px;">
+                                </div>
+                            </div>
+                        </div>
+                        <span class="text-danger small">{{ $modal.ErrorsPregunta["Respuestas[" + Index + "].Nombre"] }}</span>
+                        <hr>
+                    </div>
+                </div>
+            </slot>
+        </div>
+        <div class="modal-footer" style="padding-top: 5px; padding-bottom: 5px;">
+            <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" ng-click="$modal.dismiss()">Cancelar</button>
+            <button ng-if="!$modal.guardando" class="btn btn-sm btn-success" ng-click="$modal.GuardarPregunta()">
+                <i class="fa fa-save"></i> Guardar
+            </button>
+            <button ng-if="$modal.guardando" class="btn btn-sm btn-success" disabled>
+                <i class="fa fa-spinner fa-spin"></i> Guardar
+            </button>
+        </div>
+    </script>
+
+    <script type="text/ng-template" id="modalConfirmation.html">
+        <div class="modal-header" style="padding-top: 10px; padding-bottom: 10px;">
+            <h5 class="modal-title">Eliminar pregunta</h5>
+        </div>
+        <div class="modal-body">
+            <label>¿Estas seguro de eliminar esta pregunta?</label>
+        </div>
+        <div class="modal-footer" style="padding-top: 5px; padding-bottom: 5px;">
+            <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" ng-click="$conf.dismiss()">Cancelar</button>
+            <button class="btn btn-sm btn-danger" ng-click="$conf.close()">
+                <i class="fa fa-check"></i> Eliminar
+            </button>
+        </div>
+    </script>
+
+    <script type="text/ng-template" id="modificarEncuesta.html">
+        <div class="modal-header" style="padding-top: 10px; padding-bottom: 10px;">
+            <h5 class="modal-title">Editar encuesta</h5>
+        </div>
+        <div class="modal-body">            
+            <div class="row">
+                <div class="col-sm-6">
+                    <label>Vigencia de la encuesta</label>
+                    <div class="input-group">
+                        <input type="number" class="form-control" ng-model="$modal.vigencia">
+                        <div class="input-group-append">
+                            <span class="input-group-text bg-cards text-white">Mes(es).</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <small class="text-danger">{{ $modal.errors["Vigencia"] }}</small>
+                </div>
+                <div class="col-sm-12 mt-3">
+                    <label>Nombre de la encuesta <small>{{ $modal.nombre.length }} / 255</small></label>
+                    <input class="form-control" ng-model="$modal.nombre" />
+                    <small class="text-danger">{{ $modal.errors["Nombre"] }}</small>
+                </div> 
+                <div class="col-sm-12 mt-3">
+                    <label>Mensaje inicial <small>{{ $modal.mensaje.length }} / 1000</small></label>
+                    <textarea class="form-control" ng-model="$modal.mensaje" cols="30" rows="10"></textarea>
+                    <small class="text-danger">{{ $modal.errors["Mensaje"] }}</small>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer" style="padding-top: 5px; padding-bottom: 5px;">
+            <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" ng-click="$modal.dismiss()">Cancelar</button>
+            <button class="btn btn-sm btn-success" ng-click="$modal.Guardar()">
+                <i class="fa fa-save"></i> Guardar
+            </button>
+        </div>
+    </script>
+
+    <script type="text/ng-template" id="configurarPregunta.html">
+        <div class="modal-header" style="padding-top: 10px; padding-bottom: 10px;">
+            <h6 class="modal-title">Condiciones de la pregunta {{$modalConfigurar.Pregunta.Nombre}} {{$modalConfigurar.Pregunta.Numero}}</h6>
+        </div>
+        <div class="modal-body d-flex">
+            <div class="col-6">
+                <label>¿La pregunta se mostrará si contestan? {{$scope.Encuesta}}</label>
+                <div class="custom-control custom-checkbox" ng-if="!$modalConfigurar.Pregunta.Iterable">
+                    <input type="checkbox" class="custom-control-input" ng-attr-id="{{ 'check-iterable-' + Index }}" ng-model="$modalConfigurar.Pregunta.CondicionLista">
+                    <label class="custom-control-label small" ng-attr-for="{{ 'check-iterable-' + Index }}">Mostrar pregunta si los miembros de la familia contestan...</label>
+                </div>
+                <select class="selectpicker2 form-control" ng-model="$modalConfigurar.Pregunta.CondicionIds" multiple data-live-search="true"
+                        ng-change="$modalConfigurar.seleccionarCondiciones($modalConfigurar.Pregunta)">
+                    <option value="" selected>Sin selección</option>
+                    <option ng-repeat="opcion in $modalConfigurar.Preguntas" ng-if="opcion.Numero < $modalConfigurar.Pregunta.Numero && opcion.Activa" ng-value="opcion.Id.toString().trim()">
+                        {{ opcion.Numero+' '+opcion.Nombre }}
+                    </option>
+                </select>
+                <label>Con la respuestas...</label>                
+                <div class="mt-1" ng-repeat="(iCondicion, condicion) in $modalConfigurar.Pregunta.Condiciones">
+                    <div class="d-flex" ng-if="$modalConfigurar.Preguntas[$modalConfigurar.PreguntasHash[iCondicion]-1].TipoCondicionalAdicional">
+                        <label class="mt-2 mr-2">{{$modalConfigurar.Preguntas[$modalConfigurar.PreguntasHash[iCondicion]-1].Numero}}</label>
+                        <select multiple class="selectpicker2 form-control"
+                                ng-model="$modalConfigurar.Pregunta.CondicionRespuestas[iCondicion]">
+                            <option value="" selected>Sin selección</option>
+                            <option ng-repeat="Respuesta in $modalConfigurar.Preguntas[$modalConfigurar.PreguntasHash[iCondicion]-1].Respuestas"
+                                    ng-value="Respuesta.Id.toString().trim()">{{ Respuesta.Numero+" "+Respuesta.Nombre }}</option>
+                        </select>
+                    </div>
+                    <div class="d-flex" ng-if="!$modalConfigurar.Preguntas[$modalConfigurar.PreguntasHash[iCondicion]-1].TipoCondicionalAdicional">
+                        <label class="mt-2 mr-2">{{$modalConfigurar.Preguntas[$modalConfigurar.PreguntasHash[iCondicion]-1].Numero}}</label>
+                        <button class="btn btn-sm btn-default" ng-if="$modalConfigurar.Pregunta.CondicionOperadores[iCondicion][0] != ''
+                         && $modalConfigurar.Pregunta.CondicionOperadores[iCondicion][0] != '!='" ng-click="$modalConfigurar.agregarCondicion($modalConfigurar.Pregunta, iCondicion)">
+                            <i class="fa fa-plus"></i>
+                        </button>
+                        <div ng-repeat="(ic, c) in $modalConfigurar.Pregunta.CondicionOperadores[iCondicion]">
+                            <select class="selectpicker2 form-control" ng-model="$modalConfigurar.Pregunta.CondicionOperadores[iCondicion][ic]">
+                                <option value="">Igual</option>
+                                <option value="!=">Diferente</option>
+                                <option value="> ">Mayor a</option>
+                                <option value=">=">Mayor o igual a</option>
+                                <option value="< ">Menor a</option>
+                                <option value="<=">Menor o igual a</option>
+                            </select>
+                            <input ng-if="$modalConfigurar.Pregunta.CondicionOperadores[iCondicion][ic]=='' || $modalConfigurar.Pregunta.CondicionOperadores[iCondicion][ic]=='!='" 
+                                class="form-control" ng-model="$modalConfigurar.Pregunta.CondicionRespuestas[iCondicion][ic]"/>
+                            <input ng-if="$modalConfigurar.Pregunta.CondicionOperadores[iCondicion][ic] != '' && $modalConfigurar.Pregunta.CondicionOperadores[iCondicion][ic] != '!='" 
+                            class="form-control" ng-model="$modalConfigurar.Pregunta.CondicionRespuestas[iCondicion][ic]"
+                                oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" />                            
+                        </div>
+                    </div>
+                    <small class="text-danger">{{ $modalConfigurar.errors["Condiciones["+iCondicion+"]"] }}</small>
+                </div>                
+            </div>
+            <div class="col-6">
+                <label>¿Cuántas veces se solicitará la pregunta?</label><br/>
+                <select class="selectpicker2 form-control" ng-model="$modalConfigurar.Pregunta.CondicionIterable">
+                    <option value="" selected>Sin selección</option>
+                    <option ng-repeat="opcion in $modalConfigurar.Preguntas" ng-model="$modalConfigurar.Pregunta.CondicionIterable"
+                            ng-if="opcion.Numerica && opcion.Numero < $modalConfigurar.Pregunta.Numero && !opcion.Iterable" ng-value="opcion.Id.toString().trim()">
+                        {{ opcion.Numero+" "+opcion.Nombre}}
+                    </option>
+                </select>
+            </div>            
+        </div>
+        <div class="modal-footer" style="padding-top: 5px; padding-bottom: 5px;">
+            <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" ng-click="$modalConfigurar.dismiss()">Cancelar</button>
+            <button class="btn btn-sm btn-success" ng-click="$modalConfigurar.Guardar()">
+                <i class="fa fa-save"></i> Guardar
+            </button>
+        </div>
+    </script>
+</div>
+
+@section Scripts {
+    <script>
+        (function () {
+            var app = angular.module('SedeshuApp', ['ui.bootstrap','toggle-switch']);
+            var baseUrl = document.baseURI;
+
+            app.controller('editarController',
+                function ($scope, $http, $uibModal, $timeout) {
+
+                    $scope.guardando = false;
+                    $scope.mostrarInactivas = false;
+                    $scope.modificaciones = false;
+                    $scope.UltimoIdPregunta = 0;
+                    $scope.UltimoIdRespuesta = 0;
+                    $scope.Encuesta = {};
+                    $scope.Catalogos = [];
+                    $scope.Carencias = [];
+                    $scope.tiposRespuestas = [];
+                    $scope.tiposComplementos = [];
+                    $scope.PreguntaEditar = {};
+                    $scope.ErrorsPregunta = {};
+                    $scope.PreguntasHash = {};
+                    $scope.NuevaPregunta = {
+                        Variable: "",
+                        Nombre: "",
+                        Numero: "",
+                        NumeroReal: "",
+                        Condicion: "",
+                        Condiciones: {},
+                        CondicionIds: [],
+                        CondicionRespuestas: {},
+                        CondicionOperadores: {},
+                        CondicionLista: false,                                                                       
+                        TipoCondicionalAdicional: false,
+                        CondicionIterable: "",
+                        Iterable: false,
+                        Respuestas: [],
+                        TipoPregunta: "Abierta",
+                        IsCatalogo: false,
+                        IsGradual: false,
+                        PreguntaGrados: [],
+                        Mostrar: false,
+                        Editar: false,
+                        Activa: true,
+                        Obligatoria: true,
+                        IsAbierta: true,
+                        Editable: true,
+                        Excluir: false,
+                        Gradual: false,
+                        Numerica: false,
+                        CarenciaId: null,
+                        Expresion: null,
+                        ExpresionEjemplo: null,
+                        Carencia: "",
+                        Color: "",                     
+                        Catalogo: "",                     
+                        Complemento: null,                     
+                        TipoComplemento: null,                     
+                        Maximo: 10,
+                        Nueva: true
+                    };
+
+                    $scope.init = function (model) {
+                        $scope.Encuesta = model.Encuesta;                        
+                        $scope.UltimoIdRespuesta = model.UltimoIdRespuesta;                        
+                        $scope.UltimoIdPregunta = model.UltimoIdPregunta;                        
+                        $scope.tiposRespuestas = model.TiposRespuestas;
+                        $scope.tiposComplementos = model.TiposComplementos;
+                        $scope.Catalogos = model.Catalogos;
+                        $scope.Carencias = model.Carencias;                  
+                        $scope.PreguntasHash = model.PreguntasHash;                  
+                        $scope.refreshSelect();
+                    };
+                    
+                    $scope.cambiarVista = function (mostrar){                        
+                        $scope.mostrarInactivas = mostrar;
+                    };
+                                      
+                    $scope.refreshSelect = _.debounce(function () {
+                        $('.selectpicker2').selectpicker('refresh');
+                    }, 200);
+
+                    $scope.FindPreguntaByName = function (nombre) {
+                        var pregunta = _.find($scope.Encuesta.Preguntas, function (pregunta) {
+                            return pregunta.Nombre == nombre;
+                        });
+                        return pregunta;
+                    };
+
+                    $scope.GuardarEncuesta = function () {
+                        let confirmado;
+                        if ($scope.modificaciones){
+                            confirmado = confirm("Encontramos modificaciones en las preguntas del diagnóstico, esto puede afectar el cálculo de carencia, ¿Desea continuar?");
+                        }else{
+                            confirmado = true;
+                        }
+                        if (confirmado) {
+                            $scope.guardando = true;
+                            _.each($scope.Encuesta.Preguntas, function (pregunta){
+                                if (pregunta.Numero == "") {
+                                    pregunta.Numero = 0;
+                                }
+                                if (pregunta.Id == "") {
+                                    pregunta.Id = 0;
+                                }
+                            });
+                            $http.post(baseUrl + 'Encuesta/GuardarEncuesta', $scope.Encuesta).then(function (response) {
+                                if (response.data == "ok") {
+                                    window.location.href = baseUrl + 'Encuesta';
+                                } else {
+                                    $scope.cargarErroresGeneral(response.data);
+                                }
+                                $scope.guardando = false;
+                            }).catch(function () {
+                                $scope.guardando = false;
+                            });
+                        }
+                    };
+
+                    $scope.ResetCondicional = function (index) {
+                        $scope.Encuesta.Preguntas[index].CondicionAdicional = "";
+                        $scope.refreshSelect();
+                    };
+
+                    $scope.AgregarPregunta = function () {
+                        let pregunta = _.cloneDeep($scope.NuevaPregunta);
+                        let preguntasFilter = _.filter($scope.Encuesta.Preguntas, function(pregunta) {
+                            return pregunta.Activa;
+                        });
+                        pregunta.Id = $scope.UltimoIdPregunta+1;
+                        pregunta.Numero = preguntasFilter.length + 1;
+                        pregunta.NumeroReal = $scope.Encuesta.Preguntas.length + 1;
+                        pregunta.Editar = true;
+                        pregunta.TipoPregunta = "Abierta";
+                        $scope.Encuesta.Preguntas.push(pregunta);                                                
+                        $scope.Encuesta.Preguntas = _.sortBy($scope.Encuesta.Preguntas, function (pregunta) {
+                            return pregunta.Numero;
+                        });
+                        $('html, body').animate({ scrollTop: $(document).height() });                       
+                        $scope.refreshSelect();
+                    };
+
+                    $scope.EditarPregunta = function (pregunta, index) {
+                        if (pregunta.Editar){
+                            $scope.guardando = true;
+                            $http.post(baseUrl + 'Encuesta/ValidarPregunta', pregunta).then(function (response) {
+                                var data = response.data;
+                                if (data != "ok") {
+                                    $scope.cargarErrores(data, index);
+                                } else {
+                                    $scope.ErrorsPregunta = {};                                   
+                                    pregunta.Editar = !pregunta.Editar;
+                                }
+                                $scope.guardando = false;
+                            });
+                        }else{
+                            pregunta.Editar = !pregunta.Editar;
+                        }
+                    };
+                    
+                    $scope.AsignarId = function (pregunta){
+                        $scope.PreguntasHash[pregunta.Id] = pregunta.NumeroReal;
+                        $scope.modificaciones = pregunta.Editable;
+                    };
+                    
+                    $scope.ActivarPregunta = function(pregunta){                        
+                        $timeout(function() {
+                            let encontrada = false;
+                            if (pregunta.Activa){//Si se activa la pregunta entonces se manda al final y se quita del listado de inactivas
+                                let index = 0;
+                                let p = {};
+                                _.each($scope.Encuesta.PreguntasInactivas, function(preg, iPreg) {//Buscamos la pregunta
+                                    if (preg.Id == pregunta.Id){
+                                        index = iPreg;
+                                        p = _.cloneDeep(preg);
+                                        return;
+                                    }
+                                });
+                                p.Numero = $scope.Encuesta.Preguntas.length + 1; 
+                                $scope.Encuesta.PreguntasInactivas.splice(index,1);//La quitamos de las inactivas
+                                $scope.Encuesta.Preguntas.push(p);//La agregamos a las activas
+                            }else{//Si se inactiva, se quita del listado de activas y todas las posteriores se reta en 1 su numero
+                                let index = 0;
+                                let p = {}; 
+                                _.each($scope.Encuesta.Preguntas, function(preg, iPreg) {//Buscamos la pregunta y las posteriores les restamos 1
+                                    if (!encontrada) {
+                                        if (preg.Id == pregunta.Id){
+                                            encontrada = true;
+                                            index = iPreg;
+                                            p = _.cloneDeep(preg);
+                                        }
+                                    }else{
+                                        preg.Numero -=1;                                   
+                                    }                                
+                                });
+                                $scope.Encuesta.Preguntas.splice(index,1);//La quitamos del listado
+                                $scope.Encuesta.PreguntasInactivas.push(p);//La agregamos al listado de inactivas
+                            }
+                        }, 1000);
+                    };
+
+                    $scope.EditarRespuestas = function (index) {
+                        $scope.PreguntaEditar = _.cloneDeep($scope.Encuesta.Preguntas[index]);
+                        $scope.openModal();
+                        $scope.refreshSelect();
+                    };
+
+                    $scope.openModal = function () {                       
+                        var modalInstance = $uibModal.open({
+                            ariaLabelledBy: 'modal-title',
+                            ariaDescribedBy: 'modal-body',
+                            templateUrl: 'myModalContent.html',
+                            controller: 'modalController',
+                            controllerAs: '$modal',
+                            size: 'xl',
+                            resolve: {
+                                PreguntaEditar: function () { return $scope.PreguntaEditar; },
+                                TiposRespuestas: function () { return $scope.tiposRespuestas; },
+                                TiposComplementos: function () { return $scope.tiposComplementos; },
+                                Catalogos: function () { return $scope.Catalogos; },
+                                Encuesta: function () { return $scope.Encuesta; },
+                                Carencias: function () { return $scope.Carencias; },
+                                UltimoIdPregunta: function () { return $scope.UltimoIdPregunta; },
+                                UltimoIdRespuesta: function () { return $scope.UltimoIdRespuesta; }
+                            }
+                        });
+
+                        modalInstance.result.then(function (PreguntaModificada) {
+                            let pregunta = _.find($scope.Encuesta.Preguntas, function(pregunta) {
+                              return pregunta.Activa && pregunta.Id == PreguntaModificada.Id;
+                            });
+                            let modificada = false;
+                            PreguntaModificada.TipoCondicionalAdicional = PreguntaModificada.Respuestas.length > 0 || PreguntaModificada.Catalogo != null;
+                            if (!pregunta.Editable){
+                                modificada = pregunta.TipoCondicionalAdicional != PreguntaModificada.TipoCondicionalAdicional || pregunta.TipoPregunta != PreguntaModificada.TipoPregunta ||
+                                    pregunta.IsCatalogo != PreguntaModificada.IsCatalogo || pregunta.IsGradual != PreguntaModificada.IsGradual ||
+                                    pregunta.PreguntaGrados != PreguntaModificada.PreguntaGrados || pregunta.IsAbierta != PreguntaModificada.IsAbierta ||
+                                    pregunta.CarenciaId != PreguntaModificada.CarenciaId || pregunta.Carencia != PreguntaModificada.Carencia ||
+                                    pregunta.Color != PreguntaModificada.Color || pregunta.Maximo != PreguntaModificada.Maximo ||
+                                    pregunta.Obligatoria != PreguntaModificada.Obligatoria || pregunta.Complemento != PreguntaModificada.Complemento ||
+                                    pregunta.TipoComplemento != PreguntaModificada.TipoComplemento || pregunta.Respuestas.length != PreguntaModificada.Respuestas.length;
+                                if (!modificada){
+                                    _.each(pregunta.Respuestas, function(respuesta, iRespuesta) {
+                                        modificada = respuesta.Id != PreguntaModificada.Respuestas[iRespuesta].Id ||
+                                        respuesta.Nombre != PreguntaModificada.Respuestas[iRespuesta].Nombre ||
+                                        respuesta.Negativa != PreguntaModificada.Respuestas[iRespuesta].Negativa ||
+                                        respuesta.IsComplemento != PreguntaModificada.Respuestas[iRespuesta].IsComplemento ||
+                                        respuesta.TipoComplemento != PreguntaModificada.Respuestas[iRespuesta].TipoComplemento;
+                                        if(modificada){
+                                            return false;
+                                        }else{
+                                            _.each(respuesta.RespuestaGrados, function(repusetaGrado, iRespuestaGrado){
+                                                modificada = repusetaGrado.Id != PreguntaModificada.Respuestas[iRespuesta].RespuestaGrados[iRespuestaGrado].Id ||
+                                                    repusetaGrado.Grado != PreguntaModificada.Respuestas[iRespuesta].RespuestaGrados[iRespuestaGrado].Grado
+                                                    repusetaGrado.RespuestaId != PreguntaModificada.Respuestas[iRespuesta].RespuestaGrados[iRespuestaGrado].RespuestaId
+                                                    repusetaGrado.PreguntaGradoId != PreguntaModificada.Respuestas[iRespuesta].RespuestaGrados[iRespuestaGrado].PreguntaGradoId;
+                                                if (modificada){
+                                                    return false;
+                                                }
+                                            });
+                                        }
+                                    });
+                                    if(!modificada){
+                                        pregunta.PreguntaGrados, function(grado, iGrado) {
+                                            modificada = grado.Id != PreguntaModificada.PreguntaGrados[iGrado].Id ||
+                                                grado.Grado != PreguntaModificada.PreguntaGrados[iGrado].Grado ||
+                                                grado.RespuestaId != PreguntaModificada.PreguntaGrados[iGrado].RespuestaId ||
+                                                grado.PreguntaGradoId != PreguntaModificada.PreguntaGrados[iGrado].PreguntaGradoId;
+                                            if (modificada){
+                                                return false;
+                                            }
+                                        }
+                                    }
+                                }
+                            }                                                                                                   
+                            pregunta.TipoCondicionalAdicional = PreguntaModificada.TipoCondicionalAdicional;
+                            pregunta.Respuestas = PreguntaModificada.Respuestas;
+                            pregunta.TipoPregunta = PreguntaModificada.TipoPregunta;
+                            pregunta.IsCatalogo = PreguntaModificada.IsCatalogo;
+                            pregunta.Catalogo = PreguntaModificada.Catalogo;
+                            pregunta.IsGradual = PreguntaModificada.IsGradual;
+                            pregunta.PreguntaGrados = PreguntaModificada.PreguntaGrados;                            
+                            pregunta.IsAbierta = PreguntaModificada.IsAbierta;                            
+                            pregunta.CarenciaId = PreguntaModificada.CarenciaId;
+                            pregunta.Carencia = PreguntaModificada.Carencia;
+                            pregunta.Color = PreguntaModificada.Color;
+                            pregunta.Maximo = PreguntaModificada.Maximo;
+                            pregunta.Obligatoria = PreguntaModificada.Obligatoria;
+                            pregunta.Complemento = PreguntaModificada.Complemento;
+                            pregunta.TipoComplemento = PreguntaModificada.TipoComplemento;
+                            pregunta.Excluir = PreguntaModificada.Excluir;
+                            pregunta.SeleccionarRespuestas = PreguntaModificada.SeleccionarRespuestas;
+                            $scope.modificaciones |= pregunta.Editable && modificada;                            
+                           $scope.refreshSelect();
+                        }, function () { });
+                    };
+
+                    $scope.ActualizarNombrePregunta = function (oldName, newName) {
+                        for (var i = 0; i < $scope.Encuesta.Preguntas.length; i++) {
+                            if ($scope.Encuesta.Preguntas[i].PreguntaCondicion == oldName) {
+                                $scope.Encuesta.Preguntas[i].PreguntaCondicion = newName;
+                            }
+                            if ($scope.Encuesta.Preguntas[i].CondicionIterable == oldName) {
+                                $scope.Encuesta.Preguntas[i].CondicionIterable = newName;
+                            }
+                        }
+
+                        $scope.refreshSelect();
+                    };
+
+                    $scope.ShowModalConfirmacion = function (index) {
+                        $uibModal.open({
+                            ariaLabelledBy: 'modal-title',
+                            ariaDescribedBy: 'modal-body',
+                            templateUrl: 'modalConfirmation.html',
+                            controller: 'confirmationController',
+                            controllerAs: '$conf',
+                            size: 'md',
+                            resolve: {}
+                        }).result.then(function () {
+                            $scope.Encuesta.Preguntas.splice(index, 1);
+                        }, function () { });
+                    };
+
+                    $scope.cargarErrores = function (errors, index) {
+                        $scope.ErrorsPregunta = {};                       
+                        for (var i = 0; i < errors.length; i++) {
+                            $scope.ErrorsPregunta[errors[i].Key+""+index] = errors[i].Error;
+                        }
+                    };
+
+                    $scope.modalModificar = function () {
+                        var modalInstance = $uibModal.open({
+                            ariaLabelledBy: 'modal-title',
+                            ariaDescribedBy: 'modal-body',
+                            templateUrl: 'modificarEncuesta.html',
+                            controller: 'encuestaController',
+                            controllerAs: '$modal',
+                            size: 'md',
+                            resolve: {
+                                Vigencia: function () { return $scope.Encuesta.Vigencia; },
+                                Nombre: function () { return $scope.Encuesta.Nombre; },
+                                Mensaje: function () { return $scope.Encuesta.Mensaje; }
+                            }
+                        });
+
+                        modalInstance.result.then(function (Datos) {
+                            $scope.Encuesta.Nombre = Datos.nombre;
+                            $scope.Encuesta.Vigencia = Datos.vigencia;
+                            $scope.Encuesta.Mensaje = Datos.mensaje;
+                        }, function () { });
+                    };
+
+                    $scope.goToHeader = function () {
+                        document.getElementById("header").scrollIntoView();
+                    };
+
+                    $scope.goToFooter = function () {
+                        document.getElementById("footer").scrollIntoView();
+                    };
+                    
+                   $scope.cargarErroresGeneral = function (errors) {
+                        $scope.ErrorsPregunta = {};
+                        for (let i = 0; i < errors.length; i++) {
+                            $scope.ErrorsPregunta[errors[i].Key] = errors[i].Error;
+                        }
+                   };
+
+                   $scope.configurarPregunta = function (pregunta) {
+                        let modalInstance = $uibModal.open({
+                            ariaLabelledBy: 'modal-title',
+                            ariaDescribedBy: 'modal-body',
+                            templateUrl: 'configurarPregunta.html',
+                            controller: 'configurarPreguntaController',
+                            controllerAs: '$modalConfigurar',
+                            size: 'xl',
+                            resolve: {                                
+                                Pregunta: function () { return pregunta; },
+                                Preguntas: function () { return $scope.Encuesta.Preguntas; }     ,                           
+                                PreguntasHash: function () { return $scope.PreguntasHash; }                                
+                            }
+                        });
+
+                        modalInstance.result.then(function (PreguntaModificada) {                            
+                           let pregunta = _.find($scope.Encuesta.Preguntas, function(preg) {
+                              return preg.Activa && preg.Id == PreguntaModificada.Id;
+                            });                           
+                            pregunta.CondicionIterable = PreguntaModificada.CondicionIterable;
+                            pregunta.Condicion = PreguntaModificada.Condicion;
+                            pregunta.Condiciones = PreguntaModificada.Condiciones;
+                            pregunta.CondicionIds = PreguntaModificada.CondicionIds;
+                            pregunta.CondicionRespuestas = PreguntaModificada.CondicionRespuestas;
+                            pregunta.CondicionOperadores = PreguntaModificada.CondicionOperadores;
+                            pregunta.CondicionLista = PreguntaModificada.CondicionLista;
+                            pregunta.Excluir = PreguntaModificada.Excluir;
+                            pregunta.Iterable = PreguntaModificada.CondicionIterable != '';
+                        }, function () { });
+                        $scope.refreshSelect();
+                    };                   
+                }
+            );
+
+            app.controller('modalController',
+                function ($scope, $http, $uibModalInstance, PreguntaEditar, TiposRespuestas,TiposComplementos, Catalogos, 
+                    Encuesta, Carencias, UltimoIdPregunta, UltimoIdRespuesta) {                    
+                    $modal = this;
+                    $modal.PreguntaEditar = PreguntaEditar;
+                    $modal.TiposRespuestas = TiposRespuestas;
+                    $modal.TiposComplementos = TiposComplementos;
+                    $modal.Encuesta = Encuesta;
+                    $modal.UltimoIdPregunta = UltimoIdPregunta;
+                    $modal.UltimoIdRespuesta = UltimoIdRespuesta;
+                    $modal.ErrorsPregunta = {};
+                    $modal.Catalogos = Catalogos;
+                    $modal.PreguntaEditar.IsGradual = $modal.PreguntaEditar.Gradual;
+                    $modal.guardando = false;
+                    $modal.Carencias = Carencias;
+
+                    $modal.close = function () {
+                        if ($modal.PreguntaEditar.TipoPregunta == "Abierta" || $modal.PreguntaEditar.TipoPregunta == "Numerica") {
+                            $modal.PreguntaEditar.Respuestas = [];
+                        }
+                        if ($modal.PreguntaEditar.CarenciaId!=null){
+                            let carencia = _.find($modal.Carencias, function(c) {
+                              return c.Id == $modal.PreguntaEditar.CarenciaId;
+                            });
+                            $modal.PreguntaEditar.Carencia = carencia.Nombre;                            
+                            $modal.PreguntaEditar.Color = carencia.Color;
+                        }
+                        $uibModalInstance.close($modal.PreguntaEditar);
+                    };
+
+                    $modal.dismiss = function () {
+                        $uibModalInstance.dismiss('cancel');
+                    };
+
+                    $modal.refreshSelect = _.debounce(function () {
+                        $('.selectpicker2').selectpicker('refresh');
+                    }, 200);
+
+                    $modal.EliminarRespuesta = function (index) {
+                        $modal.PreguntaEditar.Respuestas.splice(index, 1);
+                    };
+                    
+                    $modal.ObtenerUltimoId = function (){
+                        return $modal.PreguntaEditar.Respuestas.length + $modal.UltimoIdRespuesta + 1;
+                    };
+
+                    $modal.AgregarRespuesta = function () {
+                        let respuesta = { Id: "", Nombre: "", Negativa: false, IsComplemento: false, RespuestaGrados: [], 
+                        Numero: $modal.PreguntaEditar.Respuestas.length + 1, TipoComplemento: "", Complemento: "",Nueva : true};                             
+                        respuesta.Id = $modal.ObtenerUltimoId();
+                        _.each($modal.PreguntaEditar.PreguntaGrados, function (grado) {
+                            respuesta.RespuestaGrados.push({ Id: "", Grado: "", RespuestaId: respuesta.Id, PreguntaGradoId: grado.Id });
+                        })
+                        $modal.PreguntaEditar.Respuestas.push(respuesta);
+                    };
+
+                    $modal.GuardarPregunta = function () {
+                        $modal.guardando = true;
+                        $http.post(baseUrl + 'Encuesta/ValidarRespuestasPregunta', $modal.PreguntaEditar).then(function (response) {
+                            var data = response.data;
+                            if (data != "ok") {
+                                $modal.cargarErrores(data);
+                            } else {
+                                $modal.ErrorsPregunta = {};
+                                $modal.close();
+                            }
+                            $modal.guardando = false;
+                        });
+                    };                  
+
+                    $modal.ChargeAnswers = function (origen) {
+                        if ($modal.PreguntaEditar.TipoPregunta != "Listado") {
+                            $modal.PreguntaEditar.IsGradual = false;
+                        }
+                        if ($modal.PreguntaEditar.TipoPregunta != "Listado" && $modal.PreguntaEditar.TipoPregunta != "Radio" &&
+                            $modal.PreguntaEditar.TipoPregunta != "Check") {                            
+                            $modal.PreguntaEditar.IsCatalogo = false;
+                        }
+                        if (origen == 'catalogo') {
+                            if ($modal.PreguntaEditar.IsCatalogo) {
+                                $modal.PreguntaEditar.IsGradual = false;
+                            }
+                        }
+                        if (origen == 'grado') {
+                            if ($modal.PreguntaEditar.IsGradual) {
+                                $modal.PreguntaEditar.IsCatalogo = false;
+                            }
+                        }
+                        $modal.PreguntaEditar.IsAbierta = $modal.PreguntaEditar.TipoPregunta == "Abierta";
+                        if ($modal.PreguntaEditar.TipoPregunta == "Abierta" || $modal.PreguntaEditar.TipoPregunta == "Numerica"
+                            || $modal.PreguntaEditar.TipoPregunta == "FechaPasada" || $modal.PreguntaEditar.TipoPregunta == "FechaFutura"
+                            || $modal.PreguntaEditar.TipoPregunta == "Fecha" || $modal.PreguntaEditar.TipoPregunta == "Integrantes") {
+                            $modal.PreguntaEditar.IsCatalogo = false;
+                            $modal.PreguntaEditar.Respuestas = [];
+                        } else {
+                            if ($modal.PreguntaEditar.IsCatalogo) {
+                                $modal.PreguntaEditar.Respuestas = [];
+                            } else {
+                                $modal.PreguntaEditar.Respuestas = $modal.PreguntaEditar.Respuestas.length > 0 ? $modal.PreguntaEditar.Respuestas : [{ Id: $modal.ObtenerUltimoId(), Nombre: "", Negativa: false, RespuestaGrados: [], Nueva:true }];
+                            }
+                            if (!$modal.PreguntaEditar.IsGradual) {
+                                $modal.PreguntaEditar.PreguntaGrados = [];
+                                _.each($modal.PreguntaEditar.Respuestas, function (respuesta) {
+                                    respuesta.RespuestaGrados = [];
+                                })
+                            }
+                        }
+                    };
+
+                    $modal.AgregarGrado = function () {
+                        $modal.PreguntaEditar.PreguntaGrados.push({ Id: '', PreguntaId: '', Grado: '' })
+                        _.each($modal.PreguntaEditar.Respuestas, function (respuesta) {
+                            respuesta.RespuestaGrados.push({ Id: "", Nombre: "", RespuestaId: respuesta.Id, PreguntaGradoId: "" });
+                        })
+                    };
+
+                    $modal.CambiarNegativa = function (respuesta) {
+                        if (respuesta.Negativa) {
+                            respuesta.RespuestaGrados = [];
+                        } else {
+                            _.each($modal.PreguntaEditar.PreguntaGrados, function (grado) {
+                                respuesta.RespuestaGrados.push({ Id: "", Nombre: "", RespuestaId: respuesta.Id, PreguntaGradoId: grado.Id });
+                            })
+                        }
+                    }; 
+
+                    $modal.QuitarGrado = function (grado) {
+                        let index = $modal.PreguntaEditar.PreguntaGrados.indexOf(grado);
+                        $modal.PreguntaEditar.PreguntaGrados.splice(index, 1);
+                        _.each($modal.PreguntaEditar.Respuestas, function (respuesta) {
+                            respuesta.RespuestaGrados.splice(index, 1);
+                        });
+                    };
+                    
+                    $modal.cargarErrores = function (errors) {
+                        $modal.ErrorsPregunta = {};
+                        for (var i = 0; i < errors.length; i++) {
+                            $modal.ErrorsPregunta[errors[i].Key] = errors[i].Error;
+                        }
+                    };
+                    
+                    $modal.SeleccionarRespuestas = function (){
+                        _.each($modal.PreguntaEditar.Respuestas, function (respuesta){
+                            if (!respuesta.Negativa && !respuesta.IsComplemento){
+                                respuesta.IsComplemento = true; 
+                            }
+                        });
+                    }
+                }
+            );
+
+            app.controller('confirmationController',
+                function ($scope, $http, $uibModalInstance) {
+                    $conf = this;
+
+                    $conf.dismiss = function () {
+                        $uibModalInstance.dismiss('cancel');
+                    };
+
+                    $conf.close = function () {
+                        $uibModalInstance.close();
+                    };
+                }
+            );
+
+            app.controller('encuestaController',
+                function ($scope, $http, $uibModalInstance, Vigencia, Nombre, Mensaje) {
+                    $modal = this;
+                    $modal.vigencia = Vigencia;
+                    $modal.nombre = Nombre;
+                    $modal.mensaje = Mensaje;
+                    $modal.errors = [];
+
+                    $modal.Guardar = function () {
+                        $http.post(baseUrl + 'Encuesta/ValidarCampos', {
+                            Nombre: $modal.nombre,
+                            Vigencia: $modal.vigencia,
+                            Mensaje: $modal.mensaje
+                        }).then(function (response) {
+                            if (response.data === "ok") {
+                                $modal.close();
+                            } else {
+                                $modal.cargarErrores(response.data);
+                            }
+                        });
+                    };
+                    
+                    $modal.cargarErrores = function (errors) {
+                        $modal.errors = {};
+                        for (var i = 0; i < errors.length; i++) {
+                            $modal.errors[errors[i].Key] = errors[i].Error;
+                        }
+                    };                    
+                    
+                    $modal.dismiss = function () {
+                        $uibModalInstance.dismiss('cancel');
+                    };
+
+                    $modal.close = function () {
+                        $uibModalInstance.close($modal);
+                    }; 
+                    
+                }
+            );
+            
+            /*Modal para configurar las condiciones de una pregunta*/
+            app.controller('configurarPreguntaController',
+                function ($scope, $http, $uibModalInstance, Pregunta, Preguntas, PreguntasHash) {                                        
+                    $modalConfigurar = this;                    
+                    $modalConfigurar.Pregunta = _.cloneDeep(Pregunta);
+                    $modalConfigurar.Preguntas = Preguntas;
+                    $modalConfigurar.PreguntasHash = PreguntasHash;
+                    $modalConfigurar.errors = [];
+
+                    $modalConfigurar.Guardar = function () {                        
+                        $http.post(baseUrl + 'Encuesta/ValidarCondicion', $modalConfigurar.Pregunta).then(function (response) {                            
+                            if (response.data == "ok") {
+                                $modalConfigurar.close();                               
+                            } else {
+                                $modalConfigurar.cargarErrores(response.data);
+                            }
+                        });
+                    };
+
+                    $modalConfigurar.dismiss = function () {
+                        $uibModalInstance.dismiss('cancel');
+                    };
+
+                    $modalConfigurar.close = function () {
+                        $uibModalInstance.close($modalConfigurar.Pregunta);
+                    };
+                    
+                    $modalConfigurar.seleccionarCondiciones = function(pregunta){
+                        let aEliminar = [];                        
+                        _.each(pregunta.Condiciones, function (condicion, iCondicion){
+                            let encontrado = _.find(pregunta.CondicionIds, function (id){
+                                return id == iCondicion;
+                            });
+                            if (encontrado == null){
+                                aEliminar.push(iCondicion);
+                            }                            
+                        });       
+                        _.each(aEliminar, function (e) {
+                            delete pregunta.Condiciones[e];
+                        });
+                        _.each(pregunta.CondicionIds, function(condicionId) {
+                            if (pregunta.Condiciones[condicionId]==null){
+                                pregunta.Condiciones[condicionId] = "";
+                                pregunta.CondicionOperadores[condicionId] = [""];
+                                pregunta.CondicionRespuestas[condicionId] = [];
+                            }                         
+                        });
+                        $modalConfigurar.refreshSelect();
+                    };
+                    
+                    $modalConfigurar.refreshSelect = _.debounce(function () {
+                        $('.selectpicker2').selectpicker('refresh');
+                    }, 200); 
+                    
+                    $modalConfigurar.agregarCondicion = function(Pregunta, iCondicion) {                        
+                        if (Pregunta.CondicionOperadores[iCondicion].length == 1){
+                            Pregunta.CondicionOperadores[iCondicion].push("");
+                            Pregunta.CondicionRespuestas[iCondicion].push("");
+                        }
+                    };
+                    
+                    $modalConfigurar.cargarErrores = function (errors) {
+                        $modalConfigurar.Errors = {};                       
+                        for (var i = 0; i < errors.length; i++) {
+                            $modalConfigurar.errors[errors[i].Key] = errors[i].Error;
+                        }
+                    };                    
+                }
+            );
+        })();
+    </script>
+}
+
+@section Styles
+{
+    <style>
+
+        .cerrar {
+            position: relative;
+            top: 0px;
+            right: 12px;
+            cursor: pointer;
+            color: grey;
+            font-size: 12px;
+        }
+
+        #panel {
+            position: fixed;
+            padding: 10px;
+            right: 20px;
+            bottom: 120px;
+            display: flex;
+            flex-direction: column;
+        }
+
+            #panel .btn {
+                margin: 2px;
+                border-radius: 50%;
+                width: 40px;
+                height: 40px;
+            }
+
+        .general {
+            margin: 5px 0;
+        }
+
+        .error {
+            border: 1px solid red !important;
+        }
+        
+        .pregunta{
+            background-color: #eaecee;
+            padding: 8px;
+        }
+
+        .col {
+            padding: 2px;
+        }
+    </style>
+}

@@ -1,0 +1,133 @@
+@using DiagnosticoWeb.Code
+@{
+    ViewData["Title"] = "Corrección de datos capturados";
+}
+
+<div ng-app="SedeshuApp" ng-controller="indexController" ng-init="init(@JsonSedeshu.SerializeObject(Model))">
+    <partial name="_Loading_Partial" />
+    <slot ng-cloak>
+        <div class="card">
+            <div class="card-header bg-cards text-white">
+                <h5 class="float-left">Corrección de datos capturados</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex flex-wrap">
+                    <div class="col-sm-4">
+                        <label>Período de captura</label>
+                        <div class="d-flex">
+                            <input type="date" ng-model="filtros.Inicio" placeholder="yyyy-MM-dd" class="form-control"/>
+                            <span class="al">Al</span>
+                            <input type="date" ng-model="filtros.Fin" placeholder="yyyy-MM-dd" class="form-control"/>
+                        </div>
+                        <form id="form" asp-controller="Home" asp-action="CompletarDatos" method="post">
+                            <input id="Inicio" name="Inicio" type="hidden"/>
+                            <input id="Fin" name="Fin" type="hidden"/>
+                            <input id="Accion" name="Accion" type="hidden"/>
+                        </form>
+                    </div>
+                </div>
+                <hr>
+                <div class="alert alert-info" role="alert" ng-if="mensaje!=''">
+                    {{mensaje}}
+                </div>
+                <div class="d-flex justify-content-between">
+                    <button ng-if="!loadingDiagnosticos" class="btn btn-sm btn-secondary" ng-click="importarDiagnosticos()">
+                        <i class="fa fa-tasks"></i> Importar diagnosticos
+                    </button>
+                    <button ng-if="loadingDiagnosticos" class="btn btn-sm btn-secondary" disabled>
+                        <i class="fa fa-spinner fa-spin"></i> Importar diagnosticos
+                    </button>
+                    <button ng-if="!loadingCurps" class="btn btn-sm btn-secondary" ng-click="completarCurps()">
+                        <i class="fa fa-tasks"></i> Completar CURPS
+                    </button>
+                    <button ng-if="loadingCurps" class="btn btn-sm btn-secondary" disabled>
+                        <i class="fa fa-spinner fa-spin"></i> Completar CURPS
+                    </button>
+                    <button ng-if="!loadingDirecciones" class="btn btn-sm btn-secondary" ng-click="completarDirecciones()">
+                        <i class="fa fa-tasks"></i> Completar direcciones {{NumDomiciliosSinCalculo}}
+                    </button>
+                    <button ng-if="loadingDirecciones" class="btn btn-sm btn-secondary" disabled>
+                        <i class="fa fa-spinner fa-spin"></i> Completar direcciones {{NumDomiciliosSinCalculo}}
+                    </button>
+                    <button ng-if="!loadingCarencias" class="btn btn-sm btn-secondary" ng-click="completarCarencias()">
+                        <i class="fa fa-tasks"></i> Completar carencias
+                    </button>
+                    <button ng-if="loadingCarencias" class="btn btn-sm btn-secondary" disabled>
+                        <i class="fa fa-spinner fa-spin"></i> Completar carencias
+                    </button>
+                </div>
+            </div>
+        </div>
+    </slot>
+</div>
+
+@section Scripts{
+    <script>
+        (function() {
+            var app = angular.module('SedeshuApp', ['ui.bootstrap']);
+            var baseUrl = document.baseURI;
+            
+            app.controller('indexController',
+                function($scope, $http) {                    
+                    $scope.filtros = {
+                        Inicio: "",
+                        Fin: "",
+                        Accion: ""
+                    };
+                    $scope.loadingDiagnosticos = false;
+                    $scope.loadingCurps = false;
+                    $scope.loadingDirecciones = false;
+                    $scope.loadingCarencias = false;
+                    $scope.mensaje = "";
+                    
+                    $scope.init = function (model) {
+                        $scope.filtros.Inicio = new Date(model.Inicio.substring(0, 4), parseInt(model.Inicio.substring(5, 7)) - 1, model.Inicio.substring(8, 10));
+                        $scope.filtros.Fin = new Date(model.Fin.substring(0, 4), parseInt(model.Fin.substring(5, 7)) - 1, model.Fin.substring(8, 10));
+                        $scope.NumDomiciliosSinCalculo = model.NumDomiciliosSinCalculo;
+                    };
+                    
+                    $scope.importarDiagnosticos = function (){
+                        $scope.loadingDiagnosticos = true;
+                        $scope.filtros.Accion = 'diagnosticos';
+                        $scope.mensaje = 'Importando diagnosticos de la version anterior';
+                        $http.post(baseUrl + 'Home/CompletarDatos', $scope.filtros).then(function (response) {                           
+                            $scope.mensaje = response.data;
+                            $scope.loadingDiagnosticos = false;
+                        });
+                    };
+                    
+                    $scope.completarCurps = function (){
+                        $scope.loadingCurps = true;
+                        $scope.filtros.Accion = 'curps';
+                        $scope.mensaje = 'Completando curps';
+                        $http.post(baseUrl + 'Home/CompletarDatos', $scope.filtros).then(function (response) {                           
+                            $scope.mensaje = response.data;
+                            $scope.loadingCurps = false;
+                        });
+                    };
+                    
+                    
+                    $scope.completarDirecciones = function (){
+                        $scope.loadingDirecciones = true;
+                        $scope.filtros.Accion = 'direcciones';
+                        $scope.mensaje = 'Completando datos geograficos de los domicilios';
+                        $http.post(baseUrl + 'Home/CompletarDatos', $scope.filtros).then(function (response) {                           
+                            $scope.mensaje = response.data;
+                            $scope.loadingDirecciones = false;
+                        });
+                    };            
+                    
+                    $scope.completarCarencias = function (){
+                        $scope.loadingCarencias = true;
+                        $scope.filtros.Accion = 'carencias';
+                        $scope.mensaje = 'Calculando las carencias sociales de las familias';
+                        $http.post(baseUrl + 'Home/CompletarDatos', $scope.filtros).then(function (response) {                           
+                            $scope.mensaje = response.data;
+                            $scope.loadingCarencias = false;
+                        });
+                    };
+                }
+            );            
+        })();
+    </script>
+}

@@ -1,0 +1,115 @@
+@{
+    ViewData["Title"] = "Categorías";
+}
+
+@using DiagnosticoWeb.Code
+@using System.Security.Claims
+<div ng-app="SedeshuApp" ng-controller="indexController" ng-init="init(@JsonSedeshu.SerializeObject(Model))">
+    <partial name="_Loading_Partial" />
+    <div ng-cloak>
+        <div class="card border-cards">
+            <div class="card-header bg-cards text-white">
+                <div class="d-flex justify-content-between">
+                    <h5>Categorías</h5>
+                    @if (((ClaimsIdentity)User.Identity).HasClaim("Permiso", "encuesta.editar"))
+                    {
+                        <a class="btn btn-sm btn-header" asp-controller="Categoria" asp-action="CreateEdit">
+                            <i class="fa fa-plus"></i> Crear
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="card border-cards">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Categoría</th>
+                            <th>Categoría padre</th>
+                            <th>Color</th>
+                            <th class="no-stretch"></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="categoria in categorias">
+                            <td>{{categoria.Nombre}}</td>
+                            <td>{{categoria.PadreId==null?"":categoria.Padre.Nombre}}</td>
+                            <td>
+                                <div class="color" ng-style="{'background-color':categoria.Color}"></div>
+                            </td>
+                            <td>
+                                @if (((ClaimsIdentity) User.Identity).HasClaim("Permiso", "encuesta.editar"))
+                                {
+                                    <a class="btn btn-sm btn-info lineal" href="@Url.Action(action: "CreateEdit", controller: "Categoria")/{{categoria.Id}}">
+                                        <i class="fa fa-edit"></i> Editar
+                                    </a>
+                                }
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <span class="small">{{(filtros.Usuario==null?'':filtros.Usuario)+" "+(ImportedAt==null?'':ImportedAt)}}</span>
+                    <ul uib-pagination total-items="totalcount" ng-change="pagechanged()"
+                        items-per-page="filtros.pageSize" direction-links="false" ng-model="filtros.pageIndex" role="menu"
+                        max-size="maxsize" class="pagination-sm" boundary-links="true" rotate="true"
+                        num-pages="numPages" style="margin-bottom: 0px !important"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script>
+        (function () {
+            var modalInstance = null;
+            var app = angular.module('SedeshuApp', ['ui.bootstrap']);
+            var baseUrl = document.baseURI;
+
+            app.controller('indexController',
+                function ($scope, $http, $uibModal) {                   
+                    $scope.categorias = [];
+                    $scope.animationsEnabled = true;
+                    $scope.errors = [];
+                    //Paginacion
+                    $scope.maxsize = 5;
+                    $scope.totalcount = 0;
+                    $scope.numPages = 0;
+                    $scope.cargando = false;
+                   
+                    $scope.filtros = {                                        
+                        pageIndex: 1,
+                        pageSize: 10
+                    }
+
+                    $scope.getCategorias = function () {
+                        $scope.cargando = true;
+                        $http.post(baseUrl + 'Categoria/GetCategorias/', $scope.filtros).then(function (response) {
+                            $scope.cargando = false;
+                            $scope.categorias = response.data.Carencias;
+                            $scope.totalcount = response.data.Total;
+                        });
+                    }
+
+                    $scope.pagechanged = function () {
+                        $scope.getCategorias();
+                    };
+
+                    $scope.getCategorias();                 
+                }
+            )         
+        })();
+    </script>
+}
+
+@section Styles
+{
+    <style>
+        .color{
+            width: 20px;
+            height: 20px;           
+        }
+    </style>
+}

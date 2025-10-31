@@ -1,0 +1,258 @@
+﻿@using System.Security.Claims;
+<div ng-app="SedeshuApp" ng-controller="createEditController" ng-init="init(@Model)">
+    <partial name="_Loading_Partial" />
+    <div class="card border-cards" ng-cloak>
+        <div class="card-header bg-cards text-white d-flex justify-content-between">
+            <h5 ng-if="usuario.Id == null" class="float-left">Crear trabajador de campo</h5>
+            <h5 ng-if="usuario.Id != null" class="float-left">Editar trabajador de campo</h5>
+            <a class="btn btn-sm btn-header" asp-controller="Organizacion" asp-action="IndexTrabajadores">
+                <i class="fa fa-backward"></i> Regresar
+            </a>
+        </div>
+        <div class="card-body">
+            <div class="d-flex flex-wrap">
+                <div class="col-6">
+                    <label class="required">Nombre completo <small ng-bind="usuario.Nombre.length + ' / 100'"></small></label>
+                    <input class="form-control" ng-model="usuario.Nombre" />
+                    <strong class="small text-danger" ng-bind="errors['Nombre']"></strong>
+                </div>
+                <div class="col-6">
+                    <label class="required">Correo electrónico <small ng-bind="usuario.Email.length + ' / 100'"></small></label>
+                    <input class="form-control" ng-model="usuario.Email" />
+                    <strong class="small text-danger" ng-bind="errors['Email']"></strong>
+                </div>
+                <div class="col-6">
+                    <label class="required">Nombre de usuario <small ng-bind="usuario.UserName.length + ' / 50'"></small></label>
+                    <input class="form-control" ng-model="usuario.UserName" />
+                    <strong class="small text-danger" ng-bind="errors['UserName']"></strong>
+                </div>
+                <div class="col-6">
+                    <label class="required">Contraseña <small ng-bind="usuario.Password.length + ' / 50'"></small></label>
+                    <input type="password" class="form-control" ng-model="usuario.Password" />
+                    <strong class="small text-danger" ng-bind="errors['Password']"></strong>
+                </div>
+                <div class="col-6">
+                    <label class="required">Dependencia</label>
+                    <select class="form-control selectpicker" ng-model="usuario.DependenciaId" data-title="Sin selección" ng-change="GetRegiones()">
+                        <option ng-repeat="dependencia in dependencias" ng-value="dependencia.Id">{{ dependencia.Nombre }}</option>
+                    </select>
+                    <strong class="small text-danger" ng-bind="errors['DependenciaId']"></strong>
+                </div>
+                <div class="col-6">
+                    <label class="required">Código</label>
+                    <input class="form-control" ng-model="usuario.Codigo" />
+                    <strong class="small text-danger" ng-bind="errors['Codigo']"></strong>
+                </div>
+            </div>
+            <hr>
+            <span class="badge badge-info">Regiones</span>
+            <br>
+            <div class="d-flex flex-wrap">
+                <div class="col-sm-3 region" ng-repeat="region in regiones">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <input type="checkbox" id="{{region.Id}}" ng-model="region.Selected">
+                            <label for="{{region.Id}}">{{region.Clave}}</label>
+                        </div>
+                        <button class="btn btn-sm btn-light" ng-click="MostrarRegion(region)" ng-if="region.Mostrar">
+                            <i class="fa fa-arrow-up"></i>
+                        </button>
+                        <button class="btn btn-sm btn-light" ng-click="MostrarRegion(region)" ng-if="!region.Mostrar">
+                            <i class="fa fa-arrow-down"></i>
+                        </button>
+                    </div>
+                    <table class="table" ng-if="region.Mostrar">
+                        <tr ng-repeat="municipio in region.MunicipioZonas">
+                            <td>{{municipio.Municipio.Nombre}}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        @if (((ClaimsIdentity)User.Identity).HasClaim("Permiso", "trabajadorcampo.editar") || 
+            ((ClaimsIdentity)User.Identity).HasClaim("Permiso", "trabajadorcampo.crear") || 
+             ((ClaimsIdentity)User.Identity).HasClaim("Permiso", "trabajadorcampo.eliminar"))
+        {
+            <div class="card-footer d-flex justify-content-between">
+                @if (((ClaimsIdentity)User.Identity).HasClaim("Permiso", "trabajadorcampo.editar") ||
+                    ((ClaimsIdentity)User.Identity).HasClaim("Permiso", "trabajadorcampo.crear"))
+                {
+                    <button class="btn btn-sm btn-success" ng-click="Guardar()" ng-if="!guardando">
+                        <i class="fa fa-save"></i> Guardar
+                    </button>
+
+                    <button class="btn btn-sm btn-success" disabled ng-if="guardando">
+                        <i class="fa fa-spinner fa-spin" ng-if="guardando"></i> Guardar
+                    </button>
+                }
+                @if (((ClaimsIdentity)User.Identity).HasClaim("Permiso", "trabajadorcampo.eliminar"))
+                {
+                    <button class="btn btn-sm btn-danger" ng-click="confirmar()" ng-if="usuario.Id!=''">
+                        <i class="fa fa-trash"></i>
+                    </button>
+                }
+            </div>
+        }
+    </div>
+    <script type="text/ng-template" id="myModalContent">
+        <div class="modal-header">
+            <h5 class="modal-title" id="modal-title">Eliminar encuestador</h5>
+        </div>
+        <div class="modal-body" id="modal-body">
+            <label>¿Deseas eliminar este encuestador?</label>
+        </div>
+        <div class="modal-footer" style="padding-top: 5px; padding-bottom: 5px;">
+            <button class="btn btn-sm btn-light" type="button" ng-click="$modal.cancelar()">Cancelar</button>
+            <button class="btn btn-sm btn-primary" type="button" ng-click="$modal.eliminar()" ng-if="!$modal.guardando">
+                <i class="fa fa-file-upload"></i> Confirmar
+            </button>
+            <button class="btn btn-sm btn-primary" type="button" ng-if="$modal.guardando" disabled>
+                <i class="fa fa-spinner fa-spin"></i> Confirmar
+            </button>
+        </div>
+    </script>
+</div>
+
+@section Scripts{
+    <script>
+        (function () {
+            var app = angular.module('SedeshuApp', ['ui.bootstrap']);
+            var baseUrl = document.baseURI;
+
+            app.controller('createEditController',
+                function ($scope, $http, $uibModal) {
+                    $scope.errors = [];
+                    $scope.dependencias = [];
+                    $scope.regiones = [];
+                    $scope.guardando = false;
+                    $scope.usuario = {
+                        Id: "",
+                        Nombre: "",
+                        Email: "",
+                        Codigo: "",
+                        UserName: "",
+                        Password: "",
+                        DependenciaId: "",
+                        Regiones: []
+                    };
+
+                    $scope.init = function (trabajador) {
+                        $scope.usuario = trabajador;
+                        $scope.GetRegiones();
+                    };
+
+                    $scope.getDependencias = function () {
+                        $http.post(baseUrl + 'Organizacion/GetDependencias')
+                            .then(function (response) {
+                                $scope.dependencias = response.data.Dependencias;
+                                $scope.refreshSelect();
+                            });
+                    }
+
+                    $scope.Guardar = function () {
+                        $scope.guardando = true;
+                        $scope.usuario.Regiones = [];
+                        _.each($scope.regiones, function (region) {
+                            if (region.Selected) {
+                                $scope.usuario.Regiones.push(region.Id);
+                            }
+                        });
+                        $http.post(baseUrl + 'Organizacion/GuardarTrabajador', $scope.usuario).then(function (response) {
+                            if (response.data === "ok") {
+                                window.location.href = baseUrl + "Organizacion/IndexTrabajadores";
+                            } else {
+                                $scope.cargarErrores(response.data);
+                            }
+                            $scope.guardando = false;
+                        });
+                    };
+                    $scope.GetRegiones = function () {
+                        $http.get(baseUrl + 'Organizacion/GetRegiones/' + $scope.usuario.DependenciaId).then(function (response) {
+                            $scope.regiones = response.data;
+                            _.each($scope.regiones, function (region) {
+                                region.Mostrar = false;
+                                region.Selected = _.find($scope.usuario.Regiones, function (r) {
+                                    return r == region.Id
+                                }) != null;
+                            });
+                        });
+                    };
+
+                    $scope.MostrarRegion = function (region) {
+                        region.Mostrar = !region.Mostrar;
+                    };
+
+                    $scope.refreshSelect = _.debounce(function () {
+                        $('.selectpicker').selectpicker('refresh');
+                    }, 200);
+
+                    $scope.cargarErrores = function (errors) {
+                        $scope.errors = [];
+                        for (var i = 0; i < errors.length; i++) {
+                            $scope.errors[errors[i].Key] = errors[i].Error;
+                        }
+                    };
+
+                    $scope.confirmar = function () {
+                        $scope.showModal();
+                    };
+
+                    $scope.showModal = function (size, parentSelector) {
+                        var parentElem = parentSelector ?
+                            angular.element($document[0].querySelector('#modal ' + parentSelector)) : undefined;
+                        var modalInstance = $uibModal.open({
+                            animation: $scope.animationsEnabled,
+                            ariaLabelledBy: 'modal-title',
+                            ariaDescribedBy: 'modal-body',
+                            templateUrl: 'myModalContent',
+                            size: size,
+                            controller: 'modalController',
+                            controllerAs: '$modal',
+                            appendTo: parentElem,
+                            resolve: {
+                                usuario: function () { return $scope.usuario; }
+                            }
+                        });
+
+                        modalInstance.result.then(function () { }, function () { });
+                    };
+
+                    $scope.getDependencias();
+                }
+            );
+
+            app.controller('modalController',
+                function ($scope, $http, $uibModalInstance, usuario) {
+                    $modal = this;
+                    $modal.guardando = false;
+                    $modal.usuario = usuario;
+
+                    $modal.cancelar = function () {
+                        $uibModalInstance.close();
+                    }
+
+                    $modal.eliminar = function () {
+                        $http.post(baseUrl + 'Organizacion/EliminarTrabajador', $modal.usuario).then(function (response) {
+                            if (response.data === "ok") {
+                                window.location.href = baseUrl + "Organizacion/Trabajadores";
+                            }
+                            $scope.guardando = false;
+                        });
+                    }
+                });
+
+        })();
+    </script>
+}
+@section Styles
+    {
+    <style>
+        .region {
+            border: 1px solid #dadada;
+            margin: 5px;
+            padding: 10px;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+    </style>
+}

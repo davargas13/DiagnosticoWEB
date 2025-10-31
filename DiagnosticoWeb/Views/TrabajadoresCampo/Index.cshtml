@@ -1,0 +1,143 @@
+﻿@using System.Security.Claims;
+@{
+    ViewData["Title"] = "Encuestadores";
+}
+<div ng-app="SedeshuApp" ng-controller="indexController">
+    <partial name="_Loading_Partial" />
+    <div ng-cloak>
+        <div class="card border-cards">
+            <div class="card-header bg-cards text-white d-flex justify-content-between">
+                <h5>Encuestadores</h5>
+                @if (((ClaimsIdentity)User.Identity).HasClaim("Permiso", "trabajadorcampo.crear"))
+                {
+                    <a class="btn btn-sm btn-header" asp-controller="TrabajadoresCampo" asp-action="CreateEdit">
+                        <i class="fa fa-plus"></i> Crear
+                    </a>
+                }
+            </div>
+            <div class="card-body">
+                <div class="d-flex flex-wrap">
+                    <div class="col-3">
+                        <label>Nombre</label>
+                        <input class="form-control" ng-model="Nombre" ng-keyup="$event.keyCode == 13 ? getTrabajadores() : null" />
+                    </div>
+                    <div class="col-3">
+                        <label>Nombre de usuario</label>
+                        <input class="form-control" ng-model="UserName" ng-keyup="$event.keyCode == 13 ? getTrabajadores() : null" />
+                    </div>
+                    <div class="col-3">
+                        <label>Correo electrónico</label>
+                        <input class="form-control" ng-model="Email" ng-keyup="$event.keyCode == 13 ? getTrabajadores() : null" />
+                    </div>
+                    <div class="col-2">
+                        <div class="form-row">
+                            <label class="col-sm-12">&nbsp;</label>
+                            <button class="btn btn-info" ng-click="getTrabajadores()" ng-if="!cargando">
+                                <i class="fa fa-search"></i> Buscar
+                            </button>
+                            <button class="btn btn-info" ng-if="cargando">
+                                <i class="fa fa-spinner fa-spin"></i> Buscar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card border-cards">
+            <div class="card-body">
+                <table class="table table-responsive-sm" ng-if="!cargando">
+                    <thead>
+                        <tr>
+                            <th>Dependencia</th>
+                            <th>Nombre</th>
+                            <th>Correo electrónico</th>
+                            <th>Nombre de usuario</th>
+                            <th class="no-stretch"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="usuario in usuarios" ng-cloak>
+                            <td>{{ usuario.Dependencias }}</td>
+                            <td>{{ usuario.Nombre }}</td>
+                            <td>{{ usuario.Email }}</td>
+                            <td>{{ usuario.Username }}</td>
+                            <td>
+                                @if (((ClaimsIdentity)User.Identity).HasClaim("Permiso", "trabajadorcampo.editar"))
+                                {
+                                    <a class="btn btn-sm btn-info lineal" href="@Url.Action(controller: "TrabajadoresCampo", action: "CreateEdit")/{{ usuario.Id }}">
+                                        <i class="fa fa-edit"></i> Editar
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a class="btn btn-sm btn-info lineal" href="@Url.Action(controller: "TrabajadoresCampo", action: "CreateEdit")/{{ usuario.Id }}">
+                                        <i class="fa fa-eye"></i> Ver
+                                    </a>
+                                }
+                            </td>
+                        </tr>
+                        <tr ng-if="usuarios.length == 0">
+                            <td colspan="5">No hay datos para mostrar.</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="float-right" ng-show="!cargando">
+                    <ul uib-pagination total-items="totalcount" ng-change="pagechanged()"
+                        items-per-page="pageSize" direction-links="false" ng-model="pageIndex" role="menu"
+                        max-size="maxsize" class="pagination-sm" boundary-links="true" rotate="true"
+                        num-pages="numPages" style="margin-bottom: 0px !important"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        (function () {
+            var app = angular.module('SedeshuApp', ['ui.bootstrap']);
+            var baseUrl = document.baseURI;
+
+            app.controller('indexController',
+                function ($scope, $http, $uibModal) {
+                    $scope.Nombre = "";
+                    $scope.Username = "";
+                    $scope.Email = "";
+                    $scope.usuarios = [];
+                    //Paginacion
+                    $scope.maxsize = 5;
+                    $scope.totalcount = 0;
+                    $scope.pageIndex = 1;
+                    $scope.pageSize = 10;
+                    $scope.numPages = 0;
+                    $scope.cargando = false;
+
+                    $scope.getTrabajadores = function () {
+                        $scope.cargando = true;
+
+                        $http.post(baseUrl + 'TrabajadoresCampo/GetTrabajadores/',
+                            {
+                                Nombre: $scope.Nombre,
+                                Username: $scope.UserName,
+                                Email: $scope.Email,
+                                PageIndex: $scope.pageIndex,
+                                PageSize: $scope.pageSize
+                            }
+                        ).then(
+                            function (response) {
+                                $scope.usuarios = response.data.Usuarios;
+                                $scope.totalcount = response.data.Total;
+                                $scope.cargando = false;
+                            });
+                    }
+
+                    $scope.pagechanged = function () {
+                        $scope.getTrabajadores();
+                    };
+
+                    $scope.getTrabajadores();
+                }
+            );
+        })();
+    </script>
+}

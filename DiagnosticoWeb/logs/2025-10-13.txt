@@ -1,0 +1,180 @@
+13-10-2025 13:02:20 Object reference not set to an instance of an object.    at DiagnosticoWeb.Code.ImportacionDiagnosticos.CompletarCurp(Beneficiario beneficiario, ApplicationDbContext db, String url, String passwordCurp, DateTime now, HttpClient client, String idApiCurp) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Code\ImportacionDiagnosticos.cs:line 516
+   at DiagnosticoWeb.Controllers.ApiController.CompletarCurp(String id, String conexion, String url, String password, HttpClient client, String idApiCurp) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Controllers\ApiController.cs:line 1989
+13-10-2025 13:02:22 Exception of type 'System.Exception' was thrown.  http://139.70.80.53:8080/datosapi? NotFound
+13-10-2025 13:05:01 Object reference not set to an instance of an object.    at DiagnosticoWeb.Code.ImportacionDiagnosticos.CompletarCurp(Beneficiario beneficiario, ApplicationDbContext db, String url, String passwordCurp, DateTime now, HttpClient client, String idApiCurp) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Code\ImportacionDiagnosticos.cs:line 516
+   at DiagnosticoWeb.Controllers.ApiController.CompletarCurp(String id, String conexion, String url, String password, HttpClient client, String idApiCurp) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Controllers\ApiController.cs:line 1989
+13-10-2025 13:05:01 Exception of type 'System.Exception' was thrown.  http://139.70.80.53:8080/datosapi? NotFound
+13-10-2025 13:05:04 Object reference not set to an instance of an object.    at DiagnosticoWeb.Code.ImportacionDiagnosticos.CompletarCurp(Beneficiario beneficiario, ApplicationDbContext db, String url, String passwordCurp, DateTime now, HttpClient client, String idApiCurp) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Code\ImportacionDiagnosticos.cs:line 516
+   at DiagnosticoWeb.Controllers.ApiController.CompletarCurp(String id, String conexion, String url, String password, HttpClient client, String idApiCurp) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Controllers\ApiController.cs:line 1989
+13-10-2025 13:05:04 Exception of type 'System.Exception' was thrown.  http://139.70.80.53:8080/datosapi? NotFound
+13-10-2025 13:05:04 Object reference not set to an instance of an object.    at DiagnosticoWeb.Code.ImportacionDiagnosticos.CompletarCurp(Beneficiario beneficiario, ApplicationDbContext db, String url, String passwordCurp, DateTime now, HttpClient client, String idApiCurp) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Code\ImportacionDiagnosticos.cs:line 516
+   at DiagnosticoWeb.Controllers.ApiController.CompletarCurp(String id, String conexion, String url, String password, HttpClient client, String idApiCurp) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Controllers\ApiController.cs:line 1989
+13-10-2025 13:05:04 Exception of type 'System.Exception' was thrown.  http://139.70.80.53:8080/datosapi? NotFound
+13-10-2025 13:05:05 Object reference not set to an instance of an object.    at DiagnosticoWeb.Code.ImportacionDiagnosticos.CompletarCurp(Beneficiario beneficiario, ApplicationDbContext db, String url, String passwordCurp, DateTime now, HttpClient client, String idApiCurp) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Code\ImportacionDiagnosticos.cs:line 516
+   at DiagnosticoWeb.Controllers.ApiController.CompletarCurp(String id, String conexion, String url, String password, HttpClient client, String idApiCurp) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Controllers\ApiController.cs:line 1989
+13-10-2025 13:05:05 Exception of type 'System.Exception' was thrown.  http://139.70.80.53:8080/datosapi? NotFound
+13-10-2025 13:06:03 Object reference not set to an instance of an object.    at DiagnosticoWeb.Code.ImportacionDiagnosticos.CompletarCurp(Beneficiario beneficiario, ApplicationDbContext db, String url, String passwordCurp, DateTime now, HttpClient client, String idApiCurp) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Code\ImportacionDiagnosticos.cs:line 516
+   at DiagnosticoWeb.Controllers.ApiController.CompletarCurp(String id, String conexion, String url, String password, HttpClient client, String idApiCurp) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Controllers\ApiController.cs:line 1989
+13-10-2025 13:06:05 Exception of type 'System.Exception' was thrown.  http://139.70.80.53:8080/datosapi? NotFound
+13-10-2025 13:06:07 Exception of type 'System.Exception' was thrown.  http://139.70.80.53:8080/datosapi? NotFound
+13-10-2025 13:06:08 Object reference not set to an instance of an object.    at DiagnosticoWeb.Code.ImportacionDiagnosticos.CompletarCurp(Beneficiario beneficiario, ApplicationDbContext db, String url, String passwordCurp, DateTime now, HttpClient client, String idApiCurp) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Code\ImportacionDiagnosticos.cs:line 516
+   at DiagnosticoWeb.Controllers.ApiController.CompletarCurp(String id, String conexion, String url, String password, HttpClient client, String idApiCurp) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Controllers\ApiController.cs:line 1989
+13-10-2025 13:06:08 Exception of type 'System.Exception' was thrown.  http://139.70.80.53:8080/datosapi? NotFound
+13-10-2025 13:06:08 Object reference not set to an instance of an object.    at DiagnosticoWeb.Code.ImportacionDiagnosticos.CompletarCurp(Beneficiario beneficiario, ApplicationDbContext db, String url, String passwordCurp, DateTime now, HttpClient client, String idApiCurp) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Code\ImportacionDiagnosticos.cs:line 516
+   at DiagnosticoWeb.Controllers.ApiController.CompletarCurp(String id, String conexion, String url, String password, HttpClient client, String idApiCurp) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Controllers\ApiController.cs:line 1989
+13-10-2025 13:06:08 Object reference not set to an instance of an object.    at DiagnosticoWeb.Code.ImportacionDiagnosticos.CompletarCurp(Beneficiario beneficiario, ApplicationDbContext db, String url, String passwordCurp, DateTime now, HttpClient client, String idApiCurp) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Code\ImportacionDiagnosticos.cs:line 516
+   at DiagnosticoWeb.Controllers.ApiController.CompletarCurp(String id, String conexion, String url, String password, HttpClient client, String idApiCurp) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Controllers\ApiController.cs:line 1989
+13-10-2025 13:06:08 Exception of type 'System.Exception' was thrown.  http://139.70.80.53:8080/datosapi? NotFound
+13-10-2025 13:06:42 Object reference not set to an instance of an object.    at DiagnosticoWeb.Code.ImportacionDiagnosticos.CompletarCurp(Beneficiario beneficiario, ApplicationDbContext db, String url, String passwordCurp, DateTime now, HttpClient client, String idApiCurp) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Code\ImportacionDiagnosticos.cs:line 516
+   at DiagnosticoWeb.Controllers.ApiController.CompletarCurp(String id, String conexion, String url, String password, HttpClient client, String idApiCurp) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Controllers\ApiController.cs:line 1989
+13-10-2025 13:06:43 Exception of type 'System.Exception' was thrown.  http://139.70.80.53:8080/datosapi? NotFound
+13-10-2025 13:06:46 Object reference not set to an instance of an object.    at DiagnosticoWeb.Code.ImportacionDiagnosticos.CompletarCurp(Beneficiario beneficiario, ApplicationDbContext db, String url, String passwordCurp, DateTime now, HttpClient client, String idApiCurp) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Code\ImportacionDiagnosticos.cs:line 516
+   at DiagnosticoWeb.Controllers.ApiController.CompletarCurp(String id, String conexion, String url, String password, HttpClient client, String idApiCurp) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Controllers\ApiController.cs:line 1989
+13-10-2025 13:06:46 Exception of type 'System.Exception' was thrown.  http://139.70.80.53:8080/datosapi? NotFound
+13-10-2025 13:06:46 Object reference not set to an instance of an object.    at DiagnosticoWeb.Code.ImportacionDiagnosticos.CompletarCurp(Beneficiario beneficiario, ApplicationDbContext db, String url, String passwordCurp, DateTime now, HttpClient client, String idApiCurp) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Code\ImportacionDiagnosticos.cs:line 516
+   at DiagnosticoWeb.Controllers.ApiController.CompletarCurp(String id, String conexion, String url, String password, HttpClient client, String idApiCurp) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Controllers\ApiController.cs:line 1989
+13-10-2025 13:06:46 Exception of type 'System.Exception' was thrown.  http://139.70.80.53:8080/datosapi? NotFound
+13-10-2025 13:06:46 Object reference not set to an instance of an object.    at DiagnosticoWeb.Code.ImportacionDiagnosticos.CompletarCurp(Beneficiario beneficiario, ApplicationDbContext db, String url, String passwordCurp, DateTime now, HttpClient client, String idApiCurp) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Code\ImportacionDiagnosticos.cs:line 516
+   at DiagnosticoWeb.Controllers.ApiController.CompletarCurp(String id, String conexion, String url, String password, HttpClient client, String idApiCurp) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Controllers\ApiController.cs:line 1989
+13-10-2025 13:06:46 Exception of type 'System.Exception' was thrown.  http://139.70.80.53:8080/datosapi? NotFound
+13-10-2025 13:06:46 Object reference not set to an instance of an object.    at DiagnosticoWeb.Code.ImportacionDiagnosticos.CompletarCurp(Beneficiario beneficiario, ApplicationDbContext db, String url, String passwordCurp, DateTime now, HttpClient client, String idApiCurp) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Code\ImportacionDiagnosticos.cs:line 516
+   at DiagnosticoWeb.Controllers.ApiController.CompletarCurp(String id, String conexion, String url, String password, HttpClient client, String idApiCurp) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Controllers\ApiController.cs:line 1989
+13-10-2025 13:06:46 Exception of type 'System.Exception' was thrown.  http://139.70.80.53:8080/datosapi? NotFound
+13-10-2025 13:10:05 Object reference not set to an instance of an object.    at DiagnosticoWeb.Code.ImportacionDiagnosticos.CompletarCurp(Beneficiario beneficiario, ApplicationDbContext db, String url, String passwordCurp, DateTime now, HttpClient client, String idApiCurp) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Code\ImportacionDiagnosticos.cs:line 516
+   at DiagnosticoWeb.Controllers.ApiController.CompletarCurp(String id, String conexion, String url, String password, HttpClient client, String idApiCurp) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Controllers\ApiController.cs:line 1989
+13-10-2025 13:10:05 Exception of type 'System.Exception' was thrown.  http://139.70.80.53:8080/datosapi? NotFound
+13-10-2025 13:12:27 Object reference not set to an instance of an object.    at DiagnosticoWeb.Code.ImportacionDiagnosticos.CompletarCurp(Beneficiario beneficiario, ApplicationDbContext db, String url, String passwordCurp, DateTime now, HttpClient client, String idApiCurp) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Code\ImportacionDiagnosticos.cs:line 516
+   at DiagnosticoWeb.Controllers.ApiController.CompletarCurp(String id, String conexion, String url, String password, HttpClient client, String idApiCurp) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Controllers\ApiController.cs:line 1989
+13-10-2025 13:12:27 Exception of type 'System.Exception' was thrown.  http://139.70.80.53:8080/datosapi? NotFound
+13-10-2025 13:12:27 Object reference not set to an instance of an object.    at DiagnosticoWeb.Code.ImportacionDiagnosticos.CompletarCurp(Beneficiario beneficiario, ApplicationDbContext db, String url, String passwordCurp, DateTime now, HttpClient client, String idApiCurp) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Code\ImportacionDiagnosticos.cs:line 516
+   at DiagnosticoWeb.Controllers.ApiController.CompletarCurp(String id, String conexion, String url, String password, HttpClient client, String idApiCurp) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Controllers\ApiController.cs:line 1989
+13-10-2025 13:12:28 Object reference not set to an instance of an object.    at DiagnosticoWeb.Code.ImportacionDiagnosticos.CompletarCurp(Beneficiario beneficiario, ApplicationDbContext db, String url, String passwordCurp, DateTime now, HttpClient client, String idApiCurp) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Code\ImportacionDiagnosticos.cs:line 516
+   at DiagnosticoWeb.Controllers.ApiController.CompletarCurp(String id, String conexion, String url, String password, HttpClient client, String idApiCurp) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Controllers\ApiController.cs:line 1989
+13-10-2025 13:12:28 Exception of type 'System.Exception' was thrown.  http://139.70.80.53:8080/datosapi? NotFound
+13-10-2025 13:12:28 Exception of type 'System.Exception' was thrown.  http://139.70.80.53:8080/datosapi? NotFound
+13-10-2025 13:12:31 C:\Alex\DiagnosticoTFS\DiagnosticoWeb\archivos\2a78ae53-c193-41c4-8885-79a8031a4b08.jpg    at System.Drawing.Image.FromFile(String filename, Boolean useEmbeddedColorManagement)
+   at DiagnosticoWeb.Controllers.SolicitudesController.GetImagen(String id) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Controllers\SolicitudesController.cs:line 872
+   at lambda_method(Closure , Object , Object[] )
+   at Microsoft.Extensions.Internal.ObjectMethodExecutor.Execute(Object target, Object[] parameters)
+   at Microsoft.AspNetCore.Mvc.Internal.ActionMethodExecutor.SyncObjectResultExecutor.Execute(IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.InvokeActionMethodAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.InvokeNextActionFilterAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.Rethrow(ActionExecutedContext context)
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.InvokeInnerFilterAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.InvokeNextResourceFilter()
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.Rethrow(ResourceExecutedContext context)
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.InvokeFilterPipelineAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.InvokeAsync()
+   at Microsoft.AspNetCore.Builder.RouterMiddleware.Invoke(HttpContext httpContext)
+   at DiagnosticoWeb.Startup.<>c__DisplayClass5_0.<<Configure>b__0>d.MoveNext() in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Startup.cs:line 110
+--- End of stack trace from previous location where exception was thrown ---
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware.Invoke(HttpContext context)
+13-10-2025 13:12:42 C:\Alex\DiagnosticoTFS\DiagnosticoWeb\archivos\2a78ae53-c193-41c4-8885-79a8031a4b08.jpg    at System.Drawing.Image.FromFile(String filename, Boolean useEmbeddedColorManagement)
+   at DiagnosticoWeb.Controllers.SolicitudesController.GetImagen(String id) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Controllers\SolicitudesController.cs:line 872
+   at lambda_method(Closure , Object , Object[] )
+   at Microsoft.Extensions.Internal.ObjectMethodExecutor.Execute(Object target, Object[] parameters)
+   at Microsoft.AspNetCore.Mvc.Internal.ActionMethodExecutor.SyncObjectResultExecutor.Execute(IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.InvokeActionMethodAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.InvokeNextActionFilterAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.Rethrow(ActionExecutedContext context)
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.InvokeInnerFilterAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.InvokeNextResourceFilter()
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.Rethrow(ResourceExecutedContext context)
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.InvokeFilterPipelineAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.InvokeAsync()
+   at Microsoft.AspNetCore.Builder.RouterMiddleware.Invoke(HttpContext httpContext)
+   at DiagnosticoWeb.Startup.<>c__DisplayClass5_0.<<Configure>b__0>d.MoveNext() in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Startup.cs:line 110
+--- End of stack trace from previous location where exception was thrown ---
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware.Invoke(HttpContext context)
+13-10-2025 13:12:46 C:\Alex\DiagnosticoTFS\DiagnosticoWeb\archivos\24afc19d-5344-4e21-9070-bdf5b05c6373.jpg    at System.Drawing.Image.FromFile(String filename, Boolean useEmbeddedColorManagement)
+   at DiagnosticoWeb.Controllers.SolicitudesController.GetImagen(String id) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Controllers\SolicitudesController.cs:line 872
+   at lambda_method(Closure , Object , Object[] )
+   at Microsoft.Extensions.Internal.ObjectMethodExecutor.Execute(Object target, Object[] parameters)
+   at Microsoft.AspNetCore.Mvc.Internal.ActionMethodExecutor.SyncObjectResultExecutor.Execute(IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.InvokeActionMethodAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.InvokeNextActionFilterAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.Rethrow(ActionExecutedContext context)
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.InvokeInnerFilterAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.InvokeNextResourceFilter()
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.Rethrow(ResourceExecutedContext context)
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.InvokeFilterPipelineAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.InvokeAsync()
+   at Microsoft.AspNetCore.Builder.RouterMiddleware.Invoke(HttpContext httpContext)
+   at DiagnosticoWeb.Startup.<>c__DisplayClass5_0.<<Configure>b__0>d.MoveNext() in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Startup.cs:line 110
+--- End of stack trace from previous location where exception was thrown ---
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware.Invoke(HttpContext context)
+13-10-2025 13:13:08 C:\Alex\DiagnosticoTFS\DiagnosticoWeb\archivos\27509f2b-2045-4331-917b-72a20e248985.jpg    at System.Drawing.Image.FromFile(String filename, Boolean useEmbeddedColorManagement)
+   at DiagnosticoWeb.Controllers.SolicitudesController.GetImagen(String id) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Controllers\SolicitudesController.cs:line 872
+   at lambda_method(Closure , Object , Object[] )
+   at Microsoft.Extensions.Internal.ObjectMethodExecutor.Execute(Object target, Object[] parameters)
+   at Microsoft.AspNetCore.Mvc.Internal.ActionMethodExecutor.SyncObjectResultExecutor.Execute(IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.InvokeActionMethodAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.InvokeNextActionFilterAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.Rethrow(ActionExecutedContext context)
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.InvokeInnerFilterAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.InvokeNextResourceFilter()
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.Rethrow(ResourceExecutedContext context)
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.InvokeFilterPipelineAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.InvokeAsync()
+   at Microsoft.AspNetCore.Builder.RouterMiddleware.Invoke(HttpContext httpContext)
+   at DiagnosticoWeb.Startup.<>c__DisplayClass5_0.<<Configure>b__0>d.MoveNext() in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Startup.cs:line 110
+--- End of stack trace from previous location where exception was thrown ---
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware.Invoke(HttpContext context)
+13-10-2025 13:13:10 C:\Alex\DiagnosticoTFS\DiagnosticoWeb\archivos\27509f2b-2045-4331-917b-72a20e248985.jpg    at System.Drawing.Image.FromFile(String filename, Boolean useEmbeddedColorManagement)
+   at DiagnosticoWeb.Controllers.SolicitudesController.GetImagen(String id) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Controllers\SolicitudesController.cs:line 872
+   at lambda_method(Closure , Object , Object[] )
+   at Microsoft.Extensions.Internal.ObjectMethodExecutor.Execute(Object target, Object[] parameters)
+   at Microsoft.AspNetCore.Mvc.Internal.ActionMethodExecutor.SyncObjectResultExecutor.Execute(IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.InvokeActionMethodAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.InvokeNextActionFilterAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.Rethrow(ActionExecutedContext context)
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.InvokeInnerFilterAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.InvokeNextResourceFilter()
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.Rethrow(ResourceExecutedContext context)
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.InvokeFilterPipelineAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.InvokeAsync()
+   at Microsoft.AspNetCore.Builder.RouterMiddleware.Invoke(HttpContext httpContext)
+   at DiagnosticoWeb.Startup.<>c__DisplayClass5_0.<<Configure>b__0>d.MoveNext() in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Startup.cs:line 110
+--- End of stack trace from previous location where exception was thrown ---
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware.Invoke(HttpContext context)
+13-10-2025 13:13:18 C:\Alex\DiagnosticoTFS\DiagnosticoWeb\archivos\3527ad7c-b3f9-437e-a0d1-1e954bae84df.jpg    at System.Drawing.Image.FromFile(String filename, Boolean useEmbeddedColorManagement)
+   at DiagnosticoWeb.Controllers.SolicitudesController.GetImagen(String id) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Controllers\SolicitudesController.cs:line 872
+   at lambda_method(Closure , Object , Object[] )
+   at Microsoft.Extensions.Internal.ObjectMethodExecutor.Execute(Object target, Object[] parameters)
+   at Microsoft.AspNetCore.Mvc.Internal.ActionMethodExecutor.SyncObjectResultExecutor.Execute(IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.InvokeActionMethodAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.InvokeNextActionFilterAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.Rethrow(ActionExecutedContext context)
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.InvokeInnerFilterAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.InvokeNextResourceFilter()
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.Rethrow(ResourceExecutedContext context)
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.InvokeFilterPipelineAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.InvokeAsync()
+   at Microsoft.AspNetCore.Builder.RouterMiddleware.Invoke(HttpContext httpContext)
+   at DiagnosticoWeb.Startup.<>c__DisplayClass5_0.<<Configure>b__0>d.MoveNext() in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Startup.cs:line 110
+--- End of stack trace from previous location where exception was thrown ---
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware.Invoke(HttpContext context)

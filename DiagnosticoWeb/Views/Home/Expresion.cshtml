@@ -1,0 +1,279 @@
+@{
+    ViewData["Title"] = "Diccionario de expresiones";
+}
+<div ng-app="SedeshuApp" ng-controller="welcomeController">
+<partial name="_Loading_Partial"/>
+<slot ng-cloak>
+<div class="container">
+<div class="card border-cards">
+<div class="card-header bg-cards text-white">
+    <i class="fa fa-chart-line"></i> Manual de expresiones
+</div>
+<div class="card-body">
+<h4>Carecteres</h4>
+<table class="table">
+    <tr>
+        <td>x</td>
+        <td>El caracter x</td>
+    </tr>
+    <tr>
+        <td>\\</td>
+        <td>El caracter diagonal invertida</td>
+    </tr>
+    <tr>
+        <td>\0n</td>
+        <td >
+            Caracter de valor octal (0 a 7)
+        </td>
+    </tr>
+    <tr>
+        <td>\xhh</td>
+        <td>Caracter para valores hexadecimales 0xhh</td>
+    </tr>
+    <tr>
+        <td>\t</td>
+        <td>Caracter tabulador ('\u0009')</td>
+    </tr>
+    <tr>
+        <td>\n</td>
+        <td>Caracter para saltos de línea('\u000A')</td>
+    </tr>
+    <tr>
+        <td>\r</td>
+        <td>Caracter para retorno de carro ('\u000D')</td>
+    </tr>
+    <tr>
+        <td>\f</td>
+        <td>Caracter para separador de sección ('\u000C')</td>
+    </tr>
+    <tr>
+        <td>\a</td>
+        <td>Caracter de alerta('\u0007')</td>
+    </tr>
+    <tr>
+        <td>\e</td>
+        <td>Caracter de escape('\u001B')</td>
+    </tr>
+    <tr>
+        <td>\cx</td>
+        <td>Caracter de control correspondiente a x</td>
+    </tr>
+</table>
+
+<h4>Clases</h4>
+
+<table class="table">
+    <tr>
+        <td>[abc]</td>
+        <td>a,b,o c(clase simple)</td>
+    </tr>
+    <tr>
+        <td>[^abc]</td>
+        <td>Cualquier caracter excepto a,b o c</td>
+    </tr>
+    <tr>
+        <td>[a-zA-Z]</td>
+        <td>De la 'a' la 'z' o de la 'A' a la 'Z' (inclusivo)</td>
+    </tr>
+    <tr>
+        <td>[a-d[m-p]]</td>
+        <td>De la 'a' a la 'd' o de la 'm' a la 'p' [a-dm-p] (unión)</td>
+    </tr>
+    <tr>
+        <td>[a-z&amp;&amp;[def]]</td>
+        <td>d,e, o f (insersección)</td>
+    </tr>
+    <tr>
+        <td>[a-z&amp;&amp;[^bc]]</td>
+        <td>De la 'a' a la 'z', excepto b y c: [ad-z] (sustracción)</td>
+    </tr>
+    <tr>
+        <td>[a-z&amp;&amp;[^m-p]]</td>
+        <td>De la 'a' a la 'z' y sin (De la 'm' a la 'p'): [a-lq-z] (sustracción)</td>
+    </tr>
+</table>
+
+<h4>Clases predefinidas</h4>
+
+<table class="table">
+    <tr>
+        <td>.</td>
+        <td>Cualquier caracter </td>
+    </tr>
+    <tr>
+
+        <td>\d</td>
+        <td>Un digito:[0-9]</td>
+    </tr>
+    <tr>
+        <td>\D</td>
+        <td>Caracter que no sea un digito:[^0-9]</td>
+    </tr>
+    <tr>
+        <td>\h</td>
+        <td>Caracter de espacio horizontal:[ \t\xA0\u1680\u180e\u2000-\u200a\u202f\u205f\u3000]</td>
+    </tr>
+    <tr>
+        <td>\H</td>
+        <td>Cualquier caracter que no sea un espacio horizontal:[^\h]</td>
+    </tr>
+    <tr>
+        <td>\s</td>
+        <td>Caracter de espacio :[ \t\n\x0B\f\r]</td>
+    </tr>
+    <tr>
+        <td>\S</td>
+        <td>Cualquier caracter que no sea el de espacio:[^\s]</td>
+    </tr>
+    <tr>
+        <td>\v</td>
+        <td>Caracter de espacio vertical :[\n\x0B\f\r\x85\u2028\u2029]</td>
+    </tr>
+    <tr>
+        <td>\V</td>
+        <td>Cualquier caracter que no sea el de espacio vertical :[^\v]</td>
+    </tr>
+    <tr>
+        <td>\w</td>
+        <td>Cualquier caracter alfabetico :[a-zA-Z_0-9]</td>
+    </tr>
+    <tr>
+        <td>\W</td>
+        <td>Cualquier caracter que no sea alfabetico:[^\w]</td>
+    </tr>
+</table>
+
+<h4>Límites</h4>
+
+<table class="table">
+    <tr>
+        <td>^</td>
+        <td>Comienzo de la expresión</td>
+    </tr>
+    <tr>
+        <td>$</td>
+        <td>Fin de la expresión</td>
+    </tr>
+</table>
+
+<h4>Cuantificadores</h4>
+
+<table class="table">
+    <tr>
+        <td>X?</td>
+        <td>Caracter X, ninguna o solo una vez presente</td>
+    </tr>
+    <tr>
+        <td>X*</td>
+        <td>Caracter X, ninguna o cualquier vez presente</td>
+    </tr>
+    <tr>
+        <td>X+</td>
+        <td>Caracter X, una o cualquier vez presente</td>
+    </tr>
+    <tr>
+        <td>X{n}</td>
+        <td>Caracter X, exactamente n veces presente</td>
+    </tr>
+    <tr>
+        <td>X{n,}</td>
+        <td>Caracter X, por lo menos n veces presente</td>
+    </tr>
+    <tr>
+        <td>X{n,m}</td>
+        <td>Caracter X, por lo menos n veces presente pero menos de m veces</td>
+    </tr>
+</table>
+
+<h4>Cuantificadores reclutantes</h4>
+
+<table class="table">
+    <tr>
+        <td>X??</td>
+        <td >Caracter X, una vez o ninguna vez presente</td>
+    </tr>
+    <tr>
+        <td>X*?</td>
+        <td >Caracter X,ninguna o algunas veces presente</td>
+    </tr>
+    <tr>
+        <td>X+?</td>
+        <td >Caracter X, una o mas veces presente</td>
+    </tr>
+    <tr>
+        <td>X{n}?</td>
+        <td >Caracter X, exactly n veces presente</td>
+    </tr>
+    <tr>
+        <td>X{n,}?</td>
+        <td>Caracter X, por lo menos n veces presente</td>
+    </tr>
+    <tr>
+        <td>X{n,m}?</td>
+        <td>Caracter X, por lo menos n veces presente pero no mas a m veces</td>
+    </tr>
+</table>
+
+<h4>Cuantificadores posesivos</h4>
+
+<table class="table">
+    <tr>
+        <td>X?+</td>
+        <td>Caracter X,presente una vez o ninguna</td>
+    </tr>
+    <tr>
+        <td>X*+</td>
+        <td>Caracter X, presente ninguna o algunas veces</td>
+    </tr>
+    <tr>
+        <td>X++</td>
+        <td>Caracter X, presente una o más veces</td>
+    </tr>
+    <tr>
+        <td>X{n}+</td>
+        <td>Caracter X, presente exactamente n veces</td>
+    </tr>
+    <tr>
+        <td>X{n,}+</td>
+        <td>Caracter X, presente por lo menos n veces</td>
+    </tr>
+    <tr>
+        <td>X{n,m}+</td>
+        <td>Caracter X, presente por lo menos n veces pero no más a m veces</td>
+    </tr>
+</table>
+
+<h4>Operadores lógicos</h4>
+
+<table class="table">
+    <tr>
+        <td>XY</td>
+        <td>Caracter Y seguido del caracter X</td>
+    </tr>
+    <tr>
+        <td>X|Y</td>
+        <td>Caracter X o Y presentes</td>
+    </tr>
+    <tr>
+        <td>(X)</td>
+        <td>Caracter X, dentro de un grupo</td>
+    </tr>
+</table>
+</div>
+</div>
+</div>
+</slot>
+</div>
+
+@section Scripts{
+    <script>
+        (function() {
+            var app = angular.module('SedeshuApp', ['ui.bootstrap']);
+
+            app.controller('welcomeController',
+                function($scope, $http, $uibModal) {
+                    $scope.Total = 0;
+            });
+        })();
+    </script>
+}

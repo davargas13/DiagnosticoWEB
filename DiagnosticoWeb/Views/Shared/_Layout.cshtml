@@ -1,0 +1,293 @@
+﻿@using Microsoft.AspNetCore.Authorization;
+@using System.Security.Claims;
+@inject IAuthorizationService AuthorizationService
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Diagnóstico social</title>
+    <base href='@Url.Content("~/")'>
+    <environment include="Development">
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+    </environment>
+    <environment exclude="Development">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+              asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.css"
+              asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute"
+              crossorigin="anonymous"
+              integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" />
+    </environment>
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="~/css/loading.css" />
+    <link rel="stylesheet" href="~/lib/Font-Awesome/css/all.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap-select/dist/css/bootstrap-select.css" />
+    <link rel="stylesheet" href="~/css/angular-toggle-switch.css" />
+    <link rel="stylesheet" href="~/css/spectrum.css" />
+    <link rel="shortcut icon" href="~/images/impulso.ico">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/trix/0.9.2/trix.css">
+    @RenderSection("Styles", required: false)
+
+</head>
+<body>
+    <nav class="navbar navbar-expand-md navbar-light shadow-sm navbar-laravel mb-3">
+        <div class="container">
+            <a class="navbar-brand item-white" asp-controller="Home" asp-action="Index">
+                <img src="~/images/SEDESHU_LOGO.png" style="margin-right: 10px" height="60">
+                @* SEDESHU  *@
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent" aria-expanded="false"
+                    aria-label="{{ __('Toggle navigation') }}">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <ul class="navbar-nav mr-auto">                        
+                        @if (((ClaimsIdentity)User.Identity).HasClaim("Permiso", "trabajadorcampo.ver") ||
+                            ((ClaimsIdentity)User.Identity).HasClaim("Permiso", "dependencias.ver") ||
+                            ((ClaimsIdentity)User.Identity).HasClaim("Permiso", "programasocial.ver") ||
+                            ((ClaimsIdentity)User.Identity).HasClaim("Permiso", "perfil.ver") ||
+                            ((ClaimsIdentity)User.Identity).HasClaim("Permiso", "usuarios.ver") ||
+                            ((ClaimsIdentity)User.Identity).HasClaim("Permiso", "catalogos.ver"))
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle item-white" href="#" id="organizacion" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Organización
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="organizacion">
+                                    @if (((ClaimsIdentity)User.Identity).HasClaim("Permiso", "trabajadorcampo.ver"))
+                                    {
+                                        <a class="dropdown-item" asp-controller="Organizacion" asp-action="IndexTrabajadores">Encuestadores</a>
+                                    }
+                                    @if (((ClaimsIdentity)User.Identity).HasClaim("Permiso", "dependencias.ver"))
+                                    {
+                                        <a class="dropdown-item" asp-controller="Organizacion" asp-action="IndexDependencias">Dependencias</a>
+                                    }
+                                    @if (((ClaimsIdentity)User.Identity).HasClaim("Permiso", "perfil.ver"))
+                                    {
+                                        <a class="dropdown-item" asp-controller="Organizacion" asp-action="IndexPerfiles">Perfiles</a>
+                                    }
+                                    @if (((ClaimsIdentity)User.Identity).HasClaim("Permiso", "usuarios.ver"))
+                                    {
+                                        <a class="dropdown-item" asp-controller="Organizacion" asp-action="IndexUsuarios">Usuarios</a>
+                                    }
+                                </div>
+                            </li>
+                        }                                                
+                        @if (((ClaimsIdentity)User.Identity).HasClaim("Permiso", "catalogos.ver"))
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle item-white" href="#" id="encuesta" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Catálogos
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="encuesta">
+                                    <a class="dropdown-item" asp-controller="Estado" asp-action="Index">Estados</a>
+                                    <a class="dropdown-item" asp-controller="Municipios" asp-action="Index">Municipios</a>
+                                    <a class="dropdown-item" asp-controller="Localidad" asp-action="Index">Localidades</a>
+                                    <a class="dropdown-item" asp-controller="Ageb" asp-action="Index">Agebs</a>
+                                    <a class="dropdown-item" asp-controller="Manzana" asp-action="Index">Manzanas</a>
+                                    <a class="dropdown-item" asp-controller="Zona" asp-action="Index">Zonas de impulso</a>
+                                    <a class="dropdown-item" asp-controller="Colonia" asp-action="Index">Colonias</a>
+                                    <a class="dropdown-item" asp-controller="Calle" asp-action="Index">Calles</a>
+                                    <a class="dropdown-item" asp-controller="Camino" asp-action="Index">Caminos</a>
+                                    <a class="dropdown-item" asp-controller="Carretera" asp-action="Index">Tipos de carretera</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" asp-controller="Ocupacion" asp-action="Index">Ocupaciones</a>
+                                    <a class="dropdown-item" asp-controller="EstadoCivil" asp-action="Index">Estados civiles</a>
+                                    <a class="dropdown-item" asp-controller="Estudio" asp-action="Index">Niveles de Estudios</a>
+                                    <a class="dropdown-item" asp-controller="GradoEstudio" asp-action="Index">Grados de Estudios</a>
+                                    <a class="dropdown-item" asp-controller="Parentesco" asp-action="Index">Parentescos</a>
+                                    <a class="dropdown-item" asp-controller="TipoAsentamiento" asp-action="Index">Tipos de asentamiento</a>
+                                    <a class="dropdown-item" asp-controller="Sexo" asp-action="Index">Generos</a>
+                                    <a class="dropdown-item" asp-controller="Discapacidad" asp-action="Index">Discapacidades</a>
+                                    <a class="dropdown-item" asp-controller="CausaDiscapacidad" asp-action="Index">Causas de discapacidad</a>
+                                    <a class="dropdown-item" asp-controller="GradoDiscapacidad" asp-action="Index">Grados de discapacidad</a>
+                                    <a class="dropdown-item" asp-controller="TipoIncidencia" asp-action="Index">Tipos de incidencia</a>
+                                </div>
+                            </li>
+                        }
+                        @if (((ClaimsIdentity)User.Identity).HasClaim("Permiso", "encuesta.ver"))
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle item-white" href="#" id="encuesta" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Diagnóstico
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="encuesta">
+                                    <a class="dropdown-item" asp-controller="Encuesta" asp-action="Index">Configuración del diagnóstico</a>
+                                    <a class="dropdown-item" asp-controller="Categoria" asp-action="Index">Categorías</a>
+                                    <a class="dropdown-item" asp-controller="Encuesta" asp-action="GraficasOpciones">Uso de preguntas</a>
+                                </div>
+                            </li>
+                        }
+                        
+                        @if (((ClaimsIdentity)User.Identity).HasClaim("Permiso", "beneficiarios.ver"))
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle item-white" href="#" id="beneficiarios" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Familias
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="solicitudes">
+                                    <a class="dropdown-item" asp-controller="Beneficiarios" asp-action="Index">Listado de familias</a>
+                                    <a class="dropdown-item" asp-controller="Beneficiarios" asp-action="Mapa">Mapa de familias</a>
+                                </div>
+                            </li>
+                        }
+                        @if (((ClaimsIdentity)User.Identity).HasClaim("Permiso", "diagnosticos.ver"))
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle item-white" href="#" id="beneficiarios" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Informes
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="solicitudes">
+                                   <a class="dropdown-item" asp-controller="Diagnosticos" asp-action="Index">Informe de encuestas aplicadas</a>
+                                    @*  <a class="dropdown-item" asp-controller="Diagnosticos" asp-action="EstatusVisitas">Informe de estatus de visitas</a>
+                                    <a class="dropdown-item" asp-controller="Diagnosticos" asp-action="VerRutas">Informe de rutas de encuestadores</a> *@
+                                    <a class="dropdown-item" asp-controller="Diagnosticos" asp-action="VerProductividad">Informe de productividad de encuestadores</a>
+                                    @* <a class="dropdown-item" asp-controller="Diagnosticos" asp-action="VerAvancesPerfil">Informe de avances por dependencia</a> *@
+                                    <a class="dropdown-item" asp-controller="Diagnosticos" asp-action="VerEstadisticas">Informe de estadísticas generales</a>
+                                    @* <a class="dropdown-item" asp-controller="Domicilio" asp-action="VerDomiciliosIncompletos">Informe de domicilios incompletos</a> *@
+                                    <a class="dropdown-item" asp-controller="Diagnosticos" asp-action="BaseMadre">Exportación de base madre</a>
+                                    @*<a class="dropdown-item" asp-controller="Cuadernillos" asp-action="Index">Cuadernillo</a>
+                                     @if (((ClaimsIdentity)User.Identity).HasClaim("Permiso", "incidencias.ver"))
+                                    {
+                                        <a class="dropdown-item" asp-controller="Incidencia" asp-action="Index">Incidencias</a>
+                                    }   *@
+                                </div>
+                            </li>
+                        }
+                        @if (((ClaimsIdentity)User.Identity).HasClaim("Permiso", "configuraciones.ver"))
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle item-white" href="#" id="beneficiarios" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Configuraciones
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="solicitudes">
+                                    <a class="dropdown-item" asp-controller="Bitacora" asp-action="Index">Bitácora</a>
+                                    <a class="dropdown-item" asp-controller="Configuracion" asp-action="Fundamento">Fundamento legal</a>
+                                    @if (((ClaimsIdentity)User.Identity).HasClaim("Permiso", "algoritmo.gestionar"))
+                                    {
+                                        <a class="dropdown-item" asp-controller="Configuracion" asp-action="Algoritmo">Algoritmo de carencias</a>
+                                    }
+                                    <a class="dropdown-item" asp-controller="Configuracion" asp-action="CorreccionDatos">Corrección de datos</a>
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                }
+                <ul class="navbar-nav ml-auto">
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle item-white" href="#" id="login" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                @User.Identity.Name
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="login">
+                                <a class="dropdown-item" asp-controller="Home" asp-action="ManualAdministrativo" target="_blank">
+                                    <i class="fa fa-question"></i> Manual administrativo
+                                </a>
+                                <a class="dropdown-item" asp-controller="Home" asp-action="ManualAplicativo" target="_blank">
+                                    <i class="fa fa-question-circle"></i> Manual aplicativo
+                                </a>
+                                <a class="dropdown-item" asp-controller="Home" asp-action="Logout">
+                                    <i class="fa fa-sign-out-alt"></i> Cerrar sesión
+                                </a>
+                            </div>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link item-white" asp-controller="Home" asp-action="Index">Iniciar sesión</a>
+                        </li>
+                    }
+                </ul>
+
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <partial name="_CookieConsentPartial" />
+        <main role="main" class="pb-3">
+            <div class="container">
+                @if (TempData["Alert"] != null)
+                {
+                    @if (TempData["Mensaje"] != null)
+                    {
+                        <div class="alert alert-success" role="alert">
+                            @TempData["Mensaje"]
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-success" role="alert">
+                            Se ha guardado correctamente.
+                        </div>
+                    }
+                }
+                @RenderBody()
+            </div>
+        </main>
+    </div>
+
+    <footer class="border-top d-flex justify-content-between">
+        <div>
+            @if (User.Identity.IsAuthenticated)
+            {
+                @User.Identity.Name
+            }
+        </div>
+        <div class="text-center">
+            <div style="color:#616161; font-weight: bold; font-size: 1.1rem;">Secretaría del Nuevo Comienzo</div>
+            <div>Paseo de la Presa 99, Centro, C.P.</div>
+            <div>36000, Guanajuato, Gto.</div>
+            <div>Teléfono: (473) 735-3626 al 33</div>
+            <div>© 2025 Gobierno del Estado de Guanajuato, Derechos Reservados</div>
+        </div>
+        <div>2.0.8</div>
+    </footer>
+
+    <environment include="Development">
+        <script src="~/lib/jquery/dist/jquery.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.js"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"
+                asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
+                asp-fallback-test="window.jQuery"
+                crossorigin="anonymous"
+                integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=">
+        </script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"
+                asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"
+                asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
+                crossorigin="anonymous"
+                integrity="sha384-xrRywqdh3PHs8keKZN+8zzc5TX0GRTLCcmivcbNJWm2rs5C8PRhcEn3czEjhAO9o">
+        </script>
+    </environment>
+    <script>
+        jQuery('div.alert').not('.alert-important').delay(3000).fadeOut(350);
+    </script>
+    <script src="~/lib/angular/angular.js"></script>
+    <script src="~/lib/angular-route/angular-route.js"></script>
+    <script src="~/js/ui-bootstrap-tpls-3.0.6.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+    <script src="~/lib/Font-Awesome/js/all.js"></script>
+    <script src="~/lib/bootstrap-select/dist/js/bootstrap-select.js"></script>
+    <script src="~/lib/bootstrap-select/dist/js/i18n/defaults-es_ES.js"></script>
+    <script src="~/lib/lodash/lodash.js"></script>
+    <script src="~/lib/axios/dist/axios.js"></script>
+    <script src="~/js/angular-spectrum-colorpicker.min.js"></script>
+    <script src="~/js/spectrum.js"></script>
+    <script src="~/js/moment.min.js"></script>
+    <script src="~/js/angular-toggle-switch.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/trix/0.9.2/trix.js"></script>
+    <script src="~/js/angular-trix.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

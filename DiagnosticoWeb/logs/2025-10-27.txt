@@ -1,0 +1,203 @@
+27-10-2025 12:26:24 Debe declarar la variable escalar '@Estatus'.    at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at System.Data.SqlClient.SqlDataReader.get_MetaData()
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, SqlDataReader ds)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior)
+   at System.Data.SqlClient.SqlCommand.ExecuteDbDataReader(CommandBehavior behavior)
+   at System.Data.Common.DbCommand.ExecuteReader()
+   at DiagnosticoWeb.Controllers.DiagnosticosController.ObtenerDiagnosticos(BeneficiariosRequest request) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Controllers\DiagnosticosController.cs:line 156
+   at lambda_method(Closure , Object , Object[] )
+   at Microsoft.Extensions.Internal.ObjectMethodExecutor.Execute(Object target, Object[] parameters)
+   at Microsoft.AspNetCore.Mvc.Internal.ActionMethodExecutor.SyncObjectResultExecutor.Execute(IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.InvokeActionMethodAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.InvokeNextActionFilterAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.Rethrow(ActionExecutedContext context)
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.InvokeInnerFilterAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.InvokeNextResourceFilter()
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.Rethrow(ResourceExecutedContext context)
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.InvokeFilterPipelineAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.InvokeAsync()
+   at Microsoft.AspNetCore.Builder.RouterMiddleware.Invoke(HttpContext httpContext)
+   at DiagnosticoWeb.Startup.<>c__DisplayClass5_0.<<Configure>b__0>d.MoveNext() in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Startup.cs:line 110
+--- End of stack trace from previous location where exception was thrown ---
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware.Invoke(HttpContext context)
+27-10-2025 12:26:42 Debe declarar la variable escalar '@Estatus'.    at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at System.Data.SqlClient.SqlDataReader.get_MetaData()
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, SqlDataReader ds)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior)
+   at System.Data.SqlClient.SqlCommand.ExecuteDbDataReader(CommandBehavior behavior)
+   at System.Data.Common.DbCommand.ExecuteReader()
+   at DiagnosticoWeb.Controllers.DiagnosticosController.ObtenerDiagnosticos(BeneficiariosRequest request) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Controllers\DiagnosticosController.cs:line 156
+   at lambda_method(Closure , Object , Object[] )
+   at Microsoft.Extensions.Internal.ObjectMethodExecutor.Execute(Object target, Object[] parameters)
+   at Microsoft.AspNetCore.Mvc.Internal.ActionMethodExecutor.SyncObjectResultExecutor.Execute(IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.InvokeActionMethodAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.InvokeNextActionFilterAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.Rethrow(ActionExecutedContext context)
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.InvokeInnerFilterAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.InvokeNextResourceFilter()
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.Rethrow(ResourceExecutedContext context)
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.InvokeFilterPipelineAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.InvokeAsync()
+   at Microsoft.AspNetCore.Builder.RouterMiddleware.Invoke(HttpContext httpContext)
+   at DiagnosticoWeb.Startup.<>c__DisplayClass5_0.<<Configure>b__0>d.MoveNext() in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Startup.cs:line 110
+--- End of stack trace from previous location where exception was thrown ---
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware.Invoke(HttpContext context)
+27-10-2025 12:28:05 El nombre de columna 'Completas' no es válido.    at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at System.Data.SqlClient.SqlDataReader.get_MetaData()
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, SqlDataReader ds)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior)
+   at System.Data.SqlClient.SqlCommand.ExecuteDbDataReader(CommandBehavior behavior)
+   at System.Data.Common.DbCommand.ExecuteReader()
+   at DiagnosticoWeb.Controllers.DiagnosticosController.ObtenerDiagnosticos(BeneficiariosRequest request) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Controllers\DiagnosticosController.cs:line 156
+   at lambda_method(Closure , Object , Object[] )
+   at Microsoft.Extensions.Internal.ObjectMethodExecutor.Execute(Object target, Object[] parameters)
+   at Microsoft.AspNetCore.Mvc.Internal.ActionMethodExecutor.SyncObjectResultExecutor.Execute(IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.InvokeActionMethodAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.InvokeNextActionFilterAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.Rethrow(ActionExecutedContext context)
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.InvokeInnerFilterAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.InvokeNextResourceFilter()
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.Rethrow(ResourceExecutedContext context)
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.InvokeFilterPipelineAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.InvokeAsync()
+   at Microsoft.AspNetCore.Builder.RouterMiddleware.Invoke(HttpContext httpContext)
+   at DiagnosticoWeb.Startup.<>c__DisplayClass5_0.<<Configure>b__0>d.MoveNext() in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Startup.cs:line 110
+--- End of stack trace from previous location where exception was thrown ---
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware.Invoke(HttpContext context)
+27-10-2025 12:44:56 Sintaxis incorrecta cerca de la palabra clave 'AND'.    at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at System.Data.SqlClient.SqlDataReader.get_MetaData()
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, SqlDataReader ds)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior)
+   at System.Data.SqlClient.SqlCommand.ExecuteDbDataReader(CommandBehavior behavior)
+   at System.Data.Common.DbCommand.ExecuteReader()
+   at DiagnosticoWeb.Controllers.DiagnosticosController.ObtenerDiagnosticos(BeneficiariosRequest request) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Controllers\DiagnosticosController.cs:line 116
+   at lambda_method(Closure , Object , Object[] )
+   at Microsoft.Extensions.Internal.ObjectMethodExecutor.Execute(Object target, Object[] parameters)
+   at Microsoft.AspNetCore.Mvc.Internal.ActionMethodExecutor.SyncObjectResultExecutor.Execute(IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.InvokeActionMethodAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.InvokeNextActionFilterAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.Rethrow(ActionExecutedContext context)
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.InvokeInnerFilterAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.InvokeNextResourceFilter()
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.Rethrow(ResourceExecutedContext context)
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.InvokeFilterPipelineAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.InvokeAsync()
+   at Microsoft.AspNetCore.Builder.RouterMiddleware.Invoke(HttpContext httpContext)
+   at DiagnosticoWeb.Startup.<>c__DisplayClass5_0.<<Configure>b__0>d.MoveNext() in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Startup.cs:line 110
+--- End of stack trace from previous location where exception was thrown ---
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware.Invoke(HttpContext context)
+27-10-2025 15:03:36 One or more errors occurred. (An exception has been raised that is likely due to a transient failure. Consider enabling transient error resiliency by adding 'EnableRetryOnFailure()' to the 'UseSqlServer' call.)    at System.Threading.Tasks.Task`1.GetResultCore(Boolean waitCompletionNotification)
+   at DiagnosticoWeb.Controllers.HomeController.Bienvenida() in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Controllers\HomeController.cs:line 998
+   at lambda_method(Closure , Object , Object[] )
+   at Microsoft.Extensions.Internal.ObjectMethodExecutor.Execute(Object target, Object[] parameters)
+   at Microsoft.AspNetCore.Mvc.Internal.ActionMethodExecutor.SyncActionResultExecutor.Execute(IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.InvokeActionMethodAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.InvokeNextActionFilterAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.Rethrow(ActionExecutedContext context)
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.InvokeInnerFilterAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.InvokeNextResourceFilter()
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.Rethrow(ResourceExecutedContext context)
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.InvokeFilterPipelineAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.InvokeAsync()
+   at Microsoft.AspNetCore.Builder.RouterMiddleware.Invoke(HttpContext httpContext)
+   at DiagnosticoWeb.Startup.<>c__DisplayClass5_0.<<Configure>b__0>d.MoveNext() in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Startup.cs:line 110
+--- End of stack trace from previous location where exception was thrown ---
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware.Invoke(HttpContext context)An exception has been raised that is likely due to a transient failure. Consider enabling transient error resiliency by adding 'EnableRetryOnFailure()' to the 'UseSqlServer' call.
+27-10-2025 15:10:52 Exception of type 'System.Exception' was thrown.  https://seguimiento.guanajuato.gob.mx/apiinformacionsocial/api/renapo/pordatos Gone
+27-10-2025 15:10:52 The process cannot access the file 'C:\Alex\DiagnosticoTFS\DiagnosticoWeb\logs\2025-10-27.txt' because it is being used by another process.    at System.IO.FileStream.ValidateFileHandle(SafeFileHandle fileHandle)
+   at System.IO.FileStream.CreateFileOpenHandle(FileMode mode, FileShare share, FileOptions options)
+   at System.IO.FileStream..ctor(String path, FileMode mode, FileAccess access, FileShare share, Int32 bufferSize, FileOptions options)
+   at System.IO.StreamWriter..ctor(String path, Boolean append, Encoding encoding, Int32 bufferSize)
+   at System.IO.StreamWriter..ctor(String path, Boolean append)
+   at System.IO.File.AppendText(String path)
+   at DiagnosticoWeb.Code.Excepcion.Registrar(Exception e, String mensaje) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Code\Excepcion.cs:line 36
+   at DiagnosticoWeb.Code.ImportacionDiagnosticos.CompletarCurp(Beneficiario beneficiario, ApplicationDbContext db, String url, String passwordCurp, DateTime now, HttpClient client, String idApiCurp) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Code\ImportacionDiagnosticos.cs:line 542 https://seguimiento.guanajuato.gob.mx/apiinformacionsocial/api/renapo/pordatos
+27-10-2025 15:10:53 Exception of type 'System.Exception' was thrown.  http://139.70.80.53:8080/datosapi? NotFound
+27-10-2025 15:11:07 Exception of type 'System.Exception' was thrown.  https://seguimiento.guanajuato.gob.mx/apiinformacionsocial/api/renapo/pordatos Gone
+27-10-2025 15:11:07 Exception of type 'System.Exception' was thrown.  https://seguimiento.guanajuato.gob.mx/apiinformacionsocial/api/renapo/pordatos Gone
+27-10-2025 15:11:09 Exception of type 'System.Exception' was thrown.  http://139.70.80.53:8080/datosapi? NotFound
+27-10-2025 15:11:15 Exception of type 'System.Exception' was thrown.  https://seguimiento.guanajuato.gob.mx/apiinformacionsocial/api/renapo/pordatos Gone
+27-10-2025 15:11:15 Exception of type 'System.Exception' was thrown.  https://seguimiento.guanajuato.gob.mx/apiinformacionsocial/api/renapo/pordatos Gone
+27-10-2025 15:11:15 Exception of type 'System.Exception' was thrown.  https://seguimiento.guanajuato.gob.mx/apiinformacionsocial/api/renapo/pordatos Gone
+27-10-2025 15:11:15 Exception of type 'System.Exception' was thrown.  https://seguimiento.guanajuato.gob.mx/apiinformacionsocial/api/renapo/pordatos Gone
+27-10-2025 15:11:15 Exception of type 'System.Exception' was thrown.  http://139.70.80.53:8080/datosapi? NotFound
+27-10-2025 15:11:26 Object reference not set to an instance of an object.    at DiagnosticoWeb.Code.ImportacionDiagnosticos.CompletarCurp(Beneficiario beneficiario, ApplicationDbContext db, String url, String passwordCurp, DateTime now, HttpClient client, String idApiCurp) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Code\ImportacionDiagnosticos.cs:line 516
+   at DiagnosticoWeb.Controllers.ApiController.CompletarCurp(String id, String conexion, String url, String password, HttpClient client, String idApiCurp) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Controllers\ApiController.cs:line 1989
+27-10-2025 15:11:26 Object reference not set to an instance of an object.    at DiagnosticoWeb.Code.ImportacionDiagnosticos.CompletarCurp(Beneficiario beneficiario, ApplicationDbContext db, String url, String passwordCurp, DateTime now, HttpClient client, String idApiCurp) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Code\ImportacionDiagnosticos.cs:line 516
+   at DiagnosticoWeb.Controllers.ApiController.CompletarCurp(String id, String conexion, String url, String password, HttpClient client, String idApiCurp) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Controllers\ApiController.cs:line 1989
+27-10-2025 15:11:26 Object reference not set to an instance of an object.    at DiagnosticoWeb.Code.ImportacionDiagnosticos.CompletarCurp(Beneficiario beneficiario, ApplicationDbContext db, String url, String passwordCurp, DateTime now, HttpClient client, String idApiCurp) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Code\ImportacionDiagnosticos.cs:line 516
+   at DiagnosticoWeb.Controllers.ApiController.CompletarCurp(String id, String conexion, String url, String password, HttpClient client, String idApiCurp) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Controllers\ApiController.cs:line 1989
+27-10-2025 15:11:26 Object reference not set to an instance of an object.    at DiagnosticoWeb.Code.ImportacionDiagnosticos.CompletarCurp(Beneficiario beneficiario, ApplicationDbContext db, String url, String passwordCurp, DateTime now, HttpClient client, String idApiCurp) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Code\ImportacionDiagnosticos.cs:line 516
+   at DiagnosticoWeb.Controllers.ApiController.CompletarCurp(String id, String conexion, String url, String password, HttpClient client, String idApiCurp) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Controllers\ApiController.cs:line 1989
+27-10-2025 15:11:27 Exception of type 'System.Exception' was thrown.  http://139.70.80.53:8080/datosapi? NotFound
+27-10-2025 15:11:32 Exception of type 'System.Exception' was thrown.  https://seguimiento.guanajuato.gob.mx/apiinformacionsocial/api/renapo/pordatos Gone
+27-10-2025 15:11:32 Exception of type 'System.Exception' was thrown.  https://seguimiento.guanajuato.gob.mx/apiinformacionsocial/api/renapo/pordatos Gone
+27-10-2025 15:11:32 Exception of type 'System.Exception' was thrown.  https://seguimiento.guanajuato.gob.mx/apiinformacionsocial/api/renapo/pordatos Gone
+27-10-2025 15:11:32 Exception of type 'System.Exception' was thrown.  https://seguimiento.guanajuato.gob.mx/apiinformacionsocial/api/renapo/pordatos Gone
+27-10-2025 15:11:32 Exception of type 'System.Exception' was thrown.  http://139.70.80.53:8080/datosapi? NotFound
+27-10-2025 15:11:37 Object reference not set to an instance of an object.    at DiagnosticoWeb.Code.ImportacionDiagnosticos.CompletarCurp(Beneficiario beneficiario, ApplicationDbContext db, String url, String passwordCurp, DateTime now, HttpClient client, String idApiCurp) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Code\ImportacionDiagnosticos.cs:line 516
+   at DiagnosticoWeb.Controllers.ApiController.CompletarCurp(String id, String conexion, String url, String password, HttpClient client, String idApiCurp) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Controllers\ApiController.cs:line 1989
+27-10-2025 15:11:37 Object reference not set to an instance of an object.    at DiagnosticoWeb.Code.ImportacionDiagnosticos.CompletarCurp(Beneficiario beneficiario, ApplicationDbContext db, String url, String passwordCurp, DateTime now, HttpClient client, String idApiCurp) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Code\ImportacionDiagnosticos.cs:line 516
+   at DiagnosticoWeb.Controllers.ApiController.CompletarCurp(String id, String conexion, String url, String password, HttpClient client, String idApiCurp) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Controllers\ApiController.cs:line 1989
+27-10-2025 15:11:38 Exception of type 'System.Exception' was thrown.  http://139.70.80.53:8080/datosapi? NotFound
+27-10-2025 15:11:47 Object reference not set to an instance of an object.    at DiagnosticoWeb.Code.ImportacionDiagnosticos.CompletarCurp(Beneficiario beneficiario, ApplicationDbContext db, String url, String passwordCurp, DateTime now, HttpClient client, String idApiCurp) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Code\ImportacionDiagnosticos.cs:line 516
+   at DiagnosticoWeb.Controllers.ApiController.CompletarCurp(String id, String conexion, String url, String password, HttpClient client, String idApiCurp) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Controllers\ApiController.cs:line 1989
+27-10-2025 15:11:47 Object reference not set to an instance of an object.    at DiagnosticoWeb.Code.ImportacionDiagnosticos.CompletarCurp(Beneficiario beneficiario, ApplicationDbContext db, String url, String passwordCurp, DateTime now, HttpClient client, String idApiCurp) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Code\ImportacionDiagnosticos.cs:line 516
+   at DiagnosticoWeb.Controllers.ApiController.CompletarCurp(String id, String conexion, String url, String password, HttpClient client, String idApiCurp) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Controllers\ApiController.cs:line 1989
+27-10-2025 15:11:47 Exception of type 'System.Exception' was thrown.  http://139.70.80.53:8080/datosapi? NotFound
+27-10-2025 15:13:45 Object reference not set to an instance of an object.    at DiagnosticoWeb.Code.ImportacionDiagnosticos.CompletarCurp(Beneficiario beneficiario, ApplicationDbContext db, String url, String passwordCurp, DateTime now, HttpClient client, String idApiCurp) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Code\ImportacionDiagnosticos.cs:line 516
+   at DiagnosticoWeb.Controllers.ApiController.CompletarCurp(String id, String conexion, String url, String password, HttpClient client, String idApiCurp) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Controllers\ApiController.cs:line 1989
+27-10-2025 15:13:46 Object reference not set to an instance of an object.    at DiagnosticoWeb.Code.ImportacionDiagnosticos.CompletarCurp(Beneficiario beneficiario, ApplicationDbContext db, String url, String passwordCurp, DateTime now, HttpClient client, String idApiCurp) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Code\ImportacionDiagnosticos.cs:line 516
+   at DiagnosticoWeb.Controllers.ApiController.CompletarCurp(String id, String conexion, String url, String password, HttpClient client, String idApiCurp) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Controllers\ApiController.cs:line 1989
+27-10-2025 15:18:24 Object reference not set to an instance of an object.    at DiagnosticoWeb.Code.ImportacionDiagnosticos.CompletarCurp(Beneficiario beneficiario, ApplicationDbContext db, String url, String passwordCurp, DateTime now, HttpClient client, String idApiCurp) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Code\ImportacionDiagnosticos.cs:line 516
+   at DiagnosticoWeb.Controllers.ApiController.CompletarCurp(String id, String conexion, String url, String password, HttpClient client, String idApiCurp) in C:\Alex\DiagnosticoTFS\DiagnosticoWeb\Controllers\ApiController.cs:line 1989
+27-10-2025 15:51:45 Exception of type 'System.Exception' was thrown.  http://139.70.80.53:8080/datosapi? NotFound
+27-10-2025 15:51:46 Exception of type 'System.Exception' was thrown.  https://seguimiento.guanajuato.gob.mx/apiinformacionsocial/api/renapo/pordatos Gone
+27-10-2025 15:51:46 Exception of type 'System.Exception' was thrown.  https://seguimiento.guanajuato.gob.mx/apiinformacionsocial/api/renapo/pordatos Gone
+27-10-2025 15:52:17 Exception of type 'System.Exception' was thrown.  https://seguimiento.guanajuato.gob.mx/apiinformacionsocial/api/renapo/pordatos Gone
+27-10-2025 15:52:17 Exception of type 'System.Exception' was thrown.  https://seguimiento.guanajuato.gob.mx/apiinformacionsocial/api/renapo/pordatos Gone
+27-10-2025 15:52:18 Exception of type 'System.Exception' was thrown.  http://139.70.80.53:8080/datosapi? NotFound

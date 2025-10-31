@@ -1,0 +1,73 @@
+@using Newtonsoft.Json
+@{
+    ViewData["Title"] = "Fundamento legal";
+}
+<div ng-app="SedeshuApp" ng-controller="createController" ng-init="init(@JsonConvert.SerializeObject(Model))">
+    <partial name="_Loading_Partial" />
+    <slot ng-cloak>
+        <div class="card">
+            <div class="card-header bg-cards text-white">
+                <h5>Fundamento legal</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex flex-wrap">
+                    <div class="col-12">
+                        <p>Aqui podras modificar el fundamento legal de la aplicación</p>
+                        <trix-editor angular-trix ng-model="Configuracion.Valor"></trix-editor>
+                    </div>
+                    <div class="col-12">
+                        <button class="btn btn-info mt-4" ng-click="guardar()" ng-if="!guardando">
+                            <i class="fa fa-upload"></i> Guardar
+                        </button>
+                        <button class="btn btn-info mt-4" ng-if="guardando" disabled>
+                            <i class="fa fa-spinner fa-spin"></i> Guardar
+                        </button>
+                    </div>                    
+                </div>
+            </div>
+        </div>
+    </slot>
+</div>
+@section Scripts {
+    <script>
+        (function () {
+            var app = angular.module('SedeshuApp', ['ui.bootstrap','angularTrix']);
+            var baseUrl = document.baseURI;
+
+            app.controller('createController',
+                function ($scope, $http) {
+                    $scope.guardando = false;
+                    $scope.Configuracion = {
+                       Id: 0,
+                       Nombre: '',
+                       Valor: ''
+                   };                   
+
+                   $scope.init = function(model) {
+                       $scope.Configuracion.Id = model.Id;
+                       $scope.Configuracion.Nombre = model.Nombre;
+                       $scope.Configuracion.Valor = model.Valor;
+                   };
+                   
+                    $scope.guardar = function () {
+                        $scope.guardando = true;                       
+                        axios.post(baseUrl + 'Configuracion/GuardarFundamento', $scope.Configuracion).then(function (response) {
+                            if (response.data == "ok") {
+                                window.location.href = baseUrl + 'Configuracion/Fundamento';
+                            } else {
+                                $scope.cargarErrores(response.data);
+                            }
+                            $scope.guardando = false;
+                        });
+                    };
+
+                    $scope.cargarErrores = function (errors) {
+                        $scope.errors = [];
+                        for (var i = 0; i < errors.length; i++) {
+                            $scope.errors[errors[i].Key] = errors[i].Error;
+                        }
+                    };
+                })
+        })();
+    </script>
+}

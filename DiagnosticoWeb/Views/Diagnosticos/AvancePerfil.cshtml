@@ -1,0 +1,403 @@
+@using DiagnosticoWeb.Code
+@{
+    ViewData["Title"] = "Avance por perfil";
+}
+@using System.Security.Claims;
+<div ng-app="SedeshuApp" ng-controller="indexController" ng-init="init(@JsonSedeshu.SerializeObject(Model))">
+    <partial name="_Loading_Partial" />
+    <div ng-cloak>
+        <div class="card border-cards">
+            <div class="card-header bg-cards text-white">
+                <h5>Listado de avance por tipo de perfil</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex flex-wrap">
+                    <div class="col-3">
+                        <label>Dependencias</label>
+                        <select class="selectpicker2 form-control" ng-model="DependenciasId" multiple
+                                ng-change="seleccionarDependencia()" data-live-search="true" data-title="Seleccione">
+                            <option ng-repeat="dependencia in dependencias" 
+                                    ng-value="dependencia.Id">{{dependencia.Nombre}}</option>
+                        </select>
+                        <span class="text-danger small">
+                            {{ errors["DependenciasId"] }}
+                        </span>
+                    </div>
+                    <div class="col-3">
+                        <label>Trabajadores</label>
+                        <select class="selectpicker2 form-control" ng-model="TrabajadoresId" multiple
+                                data-live-search="true" data-title="Seleccione" 
+                                ng-disabled="trabajadores.length <= 0">
+                            <option ng-repeat="trabajador in trabajadores" 
+                                    ng-value="trabajador.Id">{{trabajador.Nombre}}</option>
+                        </select>
+                        <span class="text-danger small">
+                            {{ errors["TrabajadoresId"] }}
+                        </span>
+                    </div>
+                    <div class="col-3">
+                        <label>Municipios</label>
+                        <select class="selectpicker2 form-control" ng-model="MunicipiosId" multiple
+                                ng-change="seleccionarMunicipios()" data-live-search="true" data-title="Seleccione">
+                            <option ng-repeat="Municipio in municipios" 
+                                    ng-value="Municipio.Id">{{Municipio.Nombre}}</option>
+                        </select>
+                    </div>
+                    <div class="col-3">
+                        <label>Localidades</label>
+                        <select class="selectpicker2 form-control" ng-model="LocalidadesId" multiple
+                                ng-change="seleccionarLocalidades()" data-live-search="true" data-title="Seleccione" 
+                                ng-disabled="locGrupos == '' || locGrupos.length <= 0">
+                            <optgroup ng-repeat="(municipio, localidades) in locGrupos" label="{{municipio}}">
+                                <option ng-repeat="localidad in localidades" ng-value="localidad.Id">
+                                    {{localidad.Nombre}}
+                                </option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    <div class="col-3">
+                        <label>Agebs</label>
+                        <select class="selectpicker2 form-control" ng-model="AgebsId" multiple
+                                data-live-search="true" data-title="Seleccione" 
+                                ng-disabled="agGrupos == '' || agGrupos.length <= 0">
+                            <optgroup ng-repeat="(localidad, agebs) in agGrupos" label="{{localidad}}">
+                                <option ng-repeat="ageb in agebs" ng-value="ageb.Id">
+                                    {{ageb.Clave}}
+                                </option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    <div class="col-5">
+                        <label class="required">Período</label>
+                        <br>
+                        <div class="d-flex">
+                            <input type="date" ng-model="Inicio" placeholder="yyyy-MM-dd" class="form-control filtro" required/>
+                            <span class="text-danger small">
+                                {{ errors["Inicio"] }}
+                            </span>
+                            <span class="al filtro">a</span>
+                            <input type="date" ng-model="Fin" placeholder="yyyy-MM-dd" class="form-control filtro" required/>
+                            <span class="text-danger small">
+                                {{ errors["Fin"] }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-2">
+                        <br>
+                        <button class="mt-2 btn btn-info" ng-click="cargarAvancesPerfil()" ng-if="!loading" 
+                                ng-disabled="loading || Inicio == '' || Fin == ''">
+                            <i class="fa fa-search"></i> Buscar
+                        </button>
+                        <button class="mt-2 btn btn-info" ng-if="loading">
+                            <i class="fa fa-spinner fa-spin"></i> Buscar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card border-cards mb-5">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-12 text-center">
+                        <i class="far fa-chart-bar icon-seccion"></i>
+                        <h5>Conteo de aplicaciones</h5>
+                    </div>
+                    <div class="col-12">
+                        <div id="completadosChart"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card border-cards mb-5">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-12 text-center">
+                        <i class="far fa-clock icon-seccion"></i>
+                        <h5>Comparativa de promedios de aplicación</h5>
+                    </div>
+                    <div class="col-12">
+                        <div id="promediosChart"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card border-cards mb-5">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-12 text-center">
+                        <i class="far fa-calendar-alt icon-seccion"></i>
+                        <h5>Comparativa de aplicaciones por día</h5>
+                    </div>
+                    <div class="col-12">
+                        <div id="diasChart"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script>
+        (() => {
+            var app = angular.module('SedeshuApp', ['ui.bootstrap']);
+            var baseUrl = document.baseURI;
+
+            app.controller('indexController',
+                ($scope, $http, $uibModal) => {
+                    $scope.maxsize = 5;
+                    $scope.totalcount = 0;
+                    $scope.granTotal = 0;
+                    $scope.pageIndex = 1;
+                    $scope.pageSize = 10;
+                    $scope.numPages = 0;
+                    $scope.loading = false;
+                    
+                    $scope.dependencias = [];
+                    $scope.trabajadores = [];
+                    $scope.municipios = [];
+                    $scope.locGrupos = [];
+                    $scope.agGrupos = [];
+                    
+                    $scope.DependenciasId = [];
+                    $scope.TrabajadoresId = [];
+                    $scope.MunicipiosId = [];
+                    $scope.LocalidadesId = [];
+                    $scope.AgebsId = [];                    
+                    $scope.Inicio = "";
+                    $scope.Fin = "";
+
+                    $scope.init = model => {
+                        $scope.Inicio = new Date(model.Inicio.substring(0, 4), parseInt(model.Inicio.substring(5, 7)) - 1, model.Inicio.substring(8, 10));
+                        $scope.Fin = new Date(model.Fin.substring(0, 4), parseInt(model.Fin.substring(5, 7)) - 1, model.Fin.substring(8, 10));
+                        $scope.dependencias = model.Dependencias;
+                        $scope.municipios = model.Municipios;
+                        $scope.refreshSelect();
+                    };
+                    
+                    $scope.seleccionarDependencia = () => {
+                        $scope.loading = true;
+                        if ($scope.DependenciasId.length > 0) {
+                            $http.get(baseUrl + 'Diagnosticos/GetTrabajadoresDependencias/' + $scope.DependenciasId.join()).then(response => {
+                                let trabajadores = response.data.Trabajadores;
+                                $scope.TrabajadoresId = [];
+                                if (trabajadores != null && trabajadores.length > 0) {
+                                    $scope.trabajadores = trabajadores;
+                                } else {
+                                    $scope.trabajadores = [];
+                                }
+                                $scope.refreshSelect();
+                                $scope.loading = false;
+                            });
+                        } else {
+                            $scope.trabajadores = [];
+                            $scope.TrabajadoresId = [];
+                            $scope.refreshSelect();
+                            $scope.loading = false;
+                        }
+                    };
+                    
+                    $scope.seleccionarMunicipios = () => {
+                        $scope.loading = true;
+                        if ($scope.MunicipiosId.length > 0) {
+                            $http.get(baseUrl + 'Localidad/ByMunicipios/' + $scope.MunicipiosId.join()).then(response => {
+                                let localidades = response.data;
+                                if (localidades != null) {
+                                    $scope.locGrupos = localidades;
+                                }
+                                $scope.refreshSelect();
+                                $scope.loading = false;
+                            });
+                        } else {
+                            $scope.locGrupos = [];
+                            $scope.LocalidadesId = [];
+                            $scope.refreshSelect();
+                            $scope.loading = false;
+                        }
+                    };
+                    
+                    $scope.seleccionarLocalidades = () => {
+                        $scope.loading = true;
+                        if ($scope.LocalidadesId.length > 0) {
+                            $http.get(baseUrl + 'Ageb/ByLocalidades/' + $scope.LocalidadesId.join()).then(response => {
+                                let agebs = response.data;
+                                if (agebs != null) {
+                                    $scope.agGrupos = agebs;
+                                }
+                                $scope.refreshSelect();
+                                $scope.loading = false;
+                            });
+                        } else {
+                            $scope.agGrupos = [];
+                            $scope.AgebsId = [];
+                            $scope.refreshSelect();
+                            $scope.loading = false;
+                        }
+                    };
+                    
+                    $scope.cargarAvancesPerfil = () => {
+                        if ($scope.Inicio != '' && $scope.Fin != '') {
+                            $scope.loading = true;
+                            $http.post(baseUrl + 'Diagnosticos/GetAvancesPerfil', {
+                                DependenciasId: $scope.DependenciasId.join() != "" ? $scope.DependenciasId.join() : null,
+                                TrabajadoresId: $scope.TrabajadoresId.join() != "" ? $scope.TrabajadoresId.join() : null,
+                                MunicipiosId: $scope.MunicipiosId.join() != "" ? $scope.MunicipiosId.join() : null,
+                                LocalidadesId: $scope.LocalidadesId.join() != "" ? $scope.LocalidadesId.join() : null,
+                                AgebsId: $scope.AgebsId.join() != "" ? $scope.AgebsId.join() : null,
+                                Inicio: $scope.Inicio,
+                                Fin: $scope.Fin,
+                            }).then(response => {
+                                $scope.completadosList = response.data.CompletadosList;
+                                $scope.promediosList = response.data.PromediosList;
+                                $scope.diasList = response.data.DiasList;
+                                $scope.buildCompletadosChart();
+                                $scope.buildPromediosChart();
+                                $scope.buildDiasChart();
+                                
+                                $scope.loading = false;
+                            });
+                        }
+                    };
+                    
+                    $scope.buildCompletadosChart = () => {
+                        google.charts.load('current', {packages: ['corechart', 'bar']});
+                        const drawCompletadosChart = () => {
+                            let completadosData = [
+                                ['Dependencia', 'Total', 'Completas', 'Incompletas'],
+                            ];
+                            if (Object.keys($scope.completadosList).length > 0) {
+                                _.each($scope.completadosList, (e, key) => {
+                                    completadosData.push([key, e[0], e[1], e[2]]);
+                                });
+                            } else {
+                                completadosData.push(["", 0, 0, 0]);
+                            }
+                            let data = google.visualization.arrayToDataTable(completadosData);
+                            
+                            let options = {
+                                title: 'Conteo de aplicaciones',
+                                hAxis: {
+                                    title: 'Encuestas realizadas',
+                                    minValue: 0
+                                },
+                                vAxis: {
+                                    title: 'Dependencias'
+                                }
+                            };
+                            
+                            let chart = new google.visualization.BarChart(document.getElementById('completadosChart'));
+                            chart.draw(data, options);
+                        }
+                        google.charts.setOnLoadCallback(drawCompletadosChart);
+                    };
+                    
+                    $scope.buildPromediosChart = () => {
+                        google.charts.load('current', {packages: ['corechart', 'bar']});
+                        const drawPromediosChart = () => {
+                            let promediosData = [
+                                ["Dependencia", "Promedio", { role: "style" }],
+                            ];
+                            if (Object.keys($scope.promediosList).length > 0) {
+                                _.each($scope.promediosList, (promedio, dependencia) => {
+                                    promediosData.push([dependencia, promedio, "#" + $scope.randomColor()]);
+                                });
+                            } else {
+                                promediosData.push(["", 0, "#ffffff"]);
+                            }
+                            console.log(promediosData)
+                            let data = google.visualization.arrayToDataTable(promediosData);
+                            
+                            let view = new google.visualization.DataView(data);
+                            
+                            let options = {
+                                title: "Comparativa de promedios de aplicación",
+                                bar: {groupWidth: "75%"},
+                                legend: { position: "none" },
+                                hAxis: {
+                                    title: 'Dependencias',
+                                },
+                                vAxis: {
+                                    title: 'Minutos'
+                                }
+                            };
+                            let chart = new google.visualization.ColumnChart(document.getElementById("promediosChart"));
+                            chart.draw(view, options);
+                        }
+                        google.charts.setOnLoadCallback(drawPromediosChart);
+                    };
+                    
+                    $scope.buildDiasChart = () => {
+                        google.charts.load('current', {packages: ['corechart', 'bar']});
+                        const drawDiasChart = () => {
+                            let diasData = [
+                                ["Dependencia", "Días", { role: "style" }],
+                            ];
+                            if (Object.keys($scope.diasList).length > 0) {
+                                _.each($scope.diasList, (promedio, dia) => {
+                                    diasData.push([dia, promedio, "#" + $scope.randomColor()]);
+                                });
+                            } else {
+                                diasData.push(["", 0, "#ffffff"]);
+                            }
+                            console.log(diasData)
+                            let data = google.visualization.arrayToDataTable(diasData);
+                            
+                            let view = new google.visualization.DataView(data);
+                            
+                            let options = {
+                                title: "Comparativa de aplicaciones por día",
+                                bar: {groupWidth: "75%"},
+                                legend: { position: "none" },
+                                hAxis: {
+                                    title: 'Dependencias',
+                                },
+                                vAxis: {
+                                    title: 'Número de encuestas'
+                                }
+                            };
+                            let chart = new google.visualization.ColumnChart(document.getElementById("diasChart"));
+                            chart.draw(view, options);
+                        }
+                        google.charts.setOnLoadCallback(drawDiasChart);
+                    };
+                    
+                    $scope.clickTrabajadorRow = trabajador => {
+                        trabajador.IsOpened = !trabajador.IsOpened
+                    };
+                    
+                    $scope.refreshSelect = _.debounce(() => {
+                        $('.selectpicker2').selectpicker('refresh');
+                    }, 100);
+                    
+                    $scope.randomColor = () => {
+                        return Math.floor(Math.random()*16777215).toString(16);
+                    }
+                }
+            );
+        })();
+    </script>
+}
+
+@section Styles
+{
+    <style>
+        .cursor-pointer {
+            cursor: pointer;
+        }
+        
+        .icon-seccion {
+            position: absolute;
+            left: 15px;
+            font-size: 35px;
+        }
+        
+        .col-4, .col-12 {
+            margin-bottom: 10px;
+        }   
+        
+        .bootstrap-select .dropdown-menu{           
+            max-width: 250px !important;
+        }
+    </style>
+}

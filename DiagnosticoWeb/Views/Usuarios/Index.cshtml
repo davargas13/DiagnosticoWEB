@@ -1,0 +1,140 @@
+@{
+    ViewData["Title"] = "Usuarios";
+}
+@using System.Security.Claims
+<div ng-app="SedeshuApp" ng-controller="indexController">
+    <partial name="_Loading_Partial" />
+    <div ng-cloak>
+        <div class="card border-cards">
+            <div class="card-header bg-cards text-white d-flex justify-content-between">
+                <h5>Usuarios</h5>
+                @if (((ClaimsIdentity)User.Identity).HasClaim("Permiso", "usuarios.crear"))
+                {
+                    <a class="btn btn-sm btn-header" asp-controller="Usuarios" asp-action="CreateEdit">
+                        <i class="fa fa-plus"></i> Crear
+                    </a>
+                }
+            </div>
+            <div class="card-body">
+                <div class="d-flex">
+                    <div class="col-3">
+                        <label>Nombre</label>
+                        <input class="form-control" ng-model="Nombre" />
+                    </div>
+                    <div class="col-3">
+                        <label>Nombre de usuario</label>
+                        <input class="form-control" ng-model="UserName" />
+                    </div>
+                    <div class="col-3">
+                        <label>Correo electrónico</label>
+                        <input class="form-control" ng-model="Email" />
+                    </div>
+                    <div class="col-2">
+                        <div class="form-row">
+                            <label style="width: 100%">&nbsp;</label>
+                            <button class="btn btn-info" ng-click="getUsuarios()" ng-if="!cargando">
+                                <i class="fa fa-search"></i> Buscar
+                            </button>
+                            <button class="btn btn-info" ng-if="cargando">
+                                <i class="fa fa-spinner fa-spin"></i> Buscar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card border-cards">
+            <div class="card-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Dependencia</th>
+                            <th>Nombre</th>
+                            <th>Nombre de usuario</th>
+                            <th>Correo electrónico</th>
+                            <th class="no-stretch"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="usuario in usuarios">
+                            <td>{{ usuario.Dependencia==null?'': usuario.Dependencia.Nombre}}</td>
+                            <td>{{ usuario.Name }}</td>
+                            <td>{{ usuario.UserName }}</td>
+                            <td>{{ usuario.Email }}</td>
+                            <td>
+                                @if (((ClaimsIdentity)User.Identity).HasClaim("Permiso", "usuarios.editar"))
+                                {
+                                    <a class="btn btn-sm btn-info lineal" href="@Url.Action(controller: "Usuarios", action: "CreateEdit")/{{ usuario.Id }}">
+                                        <i class="fa fa-edit"></i> Editar
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a class="btn btn-sm btn-info lineal" href="@Url.Action(controller: "Usuarios", action: "CreateEdit")/{{ usuario.Id }}">
+                                        <i class="fa fa-eye"></i> Ver
+                                    </a>
+                                }
+                            </td>
+                        </tr>
+                        <tr ng-if="usuarios.length == 0">
+                            <td colspan="5">No hay datos para mostrar.</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="float-right">
+                    <ul uib-pagination total-items="totalcount" ng-change="pagechanged()"
+                        items-per-page="pageSize" direction-links="false" ng-model="pageIndex" role="menu"
+                        max-size="maxsize" class="pagination-sm" boundary-links="true" rotate="true"
+                        num-pages="numPages" style="margin-bottom: 0px !important"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script>
+        (function () {
+            var app = angular.module('SedeshuApp', ['ui.bootstrap']);
+            var baseUrl = document.baseURI;
+
+            app.controller('indexController',
+                function ($scope, $http, $uibModal) {
+                    $scope.usuarios = [];
+                    $scope.Nombre = "";
+                    $scope.UserName = "";
+                    $scope.Email = "";
+                    //Paginación
+                    $scope.maxsize = 5;
+                    $scope.totalcount = 0;
+                    $scope.pageIndex = 1;
+                    $scope.pageSize = 10;
+                    $scope.numPages = 0;
+                    $scope.cargando = false;
+
+                    $scope.getUsuarios = function () {
+                        $scope.cargando = true;
+                        $http.post(baseUrl + 'Usuarios/GetUsuarios/',
+                            {
+                                Nombre: $scope.Nombre,
+                                UserName: $scope.UserName,
+                                Email: $scope.Email,
+                                PageIndex: $scope.pageIndex,
+                                PageSize: $scope.pageSize
+                            }
+                        ).then(function (response) {
+                            $scope.cargando = false;
+                            $scope.usuarios = response.data.Usuarios;
+                            $scope.totalcount = response.data.Total;
+                        });
+                    }
+
+                    $scope.pagechanged = function () {
+                        $scope.getUsuarios();
+                    };
+
+                    $scope.getUsuarios();
+                }
+            );
+        })();
+    </script>
+}

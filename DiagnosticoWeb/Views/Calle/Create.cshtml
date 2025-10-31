@@ -1,0 +1,128 @@
+@using DiagnosticoWeb.Code
+@using System.Security.Claims;
+<div ng-app="SedeshuApp" ng-controller="createController" ng-init="init(@JsonSedeshu.SerializeObject(Model))">
+    <partial name="_Loading_Partial" />
+    <div ng-cloak>
+        <div class="card border-cards">
+            <div class="card-header bg-cards text-white d-flex justify-content-between">
+                @if (string.IsNullOrEmpty(Model.Id))
+                {
+                    <h5>Crear calle</h5>
+                }
+                else
+                {
+                    <h5>Editar calle</h5>
+                }
+                <a class="btn btn-sm btn-header" asp-controller="Calle" asp-action="Index">
+                    <i class="fa fa-backward"></i> Regresar
+                </a>
+            </div>
+            <div class="card-body">
+                <div class="d-flex flex-wrap">
+                    <div class="col-sm-4">
+                        <label class="required">Id <small>{{ Calle.Id.length }} / 10</small></label>
+                        <input class="form-control" ng-model="Calle.Id" maxlength="10" ng-disabled="Calle.IdAnterior != ''"/>
+                        <span class="text-danger small">{{ errors["Id"] }}</span>
+                    </div>
+                    <div class="col-sm-4">
+                        <label class="required">Nombre <small>{{ Calle.Nombre.length }} / 255</small></label>
+                        <input class="form-control" ng-model="Calle.Nombre" maxlength="255" />
+                        <span class="text-danger small">{{ errors["Nombre"] }}</span>
+                    </div>
+                    <div class="col-sm-4">
+                        <label class="required">Municipio</label>
+                        <select class="selectpicker2 form-control" ng-model="Calle.MunicipioId" data-title="Municipio" ng-change="GetLocalidades()">
+                            <option ng-repeat="mun in Municipios" ng-value="mun.Id">{{mun.Nombre}}</option>
+                        </select>
+                        <span class="text-danger small">{{ errors["MunicipioId"] }}</span>
+                    </div>
+                    <div class="col-sm-4">
+                        <label class="required">Localidad</label>
+                        <select class="selectpicker2 form-control" ng-model="Calle.LocalidadId" data-title="Localidad">
+                            <option ng-repeat="loc in Localidades" ng-value="loc.Id">{{loc.Nombre}}</option>
+                        </select>
+                        <span class="text-danger small">{{ errors["LocalidadId"] }}</span>
+                    </div>
+                </div>
+            </div>
+            @if (((ClaimsIdentity)User.Identity).HasClaim("Permiso", "catalogos.editar") || (string.IsNullOrEmpty(Model.Id) &&
+                ((ClaimsIdentity)User.Identity).HasClaim("Permiso", "catalogos.crear")))
+            {
+                <div class="card-footer">
+                    <button class="btn btn-sm btn-success" ng-click="Guardar()" ng-if="!guardando">
+                        <i class="fa fa-save"></i> Guardar
+                    </button>
+                    <button class="btn btn-sm btn-success" disabled ng-if="guardando">
+                        <i class="fa fa-spinner fa-spin"></i> Guardar
+                    </button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (function () {
+            var app = angular.module('SedeshuApp', ['ui.bootstrap']);
+            var baseUrl = document.baseURI;
+
+            app.controller('createController',
+                function ($scope, $http) {
+                    $scope.Municipios = [];
+                    $scope.Localidades = [];
+                    $scope.Calle = {
+                        Id: "",
+                        IdAnterior: "",
+                        Nombre: "",                        
+                        MunicipioId: "",
+                        LocalidadId: "",
+                    };
+                    $scope.guardando = false;
+
+                    $scope.init = function (Calle) {
+
+                        $scope.Calle.Id = Calle.Id;
+                        $scope.Calle.IdAnterior = Calle.IdAnterior;                        
+                        $scope.Calle.Nombre = Calle.Nombre;
+                        $scope.Calle.MunicipioId = Calle.MunicipioId;                       
+                        $scope.Calle.LocalidadId = Calle.LocalidadId;                       
+                        $scope.Municipios = Calle.Municipios;
+                        $scope.refreshSelect();
+                       $scope.GetLocalidades();
+                    };
+
+                    $scope.refreshSelect = _.debounce(function () {
+                        $('.selectpicker2').selectpicker('refresh');
+                    }, 200);
+
+                    $scope.Guardar = function () {
+                        $scope.guardando = true;
+                        $http.post(baseUrl + 'Calle/Guardar', $scope.Calle).then(function (response) {
+                            if (response.data == "ok") {
+                                window.location.href = baseUrl + 'Calle';
+                            } else {
+                                $scope.cargarErrores(response.data);
+                            }
+                            $scope.guardando = false;
+                        });
+                    };
+                    
+                    $scope.GetLocalidades = function(){
+                        $http.get(baseUrl + 'Domicilio/GetLocalidades/'+$scope.Calle.MunicipioId).then(function (response) {
+                            $scope.Localidades = response.data;
+                            $scope.guardando = false;
+                            $scope.refreshSelect();
+                        });
+                    };
+                    
+                    $scope.cargarErrores = function (errors) {
+                        $scope.errors = [];
+                        for (var i = 0; i < errors.length; i++) {
+                            $scope.errors[errors[i].Key] = errors[i].Error;
+                        }
+                    };
+                })
+        })();
+    </script>
+}

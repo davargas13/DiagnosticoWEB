@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.32916.344
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiagnosticoWeb", "DiagnosticoWeb\DiagnosticoWeb.csproj", "{ECEB2643-15EC-4B79-9CA1-6C4A3B5E8FDA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{ECEB2643-15EC-4B79-9CA1-6C4A3B5E8FDA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ECEB2643-15EC-4B79-9CA1-6C4A3B5E8FDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ECEB2643-15EC-4B79-9CA1-6C4A3B5E8FDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ECEB2643-15EC-4B79-9CA1-6C4A3B5E8FDA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {21848759-1D0D-4BFB-915B-6077D4E10366}
+	EndGlobalSection
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 2
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = http://139.70.80.232:8080/tfs/diagnostico%20social
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = DiagnosticoWeb\\DiagnosticoWeb.csproj
+		SccProjectName1 = DiagnosticoWeb
+		SccLocalPath1 = DiagnosticoWeb
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,258 @@
+﻿@{
+    ViewData["Title"] = "Municipios";
+}
+@using DiagnosticoWeb.Code
+@using System.Security.Claims;
+<div ng-app="SedeshuApp" ng-controller="indexController" ng-init="init(@JsonSedeshu.SerializeObject(Model))">
+    <partial name="_Loading_Partial" />
+    <div ng-cloak>
+        <div class="card border-cards">
+            <div class="card-header bg-cards text-white">
+                <div class="d-flex justify-content-between">
+                    <h5>Listado de municipios</h5>
+                    <div class="d-flex">
+                        @if (((ClaimsIdentity)User.Identity).HasClaim("Permiso", "catalogos.exportar"))
+                        {
+                            <button type="button" class="btn btn-sm btn-header" ng-click="exportar()">
+                                <i class="fa fa-file-excel"></i> Exportar
+                            </button>
+                        }
+                        @if (((ClaimsIdentity)User.Identity).HasClaim("Permiso", "catalogos.importar"))
+                        {
+                            <button type="button" class="btn btn-sm btn-header" ng-click="showModal()">
+                                <i class="fa fa-file-upload"></i> Importar
+                            </button>
+                        }
+                        @if (((ClaimsIdentity)User.Identity).HasClaim("Permiso", "catalogos.crear"))
+                        {
+                            <a class="btn btn-sm btn-header" asp-controller="Municipios" asp-action="CreateEdit">
+                                <i class="fa fa-plus"></i> Crear
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="d-flex flex-wrap">
+                    <div class="col-4">
+                        <label>Municipio</label>
+                        <input class="form-control" ng-model="filtros.Nombre" ng-keypress="$event.keyCode == 13 ? getMunicipios() : null" />
+                    </div>
+                    <div class="col-2">
+                        <label class="col-12">&nbsp;</label>
+                        <button class="btn btn-info" ng-click="getMunicipios()" ng-if="!cargando">
+                            <i class="fa fa-search"></i> Buscar
+                        </button>
+                        <button class="btn btn-info" ng-if="cargando">
+                            <i class="fa fa-spinner fa-spin"></i> Buscar
+                        </button>
+                        <form id="exportar" asp-controller="Municipios" asp-action="Exportar" method="post">
+                            <input id="Clave" name="Clave" type="hidden">
+                            <input id="Nombre" name="Nombre" type="hidden">
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card border-cards">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table" ng-if="!cargando">
+                        <thead>
+                        <tr>
+                            <th>Municipio</th>
+                            <th>Localidades</th>
+                            <th class="no-stretch"></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="municipio in municipios" ng-cloak>
+                            <td>{{ municipio.Municipio }}</td>
+                            <td>{{ municipio.Localidades }}</td>
+                            <td>
+                                @if (((ClaimsIdentity) User.Identity).HasClaim("Permiso", "catalogos.editar"))
+                                {
+                                    <a class="btn btn-sm btn-info lineal" href="@Url.Action(controller: "Municipios", action: "CreateEdit")/{{ municipio.Id }}">
+                                        <i class="fa fa-edit"></i> Editar
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a class="btn btn-sm btn-info lineal" href="@Url.Action(controller: "Municipios", action: "CreateEdit")/{{ municipio.Id }}">
+                                        <i class="fa fa-eye"></i> Ver
+                                    </a>
+                                }
+                            </td>
+                        </tr>
+                        <tr ng-if="municipios.length == 0">
+                            <td colspan="3">No hay datos para mostrar.</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <span class="small">{{(filtros.Usuario==null?'':filtros.Usuario)+" "+(ImportedAt==null?'':ImportedAt)}}</span>
+                    <ul uib-pagination total-items="totalcount" ng-change="pagechanged()"
+                        items-per-page="filtros.pageSize" direction-links="false" ng-model="filtros.pageIndex" role="menu"
+                        max-size="maxsize" class="pagination-sm" boundary-links="true" rotate="true"
+                        num-pages="numPages" style="margin-bottom: 0px !important"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/ng-template" id="myModalContent">
+        <div class="modal-header">
+            <h5 class="modal-title" id="modal-title">Importación de municipios</h5>
+        </div>
+        <div class="modal-body" id="modal-body">
+            <div class="row">
+                <div class="col-sm-12">
+                    <label>Archivo (xlsx).</label>
+                    <button class="btn btn-sm btn-primary" onclick="$('#file').click();">
+                        <i class="fa fa-file-upload"></i> Seleccionar archivo
+                    </button>
+                </div>
+                <div class="col-sm-12">
+                    <span class="text-danger small" style="width: 100%;">{{ errors["File"] }}</span>
+                </div>
+                <div class="col-sm-12 mt-3" ng-if="file != '' && file != null" ng-cloak>
+                    <span class="file-span" ng-if="file.name.split('.')[file.name.split('.').length - 1] == 'xlsx'">
+                        <i class="fa fa-file-excel text-success"></i> {{ file.name }}
+                    </span>
+                    <span class="file-span-red" ng-if="file.name.split('.')[file.name.split('.').length - 1] != 'xlsx'">{{ file.name }}</span>
+                </div>
+            </div>
+            <input type="file" id="file" fileread="file" name="file" style="display: none;" />
+        </div>
+        <div class="modal-footer" style="padding-top: 5px; padding-bottom: 5px;">
+            <button class="btn btn-sm btn-light" type="button" ng-click="$conf.cancelar()">Cancelar</button>
+            <button class="btn btn-sm btn-primary" type="button" ng-click="$conf.importar()" ng-if="!cargando">
+                <i class="fa fa-file-upload"></i> Importar
+            </button>
+            <button class="btn btn-sm btn-primary" type="button" ng-if="cargando" disabled>
+                <i class="fa fa-spinner fa-spin"></i> Importar
+            </button>
+        </div>
+    </script>
+</div>
+@section Scripts {
+    <script>
+        (function () {
+            var app = angular.module('SedeshuApp', ['ui.bootstrap']);
+            var baseUrl = document.baseURI;
+
+            app.controller('indexController',
+                function ($scope, $http, $uibModal) {
+                    $scope.municipios = [];
+                    $scope.cargando = false;
+                    $scope.errors = [];
+                    $scope.file = "";
+                    //Paginacion
+                    $scope.maxsize = 5;
+                    $scope.totalcount = 0;
+                    $scope.numPages = 0;
+                    $scope.ImportedAt = ""
+                    $scope.filtros = {
+                        Nombre: "",
+                        pageIndex: 1,
+                        pageSize: 10
+                    };
+                    $scope.init = function (filtros) {
+
+                        $scope.filtros.Nombre = filtros.Nombre;
+                        $scope.ImportedAt = filtros.ImportedAt;
+                        $scope.filtros.Usuario = filtros.Usuario;
+                    }
+                    $scope.getMunicipios = function () {
+                        $scope.cargando = true;
+                        $http.post(baseUrl + 'Municipios/ObtenerMunicipios', $scope.filtros).then(function (response) {
+                            $scope.municipios = response.data.Municipios;
+                            $scope.totalcount = response.data.Total;
+                            $scope.cargando = false;
+                        });
+                    };
+
+                    $scope.pagechanged = function () {
+                        $scope.getMunicipios();
+                    };
+
+                    $scope.getMunicipios();
+                    $scope.exportar = function () {
+                        document.getElementById("Nombre").value = $scope.filtros.Nombre == null ? '' : $scope.filtros.Nombre;
+                        document.getElementById("Clave").value = $scope.filtros.Clave == null ? '' : $scope.filtros.Clave;
+                        document.getElementById("exportar").submit();
+                    };
+                    $scope.showModal = function (size, parentSelector) {
+                        var parentElem = parentSelector ?
+                            angular.element($document[0].querySelector('#modal ' + parentSelector)) : undefined;
+                        var modalInstance = $uibModal.open({
+                            animation: $scope.animationsEnabled,
+                            ariaLabelledBy: 'modal-title',
+                            ariaDescribedBy: 'modal-body',
+                            templateUrl: 'myModalContent',
+                            size: size,
+                            controller: 'modalController',
+                            controllerAs: '$conf',
+                            appendTo: parentElem,
+                        });
+
+                        modalInstance.result.then(function () {
+                            $scope.getMunicipios();
+                        }, function () { });
+                    }
+                }
+            ).directive("fileread", [function () {
+                return {
+                    scope: {
+                        fileread: "="
+                    },
+                    link: function (scope, element, attributes) {
+                        element.bind("change", function (changeEvent) {
+                            scope.$apply(function () {
+                                if (changeEvent.target.files[0] != undefined) {
+                                    scope.fileread = changeEvent.target.files[0];
+                                }
+                            });
+                        });
+                    }
+                }
+            }]);
+
+            app.controller('modalController',
+                function ($scope, $http, $uibModalInstance) {
+                    $conf = this;
+                    $conf.cargando = false;
+
+                    $conf.importar = function () {
+                        $scope.cargando = true;
+                        var fm = new FormData();
+                        fm.append("File", $scope.file);
+                        axios.post(baseUrl + 'Municipios/Importar/', fm)
+                            .then(function (response) {
+                                if (response.data == "ok") {
+                                    window.location.href = baseUrl + 'Municipios';
+                                    $conf.cancelar();
+                                } else {
+                                    $scope.cargarErrores(response.data);
+                                }
+                                $scope.cargando = false;
+                                $scope.$apply();
+                            });
+                    }
+
+                    $scope.cargarErrores = function (errors) {
+                        $scope.errors = [];
+                        for (var i = 0; i < errors.length; i++) {
+                            $scope.errors[errors[i].Key] = errors[i].Error;
+                        }
+                    };
+
+                    $conf.cancelar = function () {
+                        $uibModalInstance.close();
+                    }
+                }
+            );
+        })();
+    </script>
+}

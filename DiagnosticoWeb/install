@@ -1,0 +1,10 @@
+#!/bin/bash
+
+folder="$HOME/diagnostico"
+if [ -d $folder ]; then rm -Rf $folder; fi
+echo $folder
+mkdir $folder
+rm -rf $folder/*
+"$HOME/Applications/dotnet-2.1/dotnet" restore
+"$HOME/Applications/dotnet-2.1/dotnet" publish -c Debug -o $folder
+cd $folder

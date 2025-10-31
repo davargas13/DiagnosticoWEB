@@ -1,0 +1,137 @@
+@using DiagnosticoWeb.Code
+@using System.Security.Claims;
+<div ng-app="SedeshuApp" ng-controller="createController" ng-init="init(@JsonSedeshu.SerializeObject(Model))">
+    <partial name="_Loading_Partial" />
+    <div ng-cloak>
+        <div class="card border-cards">
+            <div class="card-header bg-cards text-white d-flex justify-content-between">
+                @if (string.IsNullOrEmpty(Model.Id))
+                {
+                    <h5>Crear localidad</h5>
+                }
+                else
+                {
+                    <h5>Editar localidad</h5>
+                }
+                <a class="btn btn-sm btn-header" asp-controller="Localidad" asp-action="Index">
+                    <i class="fa fa-backward"></i> Regresar
+                </a>
+            </div>
+            <div class="card-body">
+                <div class="d-flex flex-wrap">
+                    <div class="col-sm-4">
+                        <label class="required">Id <small>{{ localidad.Id.length }} / 10</small></label>
+                        <input class="form-control" ng-model="localidad.Id" maxlength="10" ng-disabled="localidad.IdAnterior != ''"/>
+                        <span class="text-danger small">{{ errors["Id"] }}</span>
+                    </div>
+                    <div class="col-sm-4">
+                        <label class="required">Clave <small>{{ localidad.Clave.length }} / 255</small></label>
+                        <input class="form-control" ng-model="localidad.Clave" maxlength="255" />
+                        <span class="text-danger small">{{ errors["Clave"] }}</span>
+                    </div>
+                    <div class="col-sm-4">
+                        <label class="required">Nombre <small>{{ localidad.Nombre.length }} / 255</small></label>
+                        <input class="form-control" ng-model="localidad.Nombre" maxlength="255" />
+                        <span class="text-danger small">{{ errors["Nombre"] }}</span>
+                    </div>
+                    <div class="col-sm-4">
+                        <label class="required">Estado</label>
+                        <select class="form-control" ng-model="localidad.EstadoId" disabled>
+                            <option ng-repeat="estado in Estados" ng-value="estado.Id">{{estado.Nombre}}</option>
+                        </select>
+                        <span class="text-danger small">{{ errors["EstadoId"] }}</span>
+                    </div>
+                    <div class="col-sm-4">
+                        <label class="required">Municipio</label>
+                        <select class="selectpicker2 form-control" ng-model="localidad.MunicipioId" data-title="Municipio">
+                            <option ng-repeat="mun in Municipios" ng-value="mun.Id">{{mun.Nombre}}</option>
+                        </select>
+                        <span class="text-danger small">{{ errors["MunicipioId"] }}</span>
+                    </div>
+                </div>
+            </div>
+            @if (((ClaimsIdentity)User.Identity).HasClaim("Permiso", "catalogos.editar") || (string.IsNullOrEmpty(Model.Id) &&
+                ((ClaimsIdentity)User.Identity).HasClaim("Permiso", "catalogos.crear")))
+            {
+                <div class="card-footer">
+                    <button class="btn btn-sm btn-success" ng-click="Guardar()" ng-if="!guardando">
+                        <i class="fa fa-save"></i> Guardar
+                    </button>
+                    <button class="btn btn-sm btn-success" disabled ng-if="guardando">
+                        <i class="fa fa-spinner fa-spin"></i> Guardar
+                    </button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (function () {
+            var app = angular.module('SedeshuApp', ['ui.bootstrap']);
+            var baseUrl = document.baseURI;
+
+            app.controller('createController',
+                function ($scope, $http) {
+                    $scope.Estados = [];
+                    $scope.Municipios = [];
+                    $scope.localidad = {
+                        Id: "",
+                        IdAnterior: "",
+                        Nombre: "",
+                        Clave: "",
+                        MunicipioId: "",
+                        EstadoId: ""
+                    };
+                    $scope.guardando = false;
+
+                    $scope.init = function (localidad) {
+                        $scope.localidad.Id = localidad.Id;
+                        $scope.localidad.IdAnterior = localidad.IdAnterior;
+                        $scope.localidad.Clave = localidad.Clave;
+                        $scope.localidad.Nombre = localidad.Nombre;
+                        $scope.localidad.MunicipioId = localidad.MunicipioId;
+                        $scope.localidad.EstadoId = localidad.EstadoId;
+                        $scope.getEstados();
+                    };
+                    
+                    $scope.getEstados = function () {
+                        $http.get(baseUrl + 'Estado/Get').then(function (response) {
+                            $scope.Estados = response.data;
+                            $scope.getMunicipios();
+                        });
+                    };
+                    
+                    $scope.getMunicipios = function () {
+                        $http.get(baseUrl + 'Municipios/Get').then(function (response) {
+                            $scope.Municipios = response.data;
+                            $scope.refreshSelect();
+                        });
+                    };                     
+
+                    $scope.refreshSelect = _.debounce(function () {
+                        $('.selectpicker2').selectpicker('refresh');
+                    }, 200);
+
+                    $scope.Guardar = function () {
+                        $scope.guardando = true;
+                        $http.post(baseUrl + 'Localidad/Guardar', $scope.localidad).then(function (response) {
+                            if (response.data == "ok") {
+                                window.location.href = baseUrl + 'Localidad';
+                            } else {
+                                $scope.cargarErrores(response.data);
+                            }
+                            $scope.guardando = false;
+                        });
+                    }
+                    $scope.cargarErrores = function (errors) {
+                        $scope.errors = [];
+                        for (var i = 0; i < errors.length; i++) {
+                            $scope.errors[errors[i].Key] = errors[i].Error;
+                        }
+                    };
+                })
+        })();
+    </script>
+}

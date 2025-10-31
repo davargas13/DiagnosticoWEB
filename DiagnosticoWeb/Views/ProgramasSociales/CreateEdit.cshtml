@@ -1,0 +1,287 @@
+@using System.Security.Claims;
+@using DiagnosticoWeb.Code;
+@model ProgramaSocialModel;
+<div ng-app="SedeshuApp" ng-controller="createController" ng-init="init(@JsonSedeshu.SerializeObject(Model))">
+    <partial name="_Loading_Partial" />
+    <div ng-cloak>
+        <div class="card border-cards">
+            <div class="card-header bg-cards text-white">
+                @if (string.IsNullOrEmpty(Model.Id))
+                {
+                    <h5 class="float-left">Crear programa social</h5>
+                }
+                else
+                {
+                    <h5 class="float-left">Editar programa social</h5>
+                }
+                <a class="btn btn-sm btn-header float-right" asp-controller="ProgramasSociales" asp-action="Index">
+                    <i class="fa fa-backward"></i> Regresar
+                </a>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <label class="required">Dependencia</label>
+                        @if (string.IsNullOrEmpty(Model.Id))
+                        {
+                            <select class="form-control selectpicker2" ng-model="programa.DependenciaId" data-live-search="true">
+                                <option value="">Sin selección</option>
+                                <option ng-repeat="dependencia in dependencias" ng-value="dependencia.Id">
+                                    {{ (dependencia.Nombre | limitTo: 50) + (dependencia.Nombre.length > 50 ? '...' : '') }}
+                                </option>
+                            </select>
+                        }
+                        else
+                        {
+                            <select class="form-control selectpicker2" ng-model="programa.DependenciaId" disabled>
+                                <option value="">Sin selección</option>
+                                <option ng-repeat="dependencia in dependencias" ng-value="dependencia.Id">
+                                    {{ (dependencia.Nombre | limitTo: 50) + (dependencia.Nombre.length > 50 ? '...' : '') }}
+                                </option>
+                            </select>
+                        }
+                        <strong class="small text-danger">{{ errors["DependenciaId"] }}</strong>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="required">Nombre <small>{{ programa.Nombre.length }} / 250</small></label>
+                        <input class="form-control" ng-model="programa.Nombre" />
+                        <strong class="small text-danger">{{ errors["Nombre"] }}</strong>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="required">Proyecto de Inversión <small>{{ programa.Proyecto.length }} / 250</small></label>
+                        <input class="form-control" ng-model="programa.Proyecto" />
+                        <strong class="small text-danger">{{ errors["Proyecto"] }}</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card border-cards">
+            <div class="card-body">
+                <div>
+                    <span class="badge badge-info">Vertientes</span>
+                    <button class="btn btn-sm btn-info float-right" ng-click="Agregar()">
+                        <i class="fa fa-plus"></i> Agregar vertiente
+                    </button>
+                    <br>
+                    <strong class="small text-danger">{{ errors["Vertientes"] }}</strong>
+                </div>
+                <hr>
+                <div ng-repeat="(index, vertiente) in programa.Vertientes">
+                    <div class="vertientes">
+                        <div class="vertiente col-4">
+                            <label class="required">Nombre</label><span class="small"> ({{ vertiente.Nombre.length }}/ 250)</span>
+                            <input class="form-control" ng-model="vertiente.Nombre" />
+                            <strong class="small text-danger">{{ errors["Vertientes[" + index + "].Nombre"] }}</strong>
+                            <strong class="small text-danger">{{ errors["Vertientes[" + index + "].Documentos"] }}</strong>
+                        </div>
+                        <div class="vertiente col-2">
+                            <label>Tipo de entrega</label>
+                            <select class="form-control" ng-model="vertiente.TipoEntrega">
+                                <option>Validación</option>
+                                <option>Inmediato</option>
+                            </select>
+                        </div>
+                        <div class="vertiente col-2">
+                            <label class="required">Vigencia <span class="small">(en meses)</span></label>
+                            <input type="number" class="form-control" ng-model="vertiente.Vigencia">
+                            <strong class="small text-danger">{{ errors["Vertientes[" + index + "].Vigencia"] }}</strong>
+                        </div>
+                        <div class="vertiente col-2">
+                            <label class="required">Carencias</label>
+                            <select class="selectpicker2 form-control" ng-model="vertiente.Carencias" multiple data-title="Sin selección">
+                                <option value="" disabled>Sin selección</option>
+                                <option ng-repeat="carencia in programa.Carencias" value="{{carencia.Id}}">{{carencia.Clave}}</option>
+                            </select>
+                            <strong class="small text-danger">{{ errors["Vertientes[" + index + "].Carencias"] }}</strong>
+                        </div>
+                        <div class="vertiente col-2">
+                            <label class="required">Ciclo</label>
+                            <input type="text" class="form-control" ng-model="vertiente.Ciclo">
+                            <strong class="small text-danger">{{ errors["Vertientes[" + index + "].Ciclo"] }}</strong>
+                        </div>
+                        <div class="vertiente col-2">
+                            <label class="required">Ejercicio físcal</label>
+                            <input type="text" class="form-control" ng-model="vertiente.Ejercicio">
+                            <strong class="small text-danger">{{ errors["Vertientes[" + index + "].Ejercicio"] }}</strong>
+                        </div>
+                        <div class="vertiente col-2">
+                            <label class="required">Costo</label>
+                            <input type="number" class="form-control" ng-model="vertiente.Costo">
+                            <strong class="small text-danger">{{ errors["Vertientes[" + index + "].Costo"] }}</strong>
+                        </div>
+                        <div class="vertiente col-2">
+                            <label class="required">Unidad</label>
+                            <select class="selectpicker2 form-control" ng-model="vertiente.UnidadId" data-title="Sin selección">
+                                <option value="" disabled>Sin selección</option>
+                                <option ng-repeat="unidad in unidades" value="{{unidad.Id}}">{{unidad.Nombre}}</option>
+                            </select>
+                            <strong class="small text-danger">{{ errors["Vertientes[" + index + "].UnidadId"] }}</strong>
+                        </div>
+                        <div class="vertiente col-2">
+                            <label>&nbsp;</label>
+                            <br>
+                            <button class="btn btn-sm btn-danger" ng-click="Eliminar(index)">
+                                <i class="fa fa-minus"></i>
+                            </button>
+                        </div>
+                        <div class="col-12">
+                            <button class="btn btn-sm btn-info float-right" ng-click="agregarEvidencia(vertiente)">
+                                <i class="fa fa-plus"></i> Agregar documento
+                            </button>
+                        </div>
+                        <div class="col-12">
+                            <hr>
+                            <div class="d-flex flex-wrap">
+                                <div ng-repeat="(ievidencia, evidencia) in vertiente.Evidencias" class="col-6">
+                                    <div class="d-flex justify-content-between">
+                                        <span class="small"> ({{evidencia.TipoArchivo.length}}/100)</span>
+                                        <span class="text-danger" ng-click="quitarEvidencia(vertiente, evidencia)">
+                                            <i class="fa fa-trash"></i>
+                                        </span>
+                                    </div>
+                                    <input type="text" class="form-control" ng-model="evidencia.TipoArchivo">
+                                    <strong class="small text-danger">{{ errors["Vertientes[" + index + "].Evidencias["+ievidencia+"].TipoArchivo"] }}</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @if (((ClaimsIdentity)User.Identity).HasClaim("Permiso", "programasocial.editar") || (string.IsNullOrEmpty(Model.Id) &&
+               ((ClaimsIdentity)User.Identity).HasClaim("Permiso", "programasocial.crear")))
+            {
+                <div class="card-footer">
+                    <button class="btn btn-sm btn-success" ng-click="Guardar()" ng-if="!guardando">
+                        <i class="fa fa-save"></i> Guardar
+                    </button>
+                    <button class="btn btn-sm btn-success" ng-if="guardando" disabled>
+                        <i class="fa fa-spinner fa-spin"></i> Guardar
+                    </button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (function () {
+            var app = angular.module('SedeshuApp', ['ui.bootstrap']);
+            var baseUrl = document.baseURI;
+
+            app.controller('createController',
+                function ($scope, $http, $uibModal) {
+                    $scope.dependencias = [];
+                    $scope.unidades = [];
+                    $scope.programa = {
+                        Id: 0,
+                        Nombre: "",
+                        Proyecto: "",
+                        DependenciaId: 0,
+                        Vertientes: [],
+                        Carencias: []
+                    };
+                    $scope.errors = [];
+                    $scope.guardando = false;
+
+                    $scope.init = function (programaocial) {
+                        $scope.programa.Id = programaocial.Id;
+                        $scope.programa.Nombre = programaocial.Nombre;
+                        $scope.programa.Proyecto = programaocial.Proyecto;
+                        $scope.programa.DependenciaId = programaocial.DependenciaId;
+                        $scope.programa.Vertientes = programaocial.Vertientes;
+                        $scope.programa.Carencias = programaocial.Carencias;
+                    };
+
+                    $scope.getDependencias = function () {
+                        $http.post(baseUrl + 'ProgramasSociales/GetDependencias/')
+                            .then(function (response) {
+                                $scope.dependencias = response.data.Dependencias;
+                                $scope.refreshSelect();
+                            });
+                    };
+
+                    $scope.getUnidades = function () {
+                        $http.post(baseUrl + 'ProgramasSociales/GetUnidades/')
+                            .then(function (response) {
+                                $scope.unidades = response.data;
+                                $scope.refreshSelect();
+                            });
+                    };
+
+                    $scope.refreshSelect = _.debounce(function () {
+                        $('.selectpicker2').selectpicker('refresh');
+                    }, 500);
+
+                    $scope.Guardar = function () {
+                        $scope.guardando = true;
+                        _.each($scope.programa.Vertientes, function (vertiente) {
+                            vertiente.Vigencia = parseInt(vertiente.Vigencia);
+                        });
+                        $http.post(baseUrl + 'ProgramasSociales/Guardar',
+                            {
+                                Id: $scope.programa.Id,
+                                Nombre: $scope.programa.Nombre,
+                                Proyecto: $scope.programa.Proyecto,
+                                DependenciaId: $scope.programa.DependenciaId,
+                                Vertientes: $scope.programa.Vertientes
+                            }).then(function (response) {
+                                if (response.data === 'ok') {
+                                    window.location.href = baseUrl + 'ProgramasSociales';
+                                } else {
+                                    $scope.cargarErrores(response.data);
+                                }
+                                $scope.guardando = false;
+                            });
+                    };
+
+                    $scope.Agregar = function () {
+                        $scope.programa.Vertientes.push({ Id: "", Nombre: "", programaocialId: "", Vigencia: null, TipoEntrega: "Validación", Evidencias: [] });
+
+                        $scope.refreshSelect();
+                    };
+
+                    $scope.Eliminar = function (index) {
+                        $scope.programa.Vertientes.splice(index, 1);
+                    };
+
+                    $scope.agregarEvidencia = function (vertiente) {
+                        vertiente.Evidencias.push({ Id: 0, TipoArchivo: "", VertienteId: vertiente.Id });
+                    }
+
+                    $scope.quitarEvidencia = function (vertiente, evidencia) {
+                        let index = vertiente.Evidencias.indexOf(evidencia);
+                        vertiente.Evidencias.splice(index, 1);
+                    }
+
+                    $scope.cargarErrores = function (errors) {
+                        $scope.errors = [];
+                        for (var i = 0; i < errors.length; i++) {
+                            $scope.errors[errors[i].Key] = errors[i].Error;
+                        }
+                    };
+
+                    $scope.getDependencias();
+                    $scope.getUnidades();
+                }
+            );
+        })();
+    </script>
+}
+
+@section Styles
+    {
+    <style>
+        .vertientes {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 10px;
+            margin: 10px;
+            border: 1px solid #eaecee;
+        }
+
+        .evidencia div {
+            margin: 5px;
+        }
+    </style>
+}

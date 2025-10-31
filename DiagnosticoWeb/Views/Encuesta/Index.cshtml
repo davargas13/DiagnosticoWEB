@@ -1,0 +1,167 @@
+﻿@{
+    ViewData["Title"] = "Encuesta";
+}
+@using System.Security.Claims
+<div ng-app="SedeshuApp" ng-controller="indexController">
+    <partial name="_Loading_Partial" />
+    <div class="card" ng-cloak>
+        <div class="card-header bg-cards text-white">
+            <h5 class="float-left">Encuesta del diagnóstico social</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4" ng-repeat="encuesta in encuestas" ng-cloak>
+                    <div class="card border-success mb-3">
+                        <div class="card-body text-success">
+                            <h5 class="card-title">{{ encuesta.Nombre }}</h5>
+                            <h6 class="card-subtitle">{{ encuesta.Preguntas }} Pregunta(s).</h6>
+                            <label>Versión: {{ encuesta.Version }} </label><br />
+                            <label>Vigencia: {{ encuesta.Vigencia }} Mes(es).</label><br />
+                            <span class="badge badge-primary" ng-if="encuesta.Activo">Activa</span>
+                            <span class="badge badge-danger" ng-if="!encuesta.Activo">Inactiva</span><br />
+                            @if (((ClaimsIdentity)User.Identity).HasClaim("Permiso", "encuesta.editar"))
+                            {
+                                <a class="btn btn-sm btn-success float-right" href="@Url.Action(controller: "Encuesta", action: "Editar")/{{ encuesta.Id }}/">
+                                    <i class="fa fa-edit"></i> Editar
+                                </a>
+                            }
+                            else
+                            {
+                                <a class="btn btn-sm btn-success float-right" href="@Url.Action(controller: "Encuesta", action: "Editar")/{{ encuesta.Id }}/">
+                                    <i class="fa fa-eye"></i> Ver
+                                </a>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-5" ng-if="encuestas.length == 0">
+                    <div class="card border-danger mb-3">
+                        <div class="card-body text-danger">
+                            <h5 class="card-title">
+                                <i class="fa fa-info-circle"></i> No hay encuestas creadas
+                            </h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/ng-template" id="crearEncuesta.html">
+        <div class="modal-header" style="padding-top: 10px; padding-bottom: 10px;">
+            <h5 class="modal-title">Crear encuesta</h5>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-sm-6">
+                    <label>Vigencia de la encuesta</label>
+                    <div class="input-group">
+                        <input type="number" class="form-control" ng-model="$modal.vigencia">
+                        <div class="input-group-append">
+                            <span class="input-group-text bg-cards text-white">Mes(es).</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <small class="text-danger">{{ $modal.errors["Vigencia"] }}</small>
+                </div>
+                <div class="col-sm-8 mt-3">
+                    <label>Nombre de la encuesta <small>{{ $modal.nombre.length }} / 255</small></label>
+                    <input class="form-control" ng-model="$modal.nombre" />
+                    <small class="text-danger">{{ $modal.errors["Nombre"] }}</small>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer" style="padding-top: 5px; padding-bottom: 5px;">
+            <button type="button" class="btn btn-sm btn-light" data-dismiss="modal" ng-click="$modal.dismiss()">Cancelar</button>
+            <button class="btn btn-sm btn-success" ng-click="$modal.Guardar()">
+                <i class="fa fa-save"></i> Guardar
+            </button>
+        </div>
+    </script>
+</div>
+@section Scripts {
+    <script>
+        (function () {
+            var app = angular.module('SedeshuApp', ['ui.bootstrap']);
+            var baseUrl = document.baseURI;
+
+            app.controller('indexController',
+                function ($scope, $http, $uibModal) {
+                    $scope.nombre = "";
+                    $scope.encuestas = [];
+                    //Paginacion
+                    $scope.maxsize = 5;
+                    $scope.totalcount = 0;
+                    $scope.pageIndex = 1;
+                    $scope.pageSize = 10;
+                    $scope.numPages = 0;
+
+                    $scope.GetEncuestas = function () {
+                        $http.post(baseUrl + 'Encuesta/GetEncuestas', {
+                            Nombre: $scope.nombre,
+                            pageIndex: $scope.pageIndex,
+                            PageSize: $scope.pageSize
+                        })
+                            .then(function (response) {
+                                $scope.encuestas = response.data.Encuestas;
+                            });
+                    };
+
+                    $scope.pagechanged = function () {
+                        $scope.GetEncuestas();
+                    };
+
+                    $scope.openModal = function () {
+                        var modalInstance = $uibModal.open({
+                            ariaLabelledBy: 'modal-title',
+                            ariaDescribedBy: 'modal-body',
+                            templateUrl: 'crearEncuesta.html',
+                            controller: 'modalController',
+                            controllerAs: '$modal',
+                            size: 'md',
+                            resolve: {}
+                        });
+
+                        modalInstance.result.then(function () { }, function () { });
+                    };
+
+                    $scope.GetEncuestas();
+                }
+            );
+
+            app.controller('modalController',
+                function ($scope, $http, $uibModalInstance) {
+                    $modal = this;
+                    $modal.vigencia = "";
+                    $modal.nombre = "";
+                    $modal.errors = [];
+
+                    $modal.Guardar = function () {
+                        $http.post(baseUrl + 'Encuesta/Guardar', {
+                            Nombre: $modal.nombre,
+                            Vigencia: $modal.vigencia
+                        }).then(function (response) {
+                            if (response.data.Result === "ok") {
+                                window.location.href = baseUrl + 'Encuesta/Editar/' + response.data.Id + '/';
+                            } else {
+                                $modal.cargarErrores(response.data);
+                            }
+                        });
+                    };
+
+                    $modal.dismiss = function () {
+                        $uibModalInstance.dismiss('cancel');
+                    };
+
+                    $modal.cargarErrores = function (errors) {
+                        $modal.errors = {};
+                        for (var i = 0; i < errors.length; i++) {
+                            $modal.errors[errors[i].Key] = errors[i].Error;
+                        }
+                    };
+                }
+            );
+        })();
+    </script>
+}

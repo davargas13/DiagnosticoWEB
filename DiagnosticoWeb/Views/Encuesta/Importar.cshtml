@@ -1,0 +1,222 @@
+﻿@{
+    ViewData["Title"] = "Importar";
+}
+<div ng-app="SedeshuApp" ng-controller="importarController">
+    <div class="card border-cards">
+        <div class="card-header bg-cards text-white">
+            <h5 class="float-left">Encuestas</h5>
+            <a class="btn btn-sm btn-light float-right ml-1" asp-controller="Encuesta" asp-action="Index">
+                <i class="fa fa-backward"></i> Regresar
+            </a>
+        </div>
+        <div class="card-body">
+            <div class="col-sm-12">
+                <div class="btn-group float-right">
+                    <a class="btn btn-sm btn-success" href="~/archivos/Encuesta Plantilla.xlsx">
+                        <i class="fa fa-download"></i> Descargar plantilla
+                    </a>
+                    <button class="btn btn-sm btn-info" data-target="#info" data-toggle="modal">
+                        <i class="fa fa-info-circle"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <label>Seleccione el archivo</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" ng-model="file.name" readonly style="background: white;">
+                    <div class="input-group-append">
+                        <button class="btn btn-primary" onclick="$('#file').click();" type="button">
+                            <i class="fa fa-folder-open"></i> Buscar...
+                        </button>
+                    </div>
+                </div>
+                <small class="text-danger">{{ errorMessage }}</small>
+                <input type="file" style="display: none;" id="file" fileread="file" name="file" />
+            </div>
+            <div class="col-sm-12 mt-3">
+                <button class="btn btn-sm btn-success" ng-click="enviarArchivo()">
+                    <i class="fa fa-file-upload"></i> Cargar archivo
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="info" tabindex="-1" role="dialog" aria-labelledby="info" aria-hidden="true"
+         data-backdrop="static">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="padding-top: 10px; padding-bottom: 10px;">
+                    <h5 class="modal-title">Información del llenado de la plantilla</h5>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <label>La plantilla para la creación de la encuesta, contiene ya unas llaves definidas. En este caso, las llaves que estan visibles son:</label>
+                            <ul>
+                                <li><strong class="text-primary">ENCUESTA_TITULO</strong> indica que en la siguiente celda estará el titulo de la encuesta.</li>
+                                <li>Las siguientes llaves son referidas a cada una de las preguntas, las cuáles se explicarán a continuación.</li>
+                            </ul>
+                            <img class="col-sm-10 mx-auto d-block img-thumbnail" src="~/images/Plantilla2.png" />
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="row">
+                                <div class="col-sm-7">
+                                    <label>Las preguntas son de diferentes tipos:</label>
+                                    <ul>
+                                        <li><strong class="text-primary">NUMERICA:</strong> Campo de texto abierto de tipo numérico.</li>
+                                        <li><strong class="text-primary">ABIERTA</strong> Campo de text abierto.</li>
+                                        <li><strong class="text-primary">RESPUESTA_UNICA</strong> Campo para diferentes respuestas vistas con radio button.</li>
+                                        <li><strong class="text-primary">RESPUESTA_UNICA_LISTA</strong> Campo para diferentes respuestas vistas a modo de lista.</li>
+                                        <li><strong class="text-primary">MULTIPLE</strong> Tipo de respuestas para seleccionar multiples respuestas de un listado.</li>
+                                    </ul>
+                                </div>
+                                <div class="col-sm-5">
+                                    <img class="col-sm-12 img-thumbnail mt-5" src="~/images/Plantilla3.png" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="row">
+                                <div class="col-sm-7">
+                                    <label>Las preguntas son de diferentes tipos:</label>
+                                    <ul>
+                                        <li><strong class="text-primary">ITERABLE:</strong> La condición se evaluará en todas las respuestas de una pregunta que es iterable.</li>
+                                        <li><strong class="text-primary">NO_ITERABLE</strong> La condición se evaluará por respuesta de una pregunta que es iterable.</li>
+                                    </ul>
+                                </div>
+                                <div class="col-sm-5">
+                                    <img class="col-sm-12 img-thumbnail" src="~/images/Plantilla4.png" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <label>Si se desea generar una pregunta abiera, se debe hacer de la siguiente manera...</label>
+                            <img class="col-sm-10 mx-auto d-block img-thumbnail" src="~/images/Plantilla5.png" />
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <label>Vista previa de los tipos de preguntas:</label><br />
+                            <label class="text-info">Pregunta <strong class="text-primary">ABIERTA</strong></label>
+                            <img class="col-sm-10 img-thumbnail" src="~/images/Preg1.png" /><br />
+                            <label class="text-info">Pregunta <strong class="text-primary">NUMERICA</strong></label>
+                            <img class="col-sm-10 img-thumbnail" src="~/images/Preg2.png" /><br />
+                            <label class="text-info">Pregunta <strong class="text-primary">RESPUESTA_UNICA</strong></label>
+                            <img class="col-sm-10 img-thumbnail" src="~/images/Preg3.png" /><br />
+                            <label class="text-info">Pregunta <strong class="text-primary">RESPUESTA_UNICA_LISTA</strong></label>
+                            <img class="col-sm-10 img-thumbnail" src="~/images/Preg4.png" /><br />
+                            <label class="text-info">Pregunta <strong class="text-primary">MULTIPLE</strong></label>
+                            <img class="col-sm-10 img-thumbnail" src="~/images/Preg5.png" />
+                        </div>
+                    </div>
+                    <span class="badge badge-danger mt-5">Condicionales</span>
+                    <hr style="margin-top: 5px;" />
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <label>Las condiciones para las preguntas se ponen después del nombre de la pregunta. Por ejemplo en la imagen se observa lo siguiente...</label>
+                            En la pregunta "Pregunta 2" se observa la condición <strong>?3,D</strong> esto significa que:
+                            <ul>
+                                <li>El signo de interrogación (<strong>?</strong>) es el que indica una condición.</li>
+                                <li>El número <strong>3</strong> indica la fila en la que se encuentra la pregunta sobre la que se evaluará la condición.</li>
+                                <li>La coma (<strong>,</strong>) es solo un separador entre pregunta y respuesta.</li>
+                                <li>La letra <strong>D</strong> indica la columna en la que está la respuesta.</li>
+                            </ul>
+                            <img class="col-sm-10 mx-auto d-block img-thumbnail" src="~/images/Condicion.png" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <label></label>
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <label></label>
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <label></label>
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <label></label>
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <label></label>
+
+                        </div>
+                    </div>
+                    <img class="col-sm-12" src="~/images/Condicion2.png" />
+                    <img class="col-sm-12" src="~/images/Condicion3.png" />
+                    <div class="modal-footer" style="padding-top: 5px; padding-bottom: 5px;">
+                        <button type="button" class="btn btn-sm btn-light" data-dismiss="modal">Cancelar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script>
+        (function () {
+            var app = angular.module('SedeshuApp', ['ui.bootstrap']);
+            var baseUrl = document.baseURI;
+            
+            app.controller('importarController',
+                function ($scope, $http, $uibModal) {
+                    $scope.file = "";
+                    $scope.errorMessage = "";
+
+                    $scope.enviarArchivo = function () {
+                        let data = new FormData();
+                        data.append("File", $scope.file);
+
+                        $scope.errorMessage = "";
+                        axios.post(baseUrl +'Encuesta/ImportarEncuesta', data).then(function (response) {
+                            if (response.data.Ok) {
+                                window.location.href = baseUrl +'Encuesta/Editar/' + response.data.Id;
+                            } else {
+                                $scope.errorMessage = response.data.Error;
+                                $scope.$apply();
+                            }
+                        });
+                    };
+                }
+            )
+            .directive("fileread", [function () {
+                return {
+                    scope: {
+                        fileread: "="
+                    },
+                    link: function (scope, element, attributes) {
+                        element.bind("change", function (changeEvent) {
+                            scope.$apply(function () {
+                                if (changeEvent.target.files[0] != undefined) {
+                                    scope.fileread = changeEvent.target.files[0];
+                                }
+                            });
+                        });
+                    }
+                }
+            }]);
+        })();
+    </script>
+}

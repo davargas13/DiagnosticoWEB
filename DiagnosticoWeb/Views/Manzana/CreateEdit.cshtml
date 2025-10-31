@@ -1,0 +1,150 @@
+﻿@using DiagnosticoWeb.Code;
+@using System.Security.Claims;
+<div ng-app="SedeshuApp" ng-controller="createEditController" ng-init="init(@JsonSedeshu.SerializeObject(Model))">
+    <partial name="_Loading_Partial" />
+    <div class="row justify-content-center" ng-cloak>
+        <div class="col-sm-10">
+            <div class="card border-cards">
+                <div class="card-header bg-cards text-white">
+                    @if (!string.IsNullOrEmpty(Model.Id))
+                    {
+                        <h5 class="float-left">Editar manzana</h5>
+                    }
+                    else
+                    {
+                        <h5 class="float-left">Crear manzana</h5>
+                    }
+                    <a class="btn btn-sm btn-header float-right" asp-controller="Manzana" asp-action="Index">
+                        <i class="fa fa-backward"></i> Regresar
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex flex-wrap">
+                        <div class="col-sm-3">
+                            <label class="required">Id <small ng-bind="Manzana.Id.length + ' / 16'"></small></label>
+                            <input class="form-control" ng-model="Manzana.Id" maxlength="16" ng-disabled="Manzana.IdAnterior != ''"/>
+                            <strong class="small text-danger" ng-bind="errors['Id']"></strong>
+                        </div>
+                        <div class="col-sm-4">
+                            <label class="required">Nombre <small ng-bind="Manzana.Nombre.length + ' / 255'"></small></label>
+                            <input class="form-control" ng-model="Manzana.Nombre" maxlength="255"/>
+                            <strong class="small text-danger" ng-bind="errors['Nombre']"></strong>
+                        </div>
+                        <div class="col-3">
+                            <label>Municipio</label>
+                            <select class="selectpicker2 form-control" ng-model="Manzana.MunicipioId" ng-change="seleccionarMunicipio()"
+                                    data-live-search="true">
+                                <option ng-repeat="municipio in Municipios" ng-value="municipio.Id">{{municipio.Nombre}}</option>
+                            </select>
+                            <strong class="small text-danger" ng-bind="errors['MunicipioId']"></strong>
+                        </div>
+                        <div class="col-3">
+                            <label>Localidad</label>
+                            <select class="selectpicker2 form-control" ng-model="Manzana.LocalidadId" ng-change="seleccionarLocalidad()"
+                                    data-live-search="true">
+                                <option ng-repeat="localidad in Localidades" ng-value="localidad.Id">{{localidad.Nombre}}</option>
+                            </select>
+                            <strong class="small text-danger" ng-bind="errors['LocalidadId']"></strong>
+                        </div>
+                        <div class="col-3">
+                            <label>Ageb</label>
+                            <select class="selectpicker2 form-control" ng-model="Manzana.AgebId" data-live-search="true">
+                                <option ng-repeat="ageb in Agebs" ng-value="ageb.Id">{{ageb.Nombre}}</option>
+                            </select>
+                            <strong class="small text-danger" ng-bind="errors['LocalidadId']"></strong>
+                        </div>
+                    </div>
+                </div>
+                @if (((ClaimsIdentity)User.Identity).HasClaim("Permiso", "catalogos.editar") || (string.IsNullOrEmpty(Model.Id) &&
+                        ((ClaimsIdentity)User.Identity).HasClaim("Permiso", "catalogos.crear")))
+                {
+                    <div class="card-footer">
+                        <button class="btn btn-sm btn-success" ng-click="Guardar()" ng-if="!guardando">
+                            <i class="fa fa-save"></i> Guardar
+                        </button>
+                        <button class="btn btn-sm btn-success" ng-if="guardando" disabled>
+                            <i class="fa fa-spinner fa-spin"></i> Guardar
+                        </button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (function () {
+            var app = angular.module('SedeshuApp', ['ui.bootstrap']);
+            var baseUrl = document.baseURI;
+
+            app.controller('createEditController',
+                function ($scope, $http) {
+                    $scope.Manzana = {};
+                    $scope.Municipios = [];
+                    $scope.Localidades = [];
+                    $scope.Agebs = [];
+                    $scope.errors = [];
+                    $scope.guardando = false;
+
+                    $scope.init = function (manzana) {
+                        $scope.Manzana = manzana;
+                        $scope.getMunicipios();
+                        $scope.refreshSelect();
+                    };
+
+                    $scope.Guardar = function () {
+                        $scope.guardando = true;
+                        $http.post(baseUrl + 'Manzana/Guardar', $scope.Manzana).then(function (response) {
+                            if (response.data === "ok") {
+                                window.location.href = baseUrl + "Manzana";
+                            } else {
+                                $scope.cargarErrores(response.data);
+                            }
+                            $scope.guardando = false;
+                        });
+                    };
+
+                    $scope.cargarErrores = function (errors) {
+                        $scope.errors = [];
+                        for (var i = 0; i < errors.length; i++) {
+                            $scope.errors[errors[i].Key] = errors[i].Error;
+                        }
+                    };
+                    
+                    $scope.getMunicipios = function () {
+                        $http.get(baseUrl + 'Municipios/Get').then(function (response) {
+                            $scope.Municipios = response.data;                           
+                            $scope.refreshSelect();
+                            if ($scope.Manzana.MunicipioId != '' && $scope.Manzana.LocalidadId != ''){
+                                $scope.seleccionarMunicipio();
+                            }
+                        });
+                    }; 
+                    
+                    $scope.seleccionarMunicipio = function () {
+                        $http.get(baseUrl + 'Localidad/ByMunicipio/' + $scope.Manzana.MunicipioId).then(function (response) {
+                            $scope.Localidades = response.data;
+                            $scope.refreshSelect();
+                            if ($scope.Manzana.MunicipioId != '' && $scope.Manzana.LocalidadId != '' && $scope.Manzana.AgebId != ''){
+                                $scope.seleccionarLocalidad();
+                            }
+                        });
+                    };
+
+                    $scope.seleccionarLocalidad = function () {
+                        $http.get(baseUrl + 'Ageb/ByLocalidad/' + $scope.Manzana.LocalidadId).then(function (response) {
+                            $scope.Agebs = response.data;
+                            $scope.refreshSelect();
+                        });
+                    };
+
+                    $scope.refreshSelect = _.debounce(function () {
+                        $('.selectpicker2').selectpicker('refresh');
+                    }, 200);
+
+                }
+            );
+        })();
+    </script>
+}
